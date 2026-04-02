@@ -1,0 +1,130 @@
+body {
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #0b0f1a, #020617 70%);
+  color: #eaeaea;
+  margin: 0;
+display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 420px;
+  width: 100%;
+  margin: 60px auto;
+  padding: 25px;    
+  position: relative;
+  
+
+  border-radius: 16px;
+  background: #111827;
+  border: 1px solid #38bdf8;
+
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+}
+
+/* efek glow luar angkasa */
+.container::before {
+  content: "";
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(56,189,248,0.3), transparent 70%);
+  top: -50px;
+  right: -50px;
+  filter: blur(40px);
+}
+
+/* Judul */
+h1 {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.9);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+/* Subjudul */
+h2 {
+  color: #eaeaea;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+/* Section biografi */
+.section {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(2, 6, 23, 0.6);
+}
+
+/* Text */
+p {
+  color: #d1d5db;
+  font-size: 14px;
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+small {
+  color: #9ca3af;
+}
+
+/* Divider */
+hr {
+  margin: 15px 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #38bdf8, transparent);
+}
+
+/* Card isi */
+.card {
+  padding: 15px;
+  border-radius: 12px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  margin-top: 15px;
+  position: relative;
+
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* efek garis neon tipis */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(120deg, transparent, #38bdf8, transparent);
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Hover effect */
+.card:hover {
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+  transform: translateY(-3px) scale(1.01);
+}
+
+/* Judul dalam card */
+h3 {
+  color: #facc15;
+  margin-bottom: 8px;
+}
+
+/* Footer */
+.footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Catatan kecil */
+.small-note {
+  font-size: 13px;
+  opacity: 0.8;
+}

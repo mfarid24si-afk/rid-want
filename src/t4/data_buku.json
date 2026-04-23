@@ -1,0 +1,462 @@
+[
+    {
+        "id": "BK-1001",
+        "judul": "Buku Pintar Volume 1",
+        "penulis": "Author Name 1",
+        "kategori": "Non-Fiksi",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 205,
+            "berat_gram": 302,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2011,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.5,
+            "total_ulasan": 13,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book1/400/600"
+    },
+    {
+        "id": "BK-1002",
+        "judul": "Buku Pintar Volume 2",
+        "penulis": "Author Name 2",
+        "kategori": "Teknologi",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 210,
+            "berat_gram": 304,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2012,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 16,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book2/400/600"
+    },
+    {
+        "id": "BK-1003",
+        "judul": "Buku Pintar Volume 3",
+        "penulis": "Author Name 3",
+        "kategori": "Sains",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 215,
+            "berat_gram": 306,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2013,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.7,
+            "total_ulasan": 19,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book3/400/600"
+    },
+    {
+        "id": "BK-1004",
+        "judul": "Buku Pintar Volume 4",
+        "penulis": "Author Name 4",
+        "kategori": "Sejarah",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 220,
+            "berat_gram": 308,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2014,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.7,
+            "total_ulasan": 22,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book4/400/600"
+    },
+    {
+        "id": "BK-1005",
+        "judul": "Buku Pintar Volume 5",
+        "penulis": "Author Name 5",
+        "kategori": "Fiksi",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 225,
+            "berat_gram": 310,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2015,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.8,
+            "total_ulasan": 25,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book5/400/600"
+    },
+    {
+        "id": "BK-1006",
+        "judul": "Buku Pintar Volume 6",
+        "penulis": "Author Name 6",
+        "kategori": "Non-Fiksi",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 230,
+            "berat_gram": 312,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2016,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.8,
+            "total_ulasan": 28,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book6/400/600"
+    },
+    {
+        "id": "BK-1007",
+        "judul": "Buku Pintar Volume 7",
+        "penulis": "Author Name 7",
+        "kategori": "Teknologi",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 235,
+            "berat_gram": 314,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2017,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.8,
+            "total_ulasan": 31,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book7/400/600"
+    },
+    {
+        "id": "BK-1008",
+        "judul": "Buku Pintar Volume 8",
+        "penulis": "Author Name 8",
+        "kategori": "Sains",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 240,
+            "berat_gram": 316,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2018,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.9,
+            "total_ulasan": 34,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book8/400/600"
+    },
+    {
+        "id": "BK-1009",
+        "judul": "Buku Pintar Volume 9",
+        "penulis": "Author Name 9",
+        "kategori": "Sejarah",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 245,
+            "berat_gram": 318,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2019,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 5.0,
+            "total_ulasan": 37,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book9/400/600"
+    },
+    {
+        "id": "BK-1010",
+        "judul": "Buku Pintar Volume 10",
+        "penulis": "Author Name 10",
+        "kategori": "Fiksi",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 250,
+            "berat_gram": 320,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2020,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 40,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book10/400/600"
+    },
+    {
+        "id": "BK-1011",
+        "judul": "Buku Pintar Volume 11",
+        "penulis": "Author Name 11",
+        "kategori": "Non-Fiksi",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 255,
+            "berat_gram": 322,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2021,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.6,
+            "total_ulasan": 43,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book11/400/600"
+    },
+    {
+        "id": "BK-1012",
+        "judul": "Buku Pintar Volume 12",
+        "penulis": "Author Name 12",
+        "kategori": "Teknologi",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 260,
+            "berat_gram": 324,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2022,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 46,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book12/400/600"
+    },
+    {
+        "id": "BK-1013",
+        "judul": "Buku Pintar Volume 13",
+        "penulis": "Author Name 13",
+        "kategori": "Sains",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 265,
+            "berat_gram": 326,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2023,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.6,
+            "total_ulasan": 49,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book13/400/600"
+    },
+    {
+        "id": "BK-1014",
+        "judul": "Buku Pintar Volume 14",
+        "penulis": "Author Name 14",
+        "kategori": "Sejarah",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 270,
+            "berat_gram": 328,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2024,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 52,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book14/400/600"
+    },
+    {
+        "id": "BK-1015",
+        "judul": "Buku Pintar Volume 15",
+        "penulis": "Author Name 15",
+        "kategori": "Fiksi",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 275,
+            "berat_gram": 330,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2010,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.6,
+            "total_ulasan": 55,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book15/400/600"
+    },
+    {
+        "id": "BK-1016",
+        "judul": "Buku Pintar Volume 16",
+        "penulis": "Author Name 16",
+        "kategori": "Non-Fiksi",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 280,
+            "berat_gram": 332,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2011,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 58,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book16/400/600"
+    },
+    {
+        "id": "BK-1017",
+        "judul": "Buku Pintar Volume 17",
+        "penulis": "Author Name 17",
+        "kategori": "Teknologi",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 285,
+            "berat_gram": 334,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2012,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.6,
+            "total_ulasan": 61,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book17/400/600"
+    },
+    {
+        "id": "BK-1018",
+        "judul": "Buku Pintar Volume 18",
+        "penulis": "Author Name 18",
+        "kategori": "Sains",
+        "status": "Tersedia",
+        "detail_fisik": {
+            "jumlah_halaman": 290,
+            "berat_gram": 336,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2013,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 64,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book18/400/600"
+    },
+    {
+        "id": "BK-1019",
+        "judul": "Buku Pintar Volume 19",
+        "penulis": "Author Name 19",
+        "kategori": "Sejarah",
+        "status": "Dipinjam",
+        "detail_fisik": {
+            "jumlah_halaman": 295,
+            "berat_gram": 338,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2014,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 4.6,
+            "total_ulasan": 67,
+            "rekomendasi": false
+        },
+        "gambar": "https://picsum.photos/seed/book19/400/600"
+    },
+    {
+        "id": "BK-1020",
+        "judul": "Buku Pintar Volume 20",
+        "penulis": "Author Name 20",
+        "kategori": "Fiksi",
+        "status": "Dalam Perbaikan",
+        "detail_fisik": {
+            "jumlah_halaman": 300,
+            "berat_gram": 340,
+            "dimensi": "15x23 cm"
+        },
+        "informasi_penerbit": {
+            "nama_penerbit": "Pustaka Jaya",
+            "tahun_terbit": 2015,
+            "lokasi": "Jakarta"
+        },
+        "rating_ulasan": {
+            "skor": 3.6,
+            "total_ulasan": 70,
+            "rekomendasi": true
+        },
+        "gambar": "https://picsum.photos/seed/book20/400/600"
+    }
+]

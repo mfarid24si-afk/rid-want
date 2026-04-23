@@ -1,0 +1,489 @@
+{
+  "library": {
+    "name": "Pustaka Digital Nusantara",
+    "established": 2010,
+    "total_collection": 20
+  },
+  "books": [
+    {
+      "id": "BK001",
+      "title": "Laskar Pelangi",
+      "author": "Andrea Hirata",
+      "isbn": "978-979-1228-07-0",
+      "year_published": 2005,
+      "genre": "Novel",
+      "language": "Indonesia",
+      "pages": 534,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388960316i/1331276.jpg",
+      "rating": 4.8,
+      "publisher": {
+        "name": "Bentang Pustaka",
+        "city": "Yogyakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Sastra", "Inspirasi", "Pendidikan"],
+      "availability": {
+        "total_copies": 5,
+        "available_copies": 3,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK002",
+      "title": "Bumi Manusia",
+      "author": "Pramoedya Ananta Toer",
+      "isbn": "978-979-407-303-8",
+      "year_published": 1980,
+      "genre": "Novel Sejarah",
+      "language": "Indonesia",
+      "pages": 535,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388197419i/1536474.jpg",
+      "rating": 4.9,
+      "publisher": {
+        "name": "Hasta Mitra",
+        "city": "Jakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Sastra", "Sejarah", "Fiksi"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 1,
+        "borrowed_copies": 3
+      }
+    },
+    {
+      "id": "BK003",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "isbn": "978-0-7352-1129-2",
+      "year_published": 2018,
+      "genre": "Self-Help",
+      "language": "Inggris",
+      "pages": 319,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
+      "rating": 4.7,
+      "publisher": {
+        "name": "Avery Publishing",
+        "city": "New York",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Motivasi", "Produktivitas", "Psikologi"],
+      "availability": {
+        "total_copies": 6,
+        "available_copies": 4,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK004",
+      "title": "Sapiens: A Brief History of Humankind",
+      "author": "Yuval Noah Harari",
+      "isbn": "978-0-06-231609-7",
+      "year_published": 2011,
+      "genre": "Non-Fiksi",
+      "language": "Inggris",
+      "pages": 443,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1703329310i/23692271.jpg",
+      "rating": 4.6,
+      "publisher": {
+        "name": "Harper Collins",
+        "city": "London",
+        "country": "Inggris"
+      },
+      "categories": ["Sejarah", "Antropologi", "Sains"],
+      "availability": {
+        "total_copies": 3,
+        "available_copies": 2,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK005",
+      "title": "The Alchemist",
+      "author": "Paulo Coelho",
+      "isbn": "978-0-06-231500-7",
+      "year_published": 1988,
+      "genre": "Novel",
+      "language": "Inggris",
+      "pages": 208,
+      "status": "Dipinjam",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
+      "rating": 4.5,
+      "publisher": {
+        "name": "HarperOne",
+        "city": "San Francisco",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Fiksi", "Filosofi", "Petualangan"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 0,
+        "borrowed_copies": 4
+      }
+    },
+    {
+      "id": "BK006",
+      "title": "Dilan 1990",
+      "author": "Pidi Baiq",
+      "isbn": "978-602-7870-47-9",
+      "year_published": 2014,
+      "genre": "Roman",
+      "language": "Indonesia",
+      "pages": 240,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1432897483i/25734204.jpg",
+      "rating": 4.3,
+      "publisher": {
+        "name": "Pastel Books",
+        "city": "Bandung",
+        "country": "Indonesia"
+      },
+      "categories": ["Roman", "Remaja", "Percintaan"],
+      "availability": {
+        "total_copies": 7,
+        "available_copies": 5,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK007",
+      "title": "Rich Dad Poor Dad",
+      "author": "Robert T. Kiyosaki",
+      "isbn": "978-1-61268-191-7",
+      "year_published": 1997,
+      "genre": "Keuangan",
+      "language": "Inggris",
+      "pages": 336,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388194803i/69571.jpg",
+      "rating": 4.4,
+      "publisher": {
+        "name": "Plata Publishing",
+        "city": "Scottsdale",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Keuangan", "Investasi", "Bisnis"],
+      "availability": {
+        "total_copies": 5,
+        "available_copies": 3,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK008",
+      "title": "Harry Potter and the Philosopher's Stone",
+      "author": "J.K. Rowling",
+      "isbn": "978-0-7475-3269-9",
+      "year_published": 1997,
+      "genre": "Fantasi",
+      "language": "Inggris",
+      "pages": 309,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1474154022i/3.jpg",
+      "rating": 4.9,
+      "publisher": {
+        "name": "Bloomsbury Publishing",
+        "city": "London",
+        "country": "Inggris"
+      },
+      "categories": ["Fantasi", "Petualangan", "Remaja"],
+      "availability": {
+        "total_copies": 8,
+        "available_copies": 6,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK009",
+      "title": "Filosofi Teras",
+      "author": "Henry Manampiring",
+      "isbn": "978-602-03-9115-8",
+      "year_published": 2018,
+      "genre": "Filosofi",
+      "language": "Indonesia",
+      "pages": 265,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1548123275i/43726619.jpg",
+      "rating": 4.6,
+      "publisher": {
+        "name": "Kompas Gramedia",
+        "city": "Jakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Filosofi", "Self-Help", "Motivasi"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 2,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK010",
+      "title": "1984",
+      "author": "George Orwell",
+      "isbn": "978-0-452-28423-4",
+      "year_published": 1949,
+      "genre": "Distopia",
+      "language": "Inggris",
+      "pages": 328,
+      "status": "Dipinjam",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1532714506i/40961427.jpg",
+      "rating": 4.7,
+      "publisher": {
+        "name": "Secker & Warburg",
+        "city": "London",
+        "country": "Inggris"
+      },
+      "categories": ["Fiksi", "Politik", "Distopia"],
+      "availability": {
+        "total_copies": 3,
+        "available_copies": 0,
+        "borrowed_copies": 3
+      }
+    },
+    {
+      "id": "BK011",
+      "title": "Negeri 5 Menara",
+      "author": "Ahmad Fuadi",
+      "isbn": "978-979-22-4861-6",
+      "year_published": 2009,
+      "genre": "Novel",
+      "language": "Indonesia",
+      "pages": 423,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1348424139i/6411016.jpg",
+      "rating": 4.5,
+      "publisher": {
+        "name": "Gramedia Pustaka Utama",
+        "city": "Jakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Novel", "Inspirasi", "Pendidikan"],
+      "availability": {
+        "total_copies": 5,
+        "available_copies": 4,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK012",
+      "title": "The Psychology of Money",
+      "author": "Morgan Housel",
+      "isbn": "978-0-85719-769-9",
+      "year_published": 2020,
+      "genre": "Keuangan",
+      "language": "Inggris",
+      "pages": 256,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1581527774i/41881472.jpg",
+      "rating": 4.6,
+      "publisher": {
+        "name": "Harriman House",
+        "city": "Hampshire",
+        "country": "Inggris"
+      },
+      "categories": ["Keuangan", "Psikologi", "Investasi"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 3,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK013",
+      "title": "Pulang",
+      "author": "Tere Liye",
+      "isbn": "978-602-02-5384-2",
+      "year_published": 2015,
+      "genre": "Novel Aksi",
+      "language": "Indonesia",
+      "pages": 400,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1455626749i/29152927.jpg",
+      "rating": 4.4,
+      "publisher": {
+        "name": "Republika",
+        "city": "Jakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Aksi", "Petualangan", "Thriller"],
+      "availability": {
+        "total_copies": 6,
+        "available_copies": 4,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK014",
+      "title": "Thinking, Fast and Slow",
+      "author": "Daniel Kahneman",
+      "isbn": "978-0-374-53355-7",
+      "year_published": 2011,
+      "genre": "Psikologi",
+      "language": "Inggris",
+      "pages": 499,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1317793965i/11468377.jpg",
+      "rating": 4.5,
+      "publisher": {
+        "name": "Farrar, Straus and Giroux",
+        "city": "New York",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Psikologi", "Sains", "Perilaku"],
+      "availability": {
+        "total_copies": 3,
+        "available_copies": 2,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK015",
+      "title": "Cantik Itu Luka",
+      "author": "Eka Kurniawan",
+      "isbn": "978-979-91-0594-3",
+      "year_published": 2002,
+      "genre": "Sastra",
+      "language": "Indonesia",
+      "pages": 505,
+      "status": "Dipinjam",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388183313i/7128577.jpg",
+      "rating": 4.3,
+      "publisher": {
+        "name": "Gramedia Pustaka Utama",
+        "city": "Jakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Sastra", "Sejarah", "Realisme Magis"],
+      "availability": {
+        "total_copies": 3,
+        "available_copies": 0,
+        "borrowed_copies": 3
+      }
+    },
+    {
+      "id": "BK016",
+      "title": "The Lean Startup",
+      "author": "Eric Ries",
+      "isbn": "978-0-307-88791-7",
+      "year_published": 2011,
+      "genre": "Bisnis",
+      "language": "Inggris",
+      "pages": 336,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1333576876i/10127019.jpg",
+      "rating": 4.2,
+      "publisher": {
+        "name": "Crown Business",
+        "city": "New York",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Bisnis", "Kewirausahaan", "Manajemen"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 3,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK017",
+      "title": "Perahu Kertas",
+      "author": "Dewi Lestari",
+      "isbn": "978-979-780-375-9",
+      "year_published": 2009,
+      "genre": "Roman",
+      "language": "Indonesia",
+      "pages": 444,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1328281090i/7059720.jpg",
+      "rating": 4.4,
+      "publisher": {
+        "name": "Bentang Pustaka",
+        "city": "Yogyakarta",
+        "country": "Indonesia"
+      },
+      "categories": ["Roman", "Percintaan", "Remaja"],
+      "availability": {
+        "total_copies": 5,
+        "available_copies": 3,
+        "borrowed_copies": 2
+      }
+    },
+    {
+      "id": "BK018",
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "isbn": "978-0-06-112008-4",
+      "year_published": 1960,
+      "genre": "Sastra Klasik",
+      "language": "Inggris",
+      "pages": 281,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1553383690i/2657.jpg",
+      "rating": 4.8,
+      "publisher": {
+        "name": "J. B. Lippincott & Co.",
+        "city": "Philadelphia",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Klasik", "Fiksi", "Drama"],
+      "availability": {
+        "total_copies": 3,
+        "available_copies": 2,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK019",
+      "title": "Sejarah Tuhan",
+      "author": "Karen Armstrong",
+      "isbn": "978-979-3323-76-9",
+      "year_published": 1993,
+      "genre": "Agama & Spiritualitas",
+      "language": "Indonesia",
+      "pages": 536,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1388181271i/433979.jpg",
+      "rating": 4.3,
+      "publisher": {
+        "name": "Mizan Pustaka",
+        "city": "Bandung",
+        "country": "Indonesia"
+      },
+      "categories": ["Agama", "Sejarah", "Filsafat"],
+      "availability": {
+        "total_copies": 2,
+        "available_copies": 1,
+        "borrowed_copies": 1
+      }
+    },
+    {
+      "id": "BK020",
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "isbn": "978-0-7432-7356-5",
+      "year_published": 1925,
+      "genre": "Sastra Klasik",
+      "language": "Inggris",
+      "pages": 180,
+      "status": "Tersedia",
+      "cover_image": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1490528560i/4671.jpg",
+      "rating": 4.1,
+      "publisher": {
+        "name": "Charles Scribner's Sons",
+        "city": "New York",
+        "country": "Amerika Serikat"
+      },
+      "categories": ["Klasik", "Fiksi", "Amerika"],
+      "availability": {
+        "total_copies": 4,
+        "available_copies": 4,
+        "borrowed_copies": 0
+      }
+    }
+  ]
+}

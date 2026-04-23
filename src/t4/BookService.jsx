@@ -20,9 +20,9 @@ const EldenLibrary = () => {
         <header className="flex flex-col items-center mb-16 text-center">
           <div className="w-1 h-20 bg-gradient-to-b from-transparent via-[#c5a059] to-transparent mb-4"></div>
           <h1 className="text-5xl md:text-7xl font-cinzel font-normal tracking-[0.2em] text-[#e5e5e5] drop-shadow-2xl">
-            TOME <span className="text-[#c5a059]">ARCHIVE</span>
+            PERPUSTAKAAN <span className="text-[#c5a059]">DIGITAL</span>
           </h1>
-          <p className="font-cormorant italic text-xl text-[#888] mt-2 tracking-widest uppercase">The Lost Records of the Lands Between</p>
+          <p className="font-cormorant italic text-xl text-[#888] mt-2 tracking-widest uppercase">TEMUKAN BUKU YANG AKAN ANDA BACA</p>
           
           <button 
             onClick={() => setIsAdmin(!isAdmin)}
@@ -36,7 +36,7 @@ const EldenLibrary = () => {
         <div className="relative max-w-2xl mx-auto mb-20 group">
           <input 
             type="text" 
-            placeholder="Search for lost knowledge..." 
+            placeholder="Silahkan cari bukunya..." 
             className="w-full bg-transparent border-b border-[#3c3c3c] py-4 px-2 outline-none text-center font-cormorant italic text-2xl focus:border-[#c5a059] transition-colors"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -86,10 +86,10 @@ const EldenLibrary = () => {
             <table className="w-full text-left border-collapse">
               <thead className="bg-[#1a1a1a] font-cinzel text-[10px] tracking-[0.2em] text-[#c5a059]">
                 <tr className="border-b border-[#3c3c3c]">
-                  <th className="p-6">REGISTRY</th>
-                  <th className="p-6">TOME DESCRIPTION</th>
-                  <th className="p-6">PHYSICAL TRAITS</th>
-                  <th className="p-6">STATUTE</th>
+                  <th className="p-6">ID BUKU</th>
+                  <th className="p-6">JUDUL BUKU</th>
+                  <th className="p-6">JUMLAH HALAMAN</th>
+                  <th className="p-6">STATUS</th>
                   <th className="p-6 text-center">RITES</th>
                 </tr>
               </thead>
@@ -125,7 +125,7 @@ const EldenLibrary = () => {
         {/* FOOTER */}
         <footer className="mt-32 mb-16 text-center opacity-30">
           <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-[#c5a059] to-transparent mx-auto mb-6"></div>
-          <p className="font-cinzel text-[10px] tracking-[0.5em]">MAY CHAOS TAKE THE WORLD</p>
+          <p className="font-cinzel text-[10px] tracking-[0.5em]">BY M.FARID FADILLAH</p>
         </footer>
       </div>
     </div>

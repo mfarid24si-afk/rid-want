@@ -161,7 +161,8 @@ const Orders = () => {
   const pendingOrders = ordersData.filter(o => o.status === 'pending').length
 
   return (
-    <div>
+    // Latar belakang utama diubah menjadi hitam arang pekat
+    <div className="min-h-screen bg-[#1C1C1C] text-zinc-100 p-1">
       <PageHeader 
         title="Manajemen Pesanan"
         subtitle="Kelola semua transaksi dan invoice klinik Anda"
@@ -175,55 +176,58 @@ const Orders = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="card p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-            <CreditCard className="w-6 h-6 text-emerald-600" />
+        {/* Card menggunakan bg-[#252525] solid dengan aksen warna semantik kontras rendah */}
+        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-emerald-950/40 flex items-center justify-center">
+            <CreditCard className="w-6 h-6 text-emerald-400" />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Total Pendapatan</p>
-            <p className="text-xl font-bold text-slate-800">
+            <p className="text-sm text-zinc-400">Total Pendapatan</p>
+            <p className="text-xl font-bold text-zinc-100">
               Rp {(totalRevenue / 1000000).toFixed(1)} jt
             </p>
           </div>
         </div>
-        <div className="card p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-            <FileText className="w-6 h-6 text-blue-600" />
+
+        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-sky-950/40 flex items-center justify-center">
+            <FileText className="w-6 h-6 text-sky-400" />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Pesanan Lunas</p>
-            <p className="text-xl font-bold text-slate-800">{paidOrders} pesanan</p>
+            <p className="text-sm text-zinc-400">Pesanan Lunas</p>
+            <p className="text-xl font-bold text-zinc-100">{paidOrders} pesanan</p>
           </div>
         </div>
-        <div className="card p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-            <Calendar className="w-6 h-6 text-amber-600" />
+
+        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-amber-950/40 flex items-center justify-center">
+            <Calendar className="w-6 h-6 text-amber-400" />
           </div>
           <div>
-            <p className="text-sm text-slate-500">Menunggu Pembayaran</p>
-            <p className="text-xl font-bold text-slate-800">{pendingOrders} pesanan</p>
+            <p className="text-sm text-zinc-400">Menunggu Pembayaran</p>
+            <p className="text-xl font-bold text-zinc-100">{pendingOrders} pesanan</p>
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="card p-4 mb-6">
+      <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 mb-6">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-          {/* Search */}
+          {/* Search Input Field Mode Gelap */}
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input
               type="text"
               placeholder="Cari invoice, pelanggan, atau layanan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-field pl-10 py-2"
+              className="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800/60 border border-transparent focus:bg-zinc-800 focus:border-zinc-700 outline-none text-sm transition-all text-zinc-100 placeholder:text-zinc-500"
             />
           </div>
 
           {/* Filter Buttons */}
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-slate-400" />
+            <Filter className="w-4 h-4 text-zinc-500" />
             <div className="flex gap-2 flex-wrap">
               {['all', 'paid', 'pending', 'cancelled', 'refunded'].map((filter) => (
                 <button
@@ -231,8 +235,9 @@ const Orders = () => {
                   onClick={() => setSelectedFilter(filter)}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                     selectedFilter === filter
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      // Aktif menggunakan warna abu-abu terang zinc murni sesuai ByeWind
+                      ? 'bg-zinc-200 text-zinc-900'
+                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700/80 hover:text-zinc-200'
                   }`}
                 >
                   {filter === 'all' ? 'Semua' : 
@@ -246,47 +251,49 @@ const Orders = () => {
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="card overflow-hidden">
+      {/* Orders Table Container */}
+      <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50">
+            {/* Header tabel menggunakan penampang abu-abu sangat redup tipis */}
+            <thead className="bg-zinc-800/30 border-b border-zinc-800">
               <tr>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">No. Invoice</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Pelanggan</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Layanan/Produk</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Tanggal</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Total</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Pembayaran</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-600">Aksi</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">No. Invoice</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Pelanggan</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Layanan/Produk</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Tanggal</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Total</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Pembayaran</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Status</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="border-t border-slate-100 hover:bg-slate-50 transition-colors">
+                <tr key={order.id} className="border-b border-zinc-800/40 hover:bg-zinc-800/20 transition-colors">
                   <td className="py-4 px-6">
-                    <span className="text-sm font-semibold text-primary-600">{order.id}</span>
+                    {/* Link invoice menggunakan warna aksen biru langit cerah */}
+                    <span className="text-sm font-semibold text-sky-400">{order.id}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm font-medium text-slate-800">{order.customer}</span>
+                    <span className="text-sm font-medium text-zinc-200">{order.customer}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm text-slate-600 line-clamp-1 max-w-[200px]">{order.service}</span>
+                    <span className="text-sm text-zinc-400 line-clamp-1 max-w-[200px]">{order.service}</span>
                   </td>
                   <td className="py-4 px-6">
                     <div>
-                      <p className="text-sm text-slate-800">{order.date}</p>
-                      <p className="text-xs text-slate-400">{order.time}</p>
+                      <p className="text-sm text-zinc-200">{order.date}</p>
+                      <p className="text-xs text-zinc-500">{order.time}</p>
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm font-bold text-slate-800">{order.total}</span>
+                    <span className="text-sm font-bold text-zinc-200">{order.total}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-zinc-300">
                       {getPaymentIcon(order.payment)}
-                      <span className="text-sm text-slate-600">{order.payment}</span>
+                      <span className="text-sm">{order.payment}</span>
                     </div>
                   </td>
                   <td className="py-4 px-6">
@@ -296,51 +303,54 @@ const Orders = () => {
                     <div className="relative">
                       <button
                         onClick={() => setShowActionMenu(showActionMenu === order.id ? null : order.id)}
-                        className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                        className="p-2 rounded-lg hover:bg-zinc-800 transition-colors"
                       >
-                        <MoreVertical className="w-4 h-4 text-slate-400" />
+                        <MoreVertical className="w-4 h-4 text-zinc-500" />
                       </button>
                       
                       {showActionMenu === order.id && (
-                        <div className="absolute right-0 top-10 w-44 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-10">
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-slate-50 transition-colors text-left">
-                            <Eye className="w-4 h-4 text-slate-400" />
-                            <span className="text-sm text-slate-700">Lihat Detail</span>
+                        // Dropdown aksi menggunakan warna background kontras tinggi terisolasi
+                        <div className="absolute right-0 top-10 w-44 bg-[#1C1C1C] rounded-xl shadow-2xl border border-zinc-800 py-2 z-10">
+                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
+                            <Eye className="w-4 h-4 text-zinc-500" />
+                            <span className="text-sm">Lihat Detail</span>
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-slate-50 transition-colors text-left">
-                            <FileText className="w-4 h-4 text-slate-400" />
-                            <span className="text-sm text-slate-700">Lihat Invoice</span>
+                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
+                            <FileText className="w-4 h-4 text-zinc-500" />
+                            <span className="text-sm">Lihat Invoice</span>
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-slate-50 transition-colors text-left">
-                            <Download className="w-4 h-4 text-slate-400" />
-                            <span className="text-sm text-slate-700">Download PDF</span>
+                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
+                            <Download className="w-4 h-4 text-zinc-500" />
+                            <span className="text-sm">Download PDF</span>
                           </button>
                         </div>
                       )}
                     </div>
-                  </td>
+</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-          <p className="text-sm text-slate-500">
+        {/* Pagination - Disesuaikan dengan penampang border gelap zinc */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-800">
+          <p className="text-sm text-zinc-500">
             Menampilkan {filteredOrders.length} dari {ordersData.length} pesanan
           </p>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+            {/* Tombol halaman tidak aktif menggunakan latar abu-abu gelap dengan hover redup */}
+            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
               Sebelumnya
             </button>
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-primary-500 text-white">
+            {/* Tombol nomor halaman aktif menggunakan warna solid terang minimalis */}
+            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-200 text-zinc-900">
               1
             </button>
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
               2
             </button>
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
+            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
               Selanjutnya
             </button>
           </div>

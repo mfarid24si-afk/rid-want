@@ -91,34 +91,40 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    // Latar belakang kontainer dashboard diubah ke abu-abu gelap arang
+    <div className="min-h-screen bg-[#1C1C1C] text-zinc-100 p-1">
       <PageHeader 
         title="Dashboard"
         subtitle="Selamat datang kembali! Berikut ringkasan bisnis klinik Anda hari ini."
+        // Catatan: Pastikan di dalam komponen <PageHeader /> Anda mengadopsi warna teks text-zinc-100 & text-zinc-400
       />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         {stats.map((stat, index) => (
-          <div key={index} className="card p-6 hover:shadow-md transition-shadow">
+          // Mengubah class .card menjadi bg-[#252525] dengan border zinc tipis tanpa drop shadow putih
+          <div key={index} className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-6 hover:border-zinc-700 transition-all">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-sm text-slate-500 mb-1">{stat.title}</p>
-                <h3 className="text-2xl font-bold text-slate-800">{stat.value}</h3>
+                <p className="text-sm text-zinc-400 mb-1">{stat.title}</p>
+                <h3 className="text-2xl font-bold text-zinc-100">{stat.value}</h3>
                 <div className="flex items-center gap-1 mt-2">
                   {stat.isPositive ? (
-                    <ArrowUpRight className="w-4 h-4 text-emerald-500" />
+                    // Menggunakan warna aksen hijau emerald terang untuk dark mode
+                    <ArrowUpRight className="w-4 h-4 text-emerald-400" />
                   ) : (
-                    <ArrowDownRight className="w-4 h-4 text-red-500" />
+                    // Menggunakan warna aksen merah rose terang untuk dark mode
+                    <ArrowDownRight className="w-4 h-4 text-rose-400" />
                   )}
-                  <span className={`text-sm font-medium ${stat.isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+                  <span className={`text-sm font-medium ${stat.isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
                     {stat.change}
                   </span>
-                  <span className="text-sm text-slate-400">vs bulan lalu</span>
+                  <span className="text-sm text-zinc-500">vs bulan lalu</span>
                 </div>
               </div>
-              <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center`}>
-                <stat.icon className="w-6 h-6 text-white" />
+              {/* Box Ikon menggunakan modifikasi background gelap transparan */}
+              <div className={`w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center`}>
+                <stat.icon className="w-6 h-6 text-zinc-300" />
               </div>
             </div>
           </div>
@@ -128,13 +134,13 @@ const Dashboard = () => {
       {/* Charts and Tables Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 card p-6">
+        <div className="lg:col-span-2 bg-[#252525] border border-zinc-800/80 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-slate-800">Pendapatan Bulanan</h3>
-              <p className="text-sm text-slate-500">Trend pendapatan 7 bulan terakhir</p>
+              <h3 className="text-lg font-semibold text-zinc-100">Pendapatan Bulanan</h3>
+              <p className="text-sm text-zinc-400">Trend pendapatan 7 bulan terakhir</p>
             </div>
-            <div className="flex items-center gap-2 text-emerald-600">
+            <div className="flex items-center gap-2 text-sky-400">
               <TrendingUp className="w-5 h-5" />
               <span className="text-sm font-medium">+23% dari tahun lalu</span>
             </div>
@@ -143,31 +149,36 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={revenueData}>
                 <defs>
+                  {/* Gradien grafik diubah dari Rose ke Sky Blue transparan khas ByeWind */}
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#e54d6d" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#e54d6d" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
+                {/* Garis grid diubah menjadi sangat tipis gelap agar menyatu */}
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+                <XAxis dataKey="name" stroke="#71717a" fontSize={12} />
                 <YAxis 
-                  stroke="#94a3b8" 
+                  stroke="#71717a" 
                   fontSize={12}
                   tickFormatter={(value) => `${value / 1000000}jt`}
                 />
                 <Tooltip 
                   formatter={(value) => [formatCurrency(value), 'Pendapatan']}
+                  // Mengubah style tooltip menjadi kotak pop-up gelap pekat
                   contentStyle={{ 
-                    backgroundColor: 'white', 
-                    border: '1px solid #e2e8f0',
+                    backgroundColor: '#1c1c1c', 
+                    border: '1px solid #3f3f46',
                     borderRadius: '12px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.5)'
                   }}
+                  itemStyle={{ color: '#f4f4f5' }}
+                  labelStyle={{ color: '#a1a1aa' }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#e54d6d" 
+                  stroke="#38bdf8" 
                   strokeWidth={3}
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
@@ -178,77 +189,83 @@ const Dashboard = () => {
         </div>
 
         {/* Upcoming Appointments */}
-        <div className="card p-6">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Janji Temu Hari Ini</h3>
+        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-zinc-100 mb-4">Janji Temu Hari Ini</h3>
           <div className="space-y-4">
             {upcomingAppointments.map((apt, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                <div className="flex items-center gap-2 text-primary-600 min-w-[60px]">
+              // Mengubah kontainer list janji temu dari bg-slate-50 ke bg-zinc-800/50
+              <div key={index} className="flex items-start gap-3 p-3 rounded-xl bg-zinc-800/50 hover:bg-zinc-800 transition-colors">
+                <div className="flex items-center gap-2 text-sky-400 min-w-[60px]">
                   <Clock className="w-4 h-4" />
                   <span className="text-sm font-semibold">{apt.time}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 truncate">{apt.customer}</p>
-                  <p className="text-xs text-slate-500 truncate">{apt.service}</p>
-                  <p className="text-xs text-primary-500 mt-1">{apt.therapist}</p>
+                  <p className="text-sm font-medium text-zinc-200 truncate">{apt.customer}</p>
+                  <p className="text-xs text-zinc-400 truncate">{apt.service}</p>
+                  <p className="text-xs text-sky-400/80 mt-1">{apt.therapist}</p>
                 </div>
               </div>
             ))}
           </div>
-          <button className="w-full mt-4 text-center text-sm text-primary-600 hover:text-primary-700 font-medium py-2 rounded-xl hover:bg-primary-50 transition-colors">
+          {/* Mengubah tombol aksi sekunder bawah */}
+          <button className="w-full mt-4 text-center text-sm text-sky-400 hover:text-sky-300 font-medium py-2 rounded-xl hover:bg-zinc-800 transition-colors">
             Lihat Semua Janji Temu
           </button>
         </div>
       </div>
 
       {/* Recent Transactions */}
-      <div className="card p-6">
+      <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Transaksi Terakhir</h3>
-            <p className="text-sm text-slate-500">5 transaksi terbaru di klinik Anda</p>
+            <h3 className="text-lg font-semibold text-zinc-100">Transaksi Terakhir</h3>
+            <p className="text-sm text-zinc-400">5 transaksi terbaru di klinik Anda</p>
           </div>
-          <button className="btn-secondary text-sm">
+          <button className="px-4 py-2 text-sm font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-colors">
             Lihat Semua
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-slate-100">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Invoice</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Pelanggan</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Layanan</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Jumlah</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-slate-600">Waktu</th>
+              {/* Border head table disesuaikan */}
+              <tr className="border-b border-zinc-800">
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Invoice</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Pelanggan</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Layanan</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Jumlah</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-zinc-400">Waktu</th>
               </tr>
             </thead>
             <tbody>
               {recentTransactions.map((tx) => (
-                <tr key={tx.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                // Mengubah border baris tabel dan warna hover
+                <tr key={tx.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
                   <td className="py-3 px-4">
-                    <span className="text-sm font-medium text-slate-800">{tx.id}</span>
+                    <span className="text-sm font-medium text-zinc-200">{tx.id}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-sm text-slate-600">{tx.customer}</span>
+                    <span className="text-sm text-zinc-300">{tx.customer}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-sm text-slate-600">{tx.service}</span>
+                    <span className="text-sm text-zinc-400">{tx.service}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-sm font-semibold text-slate-800">{tx.amount}</span>
+                    <span className="text-sm font-semibold text-zinc-200">{tx.amount}</span>
                   </td>
                   <td className="py-3 px-4">
-                    <span className={`badge ${
-                      tx.status === 'success' ? 'badge-success' : 
-                      tx.status === 'pending' ? 'badge-warning' : 'badge-danger'
+                    {/* Logika badge status dengan pewarnaan semantik kontras rendah untuk dark mode */}
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      tx.status === 'success' ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-800/30' : 
+                      tx.status === 'pending' ? 'bg-amber-950/40 text-amber-400 border border-amber-800/30' : 
+                      'bg-rose-950/40 text-rose-400 border border-rose-800/30'
                     }`}>
                       {tx.status === 'success' ? 'Sukses' : tx.status === 'pending' ? 'Pending' : 'Gagal'}
                     </span>
                   </td>
                   <td className="py-3 px-4">
-                    <span className="text-sm text-slate-400">{tx.time}</span>
+                    <span className="text-sm text-zinc-500">{tx.time}</span>
                   </td>
                 </tr>
               ))}

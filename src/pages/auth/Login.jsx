@@ -5,17 +5,12 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react'
 const Login = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
+  const [formData, setFormData] = useState({ email: '', password: '' })
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setIsLoading(true)
-    
-    // Simulate login
     setTimeout(() => {
       setIsLoading(false)
       navigate('/dashboard')
@@ -23,27 +18,29 @@ const Login = () => {
   }
 
   return (
-    <div> {/* 1. MENIKIS KELAS .card AGAR TIDAK DOUBLE BOXING */}
+    <div>
+      {/* Header Judul - Diperjelas dengan text-white murni */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-slate-800">Selamat Datang Kembali</h2>
-        <p className="text-slate-500 text-sm mt-2">Masuk ke akun admin Anda</p>
+        <h2 className="text-2xl font-bold text-white tracking-tight">Selamat Datang Kembali</h2>
+        <p className="text-zinc-400 text-sm mt-2">Masuk ke akun admin Anda</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Email */}
         <div>
-          <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+          {/* Label diubah menjadi text-zinc-300 agar terlihat tegas */}
+          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
             Email Admin
           </label>
           <div className="relative">
-            {/* 2. MENGUBAH INDIKATOR POSISI KE top-3.5 AGAR SEJAJAR DENGAN INPUT-FIELD V4 */}
-            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
+            {/* Input field menggunakan background zinc gelap dengan teks putih cerah */}
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="admin@beautyclinic.com"
-              className="input-field pl-12"
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
               required
             />
           </div>
@@ -51,23 +48,23 @@ const Login = () => {
 
         {/* Password */}
         <div>
-          <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
             Kata Sandi
           </label>
           <div className="relative">
-            <Lock className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
+            <Lock className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
             <input
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder="Masukkan password"
-              className="input-field pl-12 pr-12"
+              className="w-full pl-12 pr-12 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-3.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+              className="absolute right-4 top-3.5 text-zinc-500 hover:text-zinc-300 cursor-pointer"
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -77,27 +74,27 @@ const Login = () => {
         {/* Remember & Forgot */}
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 cursor-pointer select-none">
-            {/* 3. MENAMBAHKAN AKSEN WARNA CHECKBOX YANG SERASI DENGAN TEMA KLINIK */}
             <input 
               type="checkbox" 
-              className="w-4 h-4 rounded border-slate-300 text-primary-500 accent-primary-500 focus:ring-primary-500 cursor-pointer" 
+              className="w-4 h-4 rounded border-zinc-700 bg-zinc-800 accent-zinc-200 cursor-pointer" 
             />
-            <span className="text-sm text-slate-600">Ingat saya</span>
+            <span className="text-sm text-zinc-300">Ingat saya</span>
           </label>
-          <Link to="/auth/forgot" className="text-sm text-primary-500 hover:text-primary-600 font-semibold transition-colors">
+          {/* Link dialihkan menggunakan warna sky cerah */}
+          <Link to="/auth/forgot" className="text-sm text-sky-400 hover:text-sky-300 font-semibold transition-colors">
             Lupa password?
           </Link>
         </div>
 
-        {/* Submit */}
+        {/* Tombol Submit - Diubah menjadi Solid Putih/Terang Minimalis sesuai tema ByeWind */}
         <button
           type="submit"
           disabled={isLoading}
-          className="btn-primary w-full py-3 flex items-center justify-center gap-2 disabled:opacity-70 cursor-pointer"
+          className="w-full py-3 rounded-xl bg-zinc-200 hover:bg-zinc-300 text-zinc-900 font-semibold flex items-center justify-center gap-2 disabled:opacity-50 transition-colors cursor-pointer text-sm"
         >
           {isLoading ? (
             <>
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-zinc-900/30 border-t-zinc-900 rounded-full animate-spin"></div>
               <span>Memproses...</span>
             </>
           ) : (
@@ -107,9 +104,9 @@ const Login = () => {
       </form>
 
       {/* Register Link */}
-      <p className="text-center text-sm text-slate-500 mt-6">
+      <p className="text-center text-sm text-zinc-400 mt-6">
         Belum punya akun?{' '}
-        <Link to="/auth/register" className="text-primary-500 hover:text-primary-600 font-semibold transition-colors">
+        <Link to="/auth/register" className="text-sky-400 hover:text-sky-300 font-semibold transition-colors">
           Daftar sekarang
         </Link>
       </p>

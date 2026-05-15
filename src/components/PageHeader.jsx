@@ -16,16 +16,19 @@ const PageHeader = ({
         <nav className="flex items-center gap-2 text-sm mb-2">
           {breadcrumbs.map((crumb, index) => (
             <div key={index} className="flex items-center gap-2">
-              {index > 0 && <ChevronRight className="w-4 h-4 text-slate-300" />}
+              {/* Mengubah warna chevron pemisah menjadi zinc gelap */}
+              {index > 0 && <ChevronRight className="w-4 h-4 text-zinc-600" />}
               {crumb.path ? (
+                // Mengubah link tidak aktif menjadi zinc redup dan hover ke putih terang
                 <Link 
                   to={crumb.path} 
-                  className="text-slate-500 hover:text-primary-600 transition-colors"
+                  className="text-zinc-500 hover:text-zinc-200 transition-colors"
                 >
                   {crumb.label}
                 </Link>
               ) : (
-                <span className="text-slate-800 font-medium">{crumb.label}</span>
+                // Mengubah teks posisi halaman aktif saat ini menjadi zinc terang
+                <span className="text-zinc-300 font-medium">{crumb.label}</span>
               )}
             </div>
           ))}
@@ -35,16 +38,19 @@ const PageHeader = ({
       {/* Title and Action */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">{title}</h1>
+          {/* Mengubah judul utama menjadi putih bersih */}
+          <h1 className="text-2xl font-bold text-zinc-100">{title}</h1>
           {subtitle && (
-            <p className="text-sm text-slate-500 mt-1">{subtitle}</p>
+            // Mengubah deskripsi sub-judul menjadi zinc medium
+            <p className="text-sm text-zinc-400 mt-1">{subtitle}</p>
           )}
         </div>
         
         {actionLabel && (
+          // Mengubah tombol aksi utama menjadi solid putih monokrom sesuai gaya ByeWind
           <button
             onClick={onAction}
-            className="btn-primary flex items-center gap-2"
+            className="px-4 py-2.5 rounded-xl text-sm font-medium bg-zinc-200 text-zinc-900 hover:bg-zinc-300 transition-colors flex items-center gap-2 cursor-pointer"
           >
             <ActionIcon className="w-4 h-4" />
             <span>{actionLabel}</span>

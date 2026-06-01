@@ -87,7 +87,7 @@ const Header = () => {
               <span className="text-sm font-semibold text-zinc-100">A</span>
             </div>
             <div className="text-left hidden sm:block">
-              <p className="text-sm font-medium text-zinc-200">Admin Klinik💅</p>
+              <p className="text-sm font-medium text-zinc-200">Admin Klinik</p>
               <p className="text-xs text-zinc-500">Super Admin</p>
             </div>
             <ChevronDown className="w-4 h-4 text-zinc-500" />

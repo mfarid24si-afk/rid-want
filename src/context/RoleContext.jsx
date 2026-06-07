@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { leadsData } from '../data/mockLeads'
+import { customersData } from '../data/mockCustomers'
 
 const RoleContext = createContext(null)
 
@@ -18,32 +19,35 @@ export const PERMISSIONS = {
     'view:marketing',
   ],
   guest: [
-    'view:queue',
-    'view:catalog',
-    'view:register',
+    'view:landing',
+    'view:about',
+    'view:services',
+    'view:promo',
+    'view:booking',
+    'view:tracking',
+    'view:loyalty',
+    'view:voucher',
+    'view:history',
+    'view:customer-dashboard',
   ],
 }
 
 export function RoleProvider({ children }) {
   const [role, setRole] = useState('admin')
 
-  // ─── SHARED STATE ─────────────────────────────────────────────
-  // State leads diletakkan di sini agar Admin & Guest
-  // membaca & menulis sumber data yang SAMA (single source of truth).
-  // Perubahan Admin (tambah/hapus lead) langsung terefleksi
-  // di tampilan Guest tanpa refresh, karena keduanya consume
-  // context ini.
+  // SINGLE SOURCE OF TRUTH — dibaca Admin & Guest dari sumber yang sama
   const [leads, setLeads] = useState(leadsData)
+  const [customers, setCustomers] = useState(customersData)
 
   const switchRole = (newRole) => setRole(newRole)
-  const toggleRole = () => setRole(r => (r === 'admin' ? 'guest' : 'admin'))
+  const toggleRole = () => setRole((r) => (r === 'admin' ? 'guest' : 'admin'))
 
   const can = (permission) =>
     PERMISSIONS[role]?.includes(permission) ?? false
 
   return (
     <RoleContext.Provider
-      value={{ role, switchRole, toggleRole, can, leads, setLeads }}
+      value={{ role, switchRole, toggleRole, can, leads, setLeads, customers, setCustomers }}
     >
       {children}
     </RoleContext.Provider>

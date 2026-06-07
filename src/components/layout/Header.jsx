@@ -2,6 +2,14 @@ import { useState } from 'react'
 import { Search, Bell, ChevronDown, LogOut, User, Settings, Menu, Sun, Moon } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
 import RoleSwitcher from './RoleSwitcher'
+import { useRole } from '../../context/RoleContext'
+
+const Header = ({ onMenuClick }) => {
+  const { theme, toggleTheme } = useTheme()
+  const { role } = useRole()
+  const isGuest = role === 'guest'
+  const [showProfileMenu, setShowProfileMenu] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
 
 const Header = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme()
@@ -54,7 +62,7 @@ const Header = ({ onMenuClick }) => {
       {/* Right Section */}
       <div className="flex items-center gap-2 md:gap-3 ml-auto">
         {/* Role Switcher */}
-        <RoleSwitcher />
+        !isGuest && <RoleSwitcher />
 
         {/* Theme Toggle */}
         <button
@@ -169,5 +177,5 @@ const Header = ({ onMenuClick }) => {
     </header>
   )
 }
-
+}
 export default Header

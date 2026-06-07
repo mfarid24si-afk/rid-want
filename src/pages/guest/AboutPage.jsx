@@ -2,7 +2,7 @@ import { Award, Star, Users, Sparkles } from "lucide-react";
 
 const doctors = [
   {
-    avatar: "AM",
+    avatar: "/img/dokter.jpg", // Ganti dengan path foto dr. Ayu
     name: "dr. Ayu Maharani, SpKK",
     title: "Dokter Kepala & Dermatologis Senior",
     certs: [
@@ -14,8 +14,8 @@ const doctors = [
     specialty: "Dermatologi Estetika & Laser",
   },
   {
-    avatar: "SP",
-    name: "dr. Sinta Pertiwi, SpBP-RE",
+    avatar: "/img/raihan.png", // Ganti dengan path foto dr. Sinta
+    name: "dr. Raihan Ghafari, SpBP-RE",
     title: "Spesialis Bedah Plastik Rekonstruksi",
     certs: [
       "SpBP-RE – Universitas Indonesia",
@@ -26,8 +26,8 @@ const doctors = [
     specialty: "Bedah Estetika & Anti Aging",
   },
   {
-    avatar: "RK",
-    name: "dr. Rahma Kusuma, SpKK",
+    avatar: "/img/ari.png", // Ganti dengan path foto dr. Rahma
+    name: "dr. Ari Sanjaya, SpKK",
     title: "Spesialis Kulit & Kelamin",
     certs: [
       "SpKK – Universitas Airlangga",
@@ -136,13 +136,13 @@ const AboutPage = () => {
               border: "1px solid var(--border)",
             }}
           >
-            {/* Avatar */}
-            <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-black text-white mb-4"
-              style={{ background: "var(--accent)" }}
-            >
-              {doc.avatar}
-            </div>
+            {/* Avatar Berupa Foto Profil */}
+            <img
+              src={doc.avatar}
+              alt={doc.name}
+              className="w-16 h-16 rounded-full object-cover mb-4"
+              style={{ border: "2px solid var(--accent)" }} // Opsional: Memberi bingkai warna sesuai tema
+            />
             <h3
               className="font-bold mb-0.5"
               style={{ color: "var(--text-heading)" }}

@@ -7,6 +7,10 @@ import Loading from './components/ui/Loading'
 import FABRoleSwitcher from './components/guest/FABRoleSwitcher'
 import { useRole } from './context/RoleContext'
 
+// Mengimpor 2 komponen header baru sesuai instruksi kamu
+import AdminHeader from './components/layout/AdminHeader'
+import GuestHeader from './components/layout/GuestHeader'
+
 // ── Admin pages (lazy) ──────────────────────────────────────
 const Dashboard     = React.lazy(() => import('./pages/Dashboard'))
 const Orders        = React.lazy(() => import('./pages/Orders'))
@@ -50,7 +54,8 @@ function AppRoutes() {
 
           {/* ── ADMIN AREA ── */}
           {!isGuest && (
-            <Route element={<MainLayout />}>
+            // Mengirimkan AdminHeader sebagai properti agar MainLayout merender header yang tepat
+            <Route element={<MainLayout header={<AdminHeader />} />}>
               <Route path="/dashboard"                 element={<Dashboard />} />
               <Route path="/dashboard/orders"          element={<Orders />} />
               <Route path="/dashboard/customers"       element={<Customers />} />
@@ -65,7 +70,8 @@ function AppRoutes() {
 
           {/* ── GUEST / PATIENT PORTAL ── */}
           {isGuest && (
-            <Route element={<GuestLayout />}>
+            // Mengirimkan GuestHeader sebagai properti agar GuestLayout merender header yang tepat
+            <Route element={<GuestLayout header={<GuestHeader />} />}>
               <Route path="/portal"         element={<LandingPage />} />
               <Route path="/portal/about"   element={<AboutPage />} />
               <Route path="/portal/services" element={<ServicesPage />} />

@@ -1,8 +1,6 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
-/* 1. PENDEFINISIAN TEMA & UTILITY CLASSES (Sintaks Resmi Tailwind v4) */
 @theme {
-  /* Mendaftarkan warna primary bertema klinik kecantikan (pink/rose pastel) */
   --color-primary-50: #fff1f2;
   --color-primary-100: #ffe4e6;
   --color-primary-300: #fda4af;
@@ -11,7 +9,6 @@
   --color-primary-600: #e11d48;
 }
 
-/* 2. GAYA DASAR UTAMA (Base Styles) */
 @layer base {
   * {
     border-color: var(--color-slate-200);
@@ -25,7 +22,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Desain Scrollbar Estetis */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -46,7 +42,6 @@
   }
 }
 
-/* 3. KOMPONEN KUSTOM (Custom Components dengan Utilitas Standar) */
 @utility card {
   background-color: white;
   border-radius: var(--radius-2xl);
@@ -97,7 +92,6 @@
   }
 }
 
-/* Komponen Lencana (Badge Status) */
 @utility badge {
   display: inline-flex;
   align-items: center;
@@ -125,4 +119,101 @@
 @utility badge-info {
   background-color: var(--color-blue-50);
   color: var(--color-blue-700);
+} */
+
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN TOKENS — BEAUTY CLINIC CRM
+   Light = Warm Ivory + Rose Gold
+   Dark  = Charcoal Black (existing)
+   ============================================ */
+
+:root {
+  /* Surfaces */
+  --bg-base:       #FDF8F5;
+  --bg-surface:    #FFFFFF;
+  --bg-raised:     #F5ECE5;
+  --bg-overlay:    rgba(201, 169, 110, 0.08);
+
+  /* Borders */
+  --border:        #E8D5C4;
+  --border-strong: #D4B99A;
+
+  /* Text */
+  --text:          #9B8576;
+  --text-strong:   #4A3728;
+  --text-heading:  #2D1B10;
+
+  /* Brand / Accent */
+  --accent:        #C9A96E;
+  --accent-hover:  #B8935A;
+  --accent-soft:   rgba(201, 169, 110, 0.15);
+
+  /* Semantic */
+  --success:       #6B9E7A;
+  --success-soft:  rgba(107, 158, 122, 0.15);
+  --warning:       #D4956A;
+  --warning-soft:  rgba(212, 149, 106, 0.15);
+  --danger:        #C96B6B;
+  --danger-soft:   rgba(201, 107, 107, 0.15);
+  --info:          #6B8FC9;
+  --info-soft:     rgba(107, 143, 201, 0.15);
+
+  /* Shadow */
+  --shadow-sm:  0 1px 3px rgba(74, 55, 40, 0.08);
+  --shadow-md:  0 4px 16px rgba(74, 55, 40, 0.12);
+  --shadow-lg:  0 8px 32px rgba(74, 55, 40, 0.16);
 }
+
+[data-theme="dark"] {
+  --bg-base:       #141414;
+  --bg-surface:    #1C1C1C;
+  --bg-raised:     #252525;
+  --bg-overlay:    rgba(56, 189, 248, 0.08);
+
+  --border:        #2e2e2e;
+  --border-strong: #3f3f3f;
+
+  --text:          #71717a;
+  --text-strong:   #e4e4e7;
+  --text-heading:  #fafafa;
+
+  --accent:        #38bdf8;
+  --accent-hover:  #0ea5e9;
+  --accent-soft:   rgba(56, 189, 248, 0.12);
+
+  --success:       #34d399;
+  --success-soft:  rgba(52, 211, 153, 0.12);
+  --warning:       #fbbf24;
+  --warning-soft:  rgba(251, 191, 36, 0.12);
+  --danger:        #f87171;
+  --danger-soft:   rgba(248, 113, 113, 0.12);
+  --info:          #60a5fa;
+  --info-soft:     rgba(96, 165, 250, 0.12);
+
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-strong);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Kanban drag styles */
+.kanban-card-dragging { opacity: 0.5; cursor: grabbing; }

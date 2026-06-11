@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Search, Filter, MoreVertical, Eye, FileText, Download, Calendar, CreditCard } from 'lucide-react'
-import PageHeader from '../components/PageHeader'
+import PageHeader from '../components/layout/PageHeader'
 
 // Mock Data
 const ordersData = [

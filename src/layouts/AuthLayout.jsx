@@ -1,66 +1,70 @@
 import { Outlet } from 'react-router-dom'
 import { Sparkles, Heart, Star } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
 
 const AuthLayout = () => {
+  const { theme } = useTheme()
+
   return (
-    <div className="min-h-screen flex bg-[#1C1C1C]">
-      {/* Sisi Kiri - Branding (Tetap Elegan, Kontras Sempurna) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#1C1C1C] via-zinc-800 to-zinc-900 relative overflow-hidden border-r border-zinc-800/80">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-zinc-400"></div>
-          <div className="absolute bottom-40 right-20 w-48 h-48 rounded-full bg-zinc-400"></div>
-        </div>
+    <div className="min-h-screen flex" style={{ background: 'var(--bg-base)' }}>
+      {/* Left Branding Panel */}
+      <div
+        className="hidden lg:flex lg:w-1/2 relative overflow-hidden"
+        style={{
+          background: theme === 'light'
+            ? 'linear-gradient(135deg, #FDF0E8 0%, #F0D5C0 50%, #E8C4A8 100%)'
+            : 'linear-gradient(135deg, #1C1C1C 0%, #252525 50%, #1a1a2e 100%)',
+          borderRight: '1px solid var(--border)'
+        }}
+      >
+        {/* Decorative circles */}
+        <div className="absolute top-16 -left-8 w-48 h-48 rounded-full opacity-20"
+          style={{ background: 'var(--accent)' }} />
+        <div className="absolute bottom-24 -right-12 w-64 h-64 rounded-full opacity-10"
+          style={{ background: 'var(--accent)' }} />
 
         <div className="relative z-10 flex flex-col justify-center items-center w-full p-12">
           <div className="mb-8">
-            <div className="w-20 h-20 rounded-2xl bg-zinc-800 border border-zinc-700/50 flex items-center justify-center shadow-2xl">
-              <Sparkles className="w-10 h-10 text-zinc-100" />
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-2xl"
+              style={{ background: 'var(--accent)', boxShadow: 'var(--shadow-lg)' }}>
+              <Sparkles className="w-10 h-10 text-white" />
             </div>
           </div>
 
-          <h1 className="text-4xl font-bold text-center mb-4 text-white tracking-tight">
+          <h1 className="text-4xl font-bold text-center mb-3 tracking-tight"
+            style={{ color: 'var(--text-heading)' }}>
             BeautyClinic
           </h1>
-          <p className="text-xl text-zinc-300 text-center mb-12 max-w-md">
-            Sistem Manajemen Klinik Kecantikan Modern dan Elegan
+          <p className="text-lg text-center mb-10 max-w-sm"
+            style={{ color: 'var(--text)' }}>
+            Sistem Manajemen Klinik Kecantikan Modern
           </p>
 
-          <div className="space-y-4 w-full max-w-sm">
-            <div className="flex items-center gap-4 bg-zinc-800/50 border border-zinc-800 rounded-xl p-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-700/50 flex items-center justify-center text-sky-400">
-                <Heart className="w-5 h-5" />
+          <div className="space-y-3 w-full max-w-sm">
+            {[
+              { icon: Heart,    title: 'Manajemen Pelanggan',   desc: 'Kelola data pasien dengan mudah' },
+              { icon: Star,     title: 'Penjadwalan Otomatis',  desc: 'Atur janji temu dengan efisien' },
+              { icon: Sparkles, title: 'Laporan & Analitik',    desc: 'Insight bisnis yang mendalam' },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-center gap-4 rounded-2xl p-4"
+                style={{ background: 'var(--bg-overlay)', border: '1px solid var(--border)' }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'var(--accent-soft)' }}>
+                  <Icon className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm" style={{ color: 'var(--text-heading)' }}>{title}</h3>
+                  <p className="text-xs" style={{ color: 'var(--text)' }}>{desc}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-zinc-100">Manajemen Pelanggan</h3>
-                <p className="text-sm text-zinc-400">Kelola data pasien dengan mudah</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 bg-zinc-800/50 border border-zinc-800 rounded-xl p-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-700/50 flex items-center justify-center text-sky-400">
-                <Star className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-zinc-100">Penjadwalan Otomatis</h3>
-                <p className="text-sm text-zinc-400">Atur janji temu dengan efisien</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 bg-zinc-800/50 border border-zinc-800 rounded-xl p-4">
-              <div className="w-10 h-10 rounded-lg bg-zinc-700/50 flex items-center justify-center text-sky-400">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-zinc-100">Laporan Lengkap</h3>
-                <p className="text-sm text-zinc-400">Analisis bisnis yang mendalam</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Sisi Kanan - Kontainer Form Terang & Jelas */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#1C1C1C]">
+      {/* Right Form Panel */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12"
+        style={{ background: 'var(--bg-surface)' }}>
         <div className="w-full max-w-md">
           <Outlet />
         </div>

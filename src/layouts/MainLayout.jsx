@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/AdminHeader'
-import ScrollToTopButton from '../components/ui/ScrollToTopButton'
+import ScrollToTopButton from '../components/ui/Scrolltotopbutton'
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)

@@ -10,7 +10,7 @@ import {
   CalendarPlus,
   ListOrdered,
 } from "lucide-react";
-import LocationMap from "../../components/guest/LocationMap";
+import LocationMap from "../../components/guest/Locationmap";
 
 const services = [
   {

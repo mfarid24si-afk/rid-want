@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/AdminHeader'
+import ScrollToTopButton from '../components/ui/ScrollToTopButton'
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -24,6 +25,9 @@ const MainLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Tombol kembali ke atas */}
+      <ScrollToTopButton />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { CalendarPlus, CheckCircle2, Shield, Clock } from 'lucide-react'
 import InputField from '../../components/ui/InputField'
 import Button from '../../components/ui/Button'
@@ -60,13 +61,21 @@ const BookingPage = () => {
 
   const handleNext = () => {
     const e = validateStep1()
-    if (Object.keys(e).length > 0) { setErrors(e); return }
+    if (Object.keys(e).length > 0) {
+      setErrors(e)
+      toast.error('Lengkapi data wajib sebelum lanjut ke jadwal')
+      return
+    }
     setStep(2)
   }
 
   const handleSubmit = () => {
     const e = validateStep2()
-    if (Object.keys(e).length > 0) { setErrors(e); return }
+    if (Object.keys(e).length > 0) {
+      setErrors(e)
+      toast.error('Pilih dokter, tanggal, dan waktu konsultasi')
+      return
+    }
 
     // Daftarkan ke shared state (real-time sync ke Admin KanbanBoard)
     const initials = form.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
@@ -88,6 +97,7 @@ const BookingPage = () => {
       return { ...prev, konsultasi: [lead, ...prev.konsultasi] }
     })
     setSubmitted(true)
+    toast.success('Booking berhasil dikonfirmasi! 🎉')
   }
 
   if (submitted) {

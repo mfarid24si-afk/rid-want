@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import GuestNavbar from '../components/guest/GuestNavbar'
 import GuestFooter from '../components/guest/GuestFooter'
 import BirthdayOverlay from '../components/guest/BirthdayOverlay'
+import ScrollToTopButton from '../components/ui/ScrollToTopButton'
 
 const GuestLayout = () => {
   return (
@@ -22,6 +23,9 @@ const GuestLayout = () => {
 
       {/* Overlay ulang tahun CRM otomatis */}
       <BirthdayOverlay />
+
+      {/* Tombol kembali ke atas */}
+      <ScrollToTopButton />
     </div>
   )
 }

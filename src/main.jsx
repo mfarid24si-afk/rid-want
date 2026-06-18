@@ -6,6 +6,7 @@ import { RoleProvider } from "./context/RoleContext";
 import { Toaster } from "react-hot-toast";
 import "./assets/tailwind.css";
 
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeProvider>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Eye, EyeOff, Sparkles } from 'lucide-react'
 import Button from '../../components/ui/Button'
 import InputField from '../../components/ui/InputField'
-import { loginAPI } from '../../services/loginAPI'
+import { loginAPI } from '../../services/LoginAPI'
 
 const Login = () => {
   const [show, setShow] = useState(false)

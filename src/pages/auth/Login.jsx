@@ -3,15 +3,46 @@ import { Link } from 'react-router-dom'
 import { Eye, EyeOff, Sparkles } from 'lucide-react'
 import Button from '../../components/ui/Button'
 import InputField from '../../components/ui/InputField'
+import { loginAPI } from '../../services/loginAPI'
 
 const Login = () => {
   const [show, setShow] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Simulasi: redirect ke dashboard
-    window.location.href = '/dashboard'
+    setIsLoading(true)
+    setErrorMessage('')
+
+    try {
+      // Membuat format query filter manual untuk Supabase REST API
+      const queryFilter = `?email=eq.${encodeURIComponent(form.email)}&password=eq.${encodeURIComponent(form.password)}`
+      
+      // Memanggil fungsi fetchLogin dari services
+      const res = await loginAPI.fetchLogin(queryFilter)
+      const dataUser = res.data || res
+
+      // Validasi ketat: dataUser wajib berupa Array dan panjangnya harus lebih dari 0
+      if (Array.isArray(dataUser) && dataUser.length > 0) {
+        setIsLoading(false)
+        
+        // Simpan sesi user ke localStorage (opsional)
+        localStorage.setItem('user_session', JSON.stringify(dataUser[0]))
+        
+        // Alihkan halaman ke dashboard secara mutlak
+        window.location.href = '/dashboard'
+      } else {
+        // Jika array kosong [], login ditahan di halaman ini
+        setIsLoading(false)
+        setErrorMessage('Email atau password tidak terdaftar!')
+      }
+    } catch (error) {
+      setIsLoading(false)
+      console.error("Login error detail:", error)
+      setErrorMessage('Terjadi kesalahan koneksi atau database.')
+    }
   }
 
   return (
@@ -32,6 +63,12 @@ const Login = () => {
         Masuk ke panel manajemen klinik Anda
       </p>
 
+      {errorMessage && (
+        <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center font-medium">
+          {errorMessage}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <InputField
           label="Email"
@@ -41,7 +78,7 @@ const Login = () => {
           value={form.email}
           onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
         />
-        <div>
+        <div className="relative">
           <InputField
             label="Password"
             id="password"
@@ -51,7 +88,7 @@ const Login = () => {
             onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
           />
           <button type="button" onClick={() => setShow(!show)}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
+            className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer z-10"
             style={{ color: 'var(--text)' }}>
             {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -63,8 +100,8 @@ const Login = () => {
           </Link>
         </div>
 
-        <Button variant="primary" type="submit" className="w-full" size="lg">
-          Masuk ke Dashboard
+        <Button variant="primary" type="submit" className="w-full" size="lg" disabled={isLoading}>
+          {isLoading ? 'Memvalidasi...' : 'Masuk ke Dashboard'}
         </Button>
       </form>
 
@@ -75,10 +112,9 @@ const Login = () => {
         </Link>
       </p>
 
-      {/* Demo hint */}
       <div className="mt-6 p-3 rounded-xl text-xs text-center"
         style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
-        💡 Demo: Klik "Masuk" untuk langsung ke dashboard
+        💡 Silakan masuk menggunakan akun terdaftar di Supabase Anda.
       </div>
     </div>
   )

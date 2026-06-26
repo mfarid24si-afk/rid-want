@@ -293,116 +293,125 @@ const LandingPage = () => {
             </div>
           </motion.div>
 
-          {/* Sisi Kanan: Hologram Mockup AI Simulator (Visual Tema Utama) */}
+          {/* Sisi Kanan: Multi-layered Floating Beauty Cards (Aura Premium Skin Analyzer) */}
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="lg:col-span-5 relative flex items-center justify-center"
+            className="lg:col-span-5 relative flex items-center justify-center min-h-[460px]"
           >
-            {/* Glow Bulat di Belakang Hologram */}
-            <div className="absolute w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-[60px] animate-pulse z-0" />
+            {/* Glow Bulat di Belakang */}
+            <div className="absolute w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-[70px] animate-pulse z-0" />
 
-            {/* Container Hologram Terapung */}
+            {/* Main Layer: Premium Skincare Image Card */}
             <motion.div
-              variants={floatVariants(-15, 1.5)}
+              variants={floatVariants(-12, 1)}
               animate="animate"
-              transition={floatTransition(0.3, 5.5)}
-              className="relative w-full max-w-[340px] p-6 rounded-3xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-xl shadow-lg dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] z-10 overflow-hidden"
+              transition={floatTransition(0, 6)}
+              className="relative w-[280px] h-[360px] rounded-3xl overflow-hidden border border-black/5 dark:border-white/10 shadow-lg dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] z-10"
               style={{
                 boxShadow: isDark
-                  ? "inset 0 0 20px rgba(255, 255, 255, 0.05), 0 0 30px rgba(56, 189, 248, 0.15)"
-                  : "inset 0 0 20px rgba(255, 255, 255, 0.2), 0 4px 20px rgba(201, 169, 110, 0.1)",
+                  ? "0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.05)"
+                  : "0 15px 30px rgba(74, 55, 40, 0.08), inset 0 0 20px rgba(255, 255, 255, 0.2)",
               }}
             >
-              {/* Garis Grid Tekno */}
-              <div className="absolute inset-0 bg-[linear-gradient(rgba(120,120,120,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(120,120,120,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-
-              {/* Garis Scan Bergerak */}
-              <motion.div
-                className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent z-20 pointer-events-none"
-                style={{
-                  boxShadow: isDark
-                    ? "0 0 10px rgba(56, 189, 248, 0.8)"
-                    : "0 0 8px rgba(201, 169, 110, 0.8)",
-                }}
-                animate={{ y: ["0%", "500%", "0%"] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+              {/* Image background */}
+              <img
+                src="img/facial.webp"
+                alt="Aura Luxury Treatment"
+                className="w-full h-full object-cover"
               />
+              
+              {/* Soft overlay gradient matching the theme */}
+              <div className="absolute inset-0 bg-gradient-to-t dark:from-black/90 dark:via-black/45 dark:to-transparent from-[#4A3728]/80 via-[#4A3728]/25 to-transparent" />
 
-              {/* Teks Informasi Hologram */}
-              <div className="flex items-center justify-between mb-4 border-b border-black/5 dark:border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-ping" />
-                  <p className="font-mono text-xs text-[var(--accent)] tracking-wider font-bold">
-                    ANTIGRAVITY AI v1.0
-                  </p>
-                </div>
-                <Activity className="w-4 h-4 text-[var(--accent)]" />
+              {/* Text label at the bottom of the image card */}
+              <div className="absolute bottom-5 left-5 right-5 text-left text-white">
+                <span className="text-[10px] font-mono tracking-widest text-[var(--accent)] font-bold uppercase">
+                  Aura Facial Assessment
+                </span>
+                <h4 className="text-lg font-bold mt-1 text-white leading-snug">
+                  Sensasi Perawatan Mewah &amp; Menenangkan
+                </h4>
               </div>
+            </motion.div>
 
-              {/* Simulasi Grafik/Radar */}
-              <div className="h-40 w-full rounded-2xl bg-black/5 dark:bg-black/40 border border-black/5 dark:border-white/5 p-4 flex flex-col justify-between mb-4 relative overflow-hidden">
-                <div className="flex items-center justify-between z-10">
-                  <span className="text-[10px] font-mono text-[var(--text)]">
-                    FACIAL ANALYZER
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                    READY
-                  </span>
-                </div>
-
-                {/* Wajah Simulasi / Gelombang Vector */}
-                <div className="flex items-end justify-between h-20 px-4">
-                  {[40, 75, 55, 90, 60, 85, 45, 95, 70, 80].map((h, i) => (
-                    <motion.div
-                      key={i}
-                      className="w-1.5 bg-gradient-to-t from-[var(--border-strong)] to-[var(--accent)] rounded-full"
-                      animate={{
-                        height: [`${h * 0.4}%`, `${h * 0.9}%`, `${h * 0.4}%`],
-                      }}
-                      transition={{
-                        duration: 2.5 + i * 0.15,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    />
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between font-mono text-[9px] text-[var(--text)] z-10">
-                  <span>GLOW SCALE: 98.4%</span>
-                  <span>ELEVATION: 10m</span>
-                </div>
+            {/* Floating Layer 1: Skin Analyzer Score (Top Left) */}
+            <motion.div
+              variants={floatVariants(-22, -2)}
+              animate="animate"
+              transition={floatTransition(0.5, 5)}
+              className="absolute top-8 -left-4 w-[160px] p-4 rounded-2xl bg-white/80 dark:bg-[#1C1C1C]/80 border border-black/5 dark:border-white/10 backdrop-blur-xl shadow-md z-20"
+              style={{
+                boxShadow: isDark
+                  ? "0 10px 25px rgba(0,0,0,0.3)"
+                  : "0 10px 25px rgba(74,55,40,0.06)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-[var(--accent)] animate-ping" />
+                <span className="text-[9px] font-bold font-mono text-[var(--accent)] tracking-wider">
+                  GLOW REPORT
+                </span>
               </div>
+              
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-black text-[var(--text-heading)]">
+                  98.4%
+                </span>
+                <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-1.5 py-0.5 rounded">
+                  Radiant
+                </span>
+              </div>
+              <p className="text-[10px] text-[var(--text)] mt-1 font-normal leading-tight">
+                Indeks pancaran cahaya kulit optimal
+              </p>
+            </motion.div>
 
-              {/* Daftar Parameter Diagnosis */}
-              <div className="space-y-2.5">
-                {[
-                  { label: "Skin Hydration", val: "94.2%", status: "OPTIMAL" },
-                  { label: "Collagen Density", val: "88.7%", status: "HIGH" },
-                  { label: "Melanin Level", val: "12.4%", status: "STABLE" },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between items-center text-xs py-1.5 px-2.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
-                  >
-                    <span className="text-[var(--text)]">{item.label}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-[var(--text-strong)]">
-                        {item.val}
-                      </span>
-                      <span className="text-[9px] font-mono text-[var(--text)] font-bold">
-                        {item.status}
-                      </span>
-                    </div>
+            {/* Floating Layer 2: Hydration & Collagen Metrics (Bottom Right) */}
+            <motion.div
+              variants={floatVariants(-16, 2)}
+              animate="animate"
+              transition={floatTransition(1, 5.5)}
+              className="absolute -bottom-4 -right-4 w-[190px] p-4 rounded-2xl bg-white/80 dark:bg-[#1C1C1C]/80 border border-black/5 dark:border-white/10 backdrop-blur-xl shadow-md z-20"
+              style={{
+                boxShadow: isDark
+                  ? "0 10px 25px rgba(0,0,0,0.3)"
+                  : "0 10px 25px rgba(74,55,40,0.06)",
+              }}
+            >
+              <div className="space-y-2">
+                <div>
+                  <div className="flex justify-between items-center text-[10px] mb-1">
+                    <span className="text-[var(--text)]">Skin Hydration</span>
+                    <span className="font-bold text-[var(--text-heading)]">94.2%</span>
                   </div>
-                ))}
+                  <div className="w-full h-1.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-[var(--accent)] rounded-full" style={{ width: "94.2%" }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center text-[10px] mb-1">
+                    <span className="text-[var(--text)]">Collagen Density</span>
+                    <span className="font-bold text-[var(--text-heading)]">88.7%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--border-strong)] rounded-full" style={{ width: "88.7%" }} />
+                  </div>
+                </div>
               </div>
+            </motion.div>
+
+            {/* Floating Layer 3: Doctor Approved Badge (Top Right) */}
+            <motion.div
+              variants={floatVariants(-8, 3)}
+              animate="animate"
+              transition={floatTransition(1.5, 4.2)}
+              className="absolute top-24 -right-8 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/90 dark:bg-[#1C1C1C]/90 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm text-xs font-bold text-[var(--text-strong)] z-20 shadow-[0_4px_12px_rgba(74,55,40,0.05)]"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <span>Doctor Approved</span>
             </motion.div>
           </motion.div>
         </div>
@@ -495,7 +504,7 @@ const LandingPage = () => {
                   alt={services[0].title}
                   className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t dark:from-black/80 dark:via-black/20 from-white/95 via-white/40 to-transparent" />
               </div>
 
               <div className="relative z-10">
@@ -537,7 +546,7 @@ const LandingPage = () => {
                     alt={services[1].title}
                     className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t dark:from-black/80 dark:via-black/20 from-white/95 via-white/40 to-transparent" />
                 </div>
 
                 <div className="relative z-10">
@@ -573,7 +582,7 @@ const LandingPage = () => {
                     alt={services[2].title}
                     className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t dark:from-black/80 dark:via-black/20 from-white/95 via-white/40 to-transparent" />
                 </div>
 
                 <div className="relative z-10">
@@ -609,7 +618,7 @@ const LandingPage = () => {
                     alt={services[3].title}
                     className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t dark:from-black/80 dark:via-black/20 from-white/95 via-white/40 to-transparent" />
                 </div>
 
                 <div className="relative z-10">

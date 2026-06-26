@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Sparkles,
@@ -136,6 +136,49 @@ const staggerItem = {
       damping: 15,
     },
   },
+};
+
+const AnimatedCounter = ({ value }) => {
+  const matches = value.match(/^([\d.,]+)(.*)$/);
+  let target = 0;
+  let suffix = "";
+  if (matches) {
+    target = parseFloat(matches[1].replace(/\./g, ""));
+    suffix = matches[2];
+  } else {
+    target = parseFloat(value) || 0;
+  }
+
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => {
+    const num = Math.round(latest);
+    return new Intl.NumberFormat("id-ID").format(num) + suffix;
+  });
+
+  const ref = useRef(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    if (ref.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !hasAnimated) {
+            setHasAnimated(true);
+            const controls = animate(count, target, {
+              duration: 2.5,
+              ease: [0.16, 1, 0.3, 1], // easeOutExpo
+            });
+            return () => controls.stop();
+          }
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(ref.current);
+      return () => observer.disconnect();
+    }
+  }, [target, hasAnimated, count]);
+
+  return <motion.span ref={ref}>{rounded}</motion.span>;
 };
 
 const LandingPage = () => {
@@ -439,7 +482,7 @@ const LandingPage = () => {
             {stats.map((s, idx) => (
               <div key={s.label} className="relative group">
                 <p className="text-3xl sm:text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-[var(--text-strong)] to-[var(--text)] drop-shadow-[0_2px_8px_rgba(255,255,255,0.1)]">
-                  {s.value}
+                  <AnimatedCounter value={s.value} />
                 </p>
                 <p className="text-xs sm:text-sm font-semibold text-[var(--accent)] uppercase tracking-wider">
                   {s.label}

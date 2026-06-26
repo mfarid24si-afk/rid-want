@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Search, Filter, MoreVertical, Eye, FileText, Download, Calendar, CreditCard } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
+import { useTheme } from '../context/ThemeContext'
+import Badge from '../components/ui/Badge'
 
 // Mock Data
 const ordersData = [
@@ -107,6 +109,7 @@ const ordersData = [
 ]
 
 const Orders = () => {
+  const { theme } = useTheme()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [showActionMenu, setShowActionMenu] = useState(null)
@@ -124,13 +127,13 @@ const Orders = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'paid':
-        return <span className="badge badge-success">Lunas</span>
+        return <Badge status="success">Lunas</Badge>
       case 'pending':
-        return <span className="badge badge-warning">Menunggu</span>
+        return <Badge status="pending">Menunggu</Badge>
       case 'cancelled':
-        return <span className="badge badge-danger">Dibatalkan</span>
+        return <Badge status="cancelled">Dibatalkan</Badge>
       case 'refunded':
-        return <span className="badge badge-info">Dikembalikan</span>
+        return <Badge status="new">Dikembalikan</Badge>
       default:
         return null
     }
@@ -161,8 +164,10 @@ const Orders = () => {
   const pendingOrders = ordersData.filter(o => o.status === 'pending').length
 
   return (
-    // Latar belakang utama diubah menjadi hitam arang pekat
-    <div className="min-h-screen bg-[#1C1C1C] text-zinc-100 p-1">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-300"
+      style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-strong)' }}
+    >
       <PageHeader 
         title="Manajemen Pesanan"
         subtitle="Kelola semua transaksi dan invoice klinik Anda"
@@ -176,69 +181,85 @@ const Orders = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {/* Card menggunakan bg-[#252525] solid dengan aksen warna semantik kontras rendah */}
-        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-emerald-950/40 flex items-center justify-center">
-            <CreditCard className="w-6 h-6 text-emerald-400" />
+        <div 
+          className="border rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+          style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+        >
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+            <CreditCard className="w-6 h-6 text-emerald-500" />
           </div>
           <div>
-            <p className="text-sm text-zinc-400">Total Pendapatan</p>
-            <p className="text-xl font-bold text-zinc-100">
+            <p className="text-sm" style={{ color: 'var(--text)' }}>Total Pendapatan</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>
               Rp {(totalRevenue / 1000000).toFixed(1)} jt
             </p>
           </div>
         </div>
 
-        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-sky-950/40 flex items-center justify-center">
-            <FileText className="w-6 h-6 text-sky-400" />
+        <div 
+          className="border rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+          style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+        >
+          <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <FileText className="w-6 h-6 text-blue-500" />
           </div>
           <div>
-            <p className="text-sm text-zinc-400">Pesanan Lunas</p>
-            <p className="text-xl font-bold text-zinc-100">{paidOrders} pesanan</p>
+            <p className="text-sm" style={{ color: 'var(--text)' }}>Pesanan Lunas</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{paidOrders} pesanan</p>
           </div>
         </div>
 
-        <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-950/40 flex items-center justify-center">
-            <Calendar className="w-6 h-6 text-amber-400" />
+        <div 
+          className="border rounded-2xl p-4 flex items-center gap-4 transition-all duration-300"
+          style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+        >
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+            <Calendar className="w-6 h-6 text-amber-500" />
           </div>
           <div>
-            <p className="text-sm text-zinc-400">Menunggu Pembayaran</p>
-            <p className="text-xl font-bold text-zinc-100">{pendingOrders} pesanan</p>
+            <p className="text-sm" style={{ color: 'var(--text)' }}>Menunggu Pembayaran</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--text-heading)' }}>{pendingOrders} pesanan</p>
           </div>
         </div>
       </div>
 
       {/* Filters and Search */}
-      <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl p-4 mb-6">
+      <div 
+        className="border rounded-2xl p-4 mb-6 transition-all duration-300"
+        style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+      >
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-          {/* Search Input Field Mode Gelap */}
+          {/* Search Input Field */}
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text)' }} />
             <input
               type="text"
               placeholder="Cari invoice, pelanggan, atau layanan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-zinc-800/60 border border-transparent focus:bg-zinc-800 focus:border-zinc-700 outline-none text-sm transition-all text-zinc-100 placeholder:text-zinc-500"
+              className="w-full pl-10 pr-4 py-2 rounded-xl outline-none text-sm transition-all"
+              style={{
+                backgroundColor: 'var(--bg-raised)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-strong)',
+              }}
             />
           </div>
 
           {/* Filter Buttons */}
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-zinc-500" />
+            <Filter className="w-4 h-4" style={{ color: 'var(--text)' }} />
             <div className="flex gap-2 flex-wrap">
               {['all', 'paid', 'pending', 'cancelled', 'refunded'].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setSelectedFilter(filter)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    selectedFilter === filter
-                      // Aktif menggunakan warna abu-abu terang zinc murni sesuai ByeWind
-                      ? 'bg-zinc-200 text-zinc-900'
-                      : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700/80 hover:text-zinc-200'
-                  }`}
+                  className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                  style={{
+                    backgroundColor: selectedFilter === filter ? 'var(--accent)' : 'var(--bg-raised)',
+                    color: selectedFilter === filter ? '#ffffff' : 'var(--text)',
+                    border: `1px solid ${selectedFilter === filter ? 'var(--accent)' : 'var(--border)'}`,
+                  }}
                 >
                   {filter === 'all' ? 'Semua' : 
                    filter === 'paid' ? 'Lunas' : 
@@ -252,46 +273,55 @@ const Orders = () => {
       </div>
 
       {/* Orders Table Container */}
-      <div className="bg-[#252525] border border-zinc-800/80 rounded-2xl overflow-hidden">
+      <div 
+        className="border rounded-2xl overflow-hidden transition-all duration-300"
+        style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+      >
         <div className="overflow-x-auto">
           <table className="w-full">
-            {/* Header tabel menggunakan penampang abu-abu sangat redup tipis */}
-            <thead className="bg-zinc-800/30 border-b border-zinc-800">
+            <thead style={{ backgroundColor: 'var(--bg-raised)', borderBottom: '1px solid var(--border)' }}>
               <tr>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">No. Invoice</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Pelanggan</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Layanan/Produk</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Tanggal</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Total</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Pembayaran</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-zinc-400">Aksi</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>No. Invoice</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Pelanggan</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Layanan/Produk</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Tanggal</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Total</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Pembayaran</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Status</th>
+                <th className="text-left py-4 px-6 text-sm font-semibold" style={{ color: 'var(--text)' }}>Aksi</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <tr key={order.id} className="border-b border-zinc-800/40 hover:bg-zinc-800/20 transition-colors">
+                <tr 
+                  key={order.id} 
+                  className="transition-colors border-b"
+                  style={{ 
+                    borderColor: 'var(--border)', 
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-overlay)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                >
                   <td className="py-4 px-6">
-                    {/* Link invoice menggunakan warna aksen biru langit cerah */}
-                    <span className="text-sm font-semibold text-sky-400">{order.id}</span>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>{order.id}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm font-medium text-zinc-200">{order.customer}</span>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-strong)' }}>{order.customer}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm text-zinc-400 line-clamp-1 max-w-[200px]">{order.service}</span>
+                    <span className="text-sm line-clamp-1 max-w-[200px]" style={{ color: 'var(--text)' }}>{order.service}</span>
                   </td>
                   <td className="py-4 px-6">
                     <div>
-                      <p className="text-sm text-zinc-200">{order.date}</p>
-                      <p className="text-xs text-zinc-500">{order.time}</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--text-strong)' }}>{order.date}</p>
+                      <p className="text-xs" style={{ color: 'var(--text)' }}>{order.time}</p>
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-sm font-bold text-zinc-200">{order.total}</span>
+                    <span className="text-sm font-bold" style={{ color: 'var(--text-strong)' }}>{order.total}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <div className="flex items-center gap-2 text-zinc-300">
+                    <div className="flex items-center gap-2" style={{ color: 'var(--text-strong)' }}>
                       {getPaymentIcon(order.payment)}
                       <span className="text-sm">{order.payment}</span>
                     </div>
@@ -303,54 +333,93 @@ const Orders = () => {
                     <div className="relative">
                       <button
                         onClick={() => setShowActionMenu(showActionMenu === order.id ? null : order.id)}
-                        className="p-2 rounded-lg hover:bg-zinc-800 transition-colors"
+                        className="p-2 rounded-lg transition-colors cursor-pointer"
+                        style={{ color: 'var(--text)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-raised)' }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                       >
-                        <MoreVertical className="w-4 h-4 text-zinc-500" />
+                        <MoreVertical className="w-4 h-4" />
                       </button>
                       
                       {showActionMenu === order.id && (
-                        // Dropdown aksi menggunakan warna background kontras tinggi terisolasi
-                        <div className="absolute right-0 top-10 w-44 bg-[#1C1C1C] rounded-xl shadow-2xl border border-zinc-800 py-2 z-10">
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
-                            <Eye className="w-4 h-4 text-zinc-500" />
+                        <div 
+                          className="absolute right-0 top-10 w-44 rounded-xl shadow-2xl border py-2 z-10"
+                          style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+                        >
+                          <button 
+                            className="flex items-center gap-2 px-4 py-2 w-full transition-colors text-left cursor-pointer"
+                            style={{ color: 'var(--text-strong)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-raised)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                          >
+                            <Eye className="w-4 h-4" style={{ color: 'var(--text)' }} />
                             <span className="text-sm">Lihat Detail</span>
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
-                            <FileText className="w-4 h-4 text-zinc-500" />
+                          <button 
+                            className="flex items-center gap-2 px-4 py-2 w-full transition-colors text-left cursor-pointer"
+                            style={{ color: 'var(--text-strong)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-raised)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                          >
+                            <FileText className="w-4 h-4" style={{ color: 'var(--text)' }} />
                             <span className="text-sm">Lihat Invoice</span>
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 w-full hover:bg-zinc-800 transition-colors text-left text-zinc-300">
-                            <Download className="w-4 h-4 text-zinc-500" />
+                          <button 
+                            className="flex items-center gap-2 px-4 py-2 w-full transition-colors text-left cursor-pointer"
+                            style={{ color: 'var(--text-strong)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-raised)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                          >
+                            <Download className="w-4 h-4" style={{ color: 'var(--text)' }} />
                             <span className="text-sm">Download PDF</span>
                           </button>
                         </div>
                       )}
                     </div>
-</td>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination - Disesuaikan dengan penampang border gelap zinc */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-zinc-800">
-          <p className="text-sm text-zinc-500">
+        {/* Pagination */}
+        <div 
+          className="flex items-center justify-between px-6 py-4 border-t transition-all duration-300"
+          style={{ borderColor: 'var(--border)' }}
+        >
+          <p className="text-sm" style={{ color: 'var(--text)' }}>
             Menampilkan {filteredOrders.length} dari {ordersData.length} pesanan
           </p>
           <div className="flex items-center gap-2">
-            {/* Tombol halaman tidak aktif menggunakan latar abu-abu gelap dengan hover redup */}
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
+            <button 
+              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
+            >
               Sebelumnya
             </button>
-            {/* Tombol nomor halaman aktif menggunakan warna solid terang minimalis */}
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-200 text-zinc-900">
+            <button 
+              className="px-3 py-1.5 rounded-lg text-sm font-medium text-white cursor-pointer"
+              style={{ backgroundColor: 'var(--accent)' }}
+            >
               1
             </button>
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
+            <button 
+              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
+            >
               2
             </button>
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200 transition-colors">
+            <button 
+              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
+            >
               Selanjutnya
             </button>
           </div>

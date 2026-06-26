@@ -1,11 +1,10 @@
-import { Info, ListOrdered, Sparkles, ClipboardPen, RefreshCw } from 'lucide-react'
+import { Info, ListOrdered, Sparkles, ClipboardPen, RefreshCw, Shield, CheckCircle2, Clock, Ticket } from 'lucide-react'
 import { useState } from 'react'
 import KanbanBoard from '../../components/crm/KanbanBoard'
 import { useRole } from '../../context/RoleContext'
 import Modal from '../../components/ui/Modal'
 import InputField from '../../components/ui/InputField'
 import Button from '../../components/ui/Button'
-import { Shield, CheckCircle2 } from 'lucide-react'
 
 // Form pendaftaran mandiri (disalin dari LeadsPipeline Guest panel)
 function QuickRegisterForm({ onSubmit, onClose }) {
@@ -105,9 +104,19 @@ function QuickRegisterForm({ onSubmit, onClose }) {
 }
 
 const TrackingPage = () => {
-  const { leads, setLeads } = useRole()
+  const { leads, setLeads, customers } = useRole()
   const [showModal, setShowModal] = useState(false)
   const [lastRefresh] = useState(new Date().toLocaleTimeString('id-ID'))
+
+  const patient = customers?.[0]
+
+  // Cari antrean aktif milik pasien ini di seluruh tahapan Kanban
+  const activeLead = Object.entries(leads).reduce((found, [stage, list]) => {
+    if (found) return found
+    const item = list.find(l => l.name.toLowerCase() === (patient?.name || '').toLowerCase())
+    if (item) return { ...item, stage }
+    return null
+  }, null)
 
   const totalAktif =
     (leads.konsultasi?.length ?? 0) +
@@ -136,9 +145,9 @@ const TrackingPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 space-y-6">
       {/* Hero header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
           <div
             className="w-12 h-12 rounded-2xl flex items-center justify-center"
@@ -176,7 +185,7 @@ const TrackingPage = () => {
 
       {/* Banner klinik */}
       <div
-        className="rounded-2xl p-5 mb-5 flex items-start gap-4 flex-wrap"
+        className="rounded-2xl p-5 flex items-start gap-4 flex-wrap"
         style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent)' }}
       >
         <div
@@ -197,8 +206,52 @@ const TrackingPage = () => {
         </div>
       </div>
 
+      {/* Tiket Antrean Anda (Menonjol di atas antrean umum) */}
+      {activeLead && (
+        <div 
+          className="relative overflow-hidden rounded-3xl p-6 text-white shadow-lg border transition-all duration-300 hover:shadow-xl"
+          style={{
+            background: 'linear-gradient(135deg, #1C1917 0%, #443E38 50%, #1C1917 100%)',
+            borderColor: 'rgba(201, 169, 110, 0.4)',
+            boxShadow: '0 15px 30px rgba(0, 0, 0, 0.15)'
+          }}
+        >
+          {/* Radial light aura */}
+          <div className="absolute -right-20 -top-20 w-60 h-60 rounded-full blur-3xl opacity-20 pointer-events-none" style={{ background: 'var(--accent)' }} />
+          
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10 relative">
+            <div>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-stone-900" style={{ backgroundColor: 'var(--accent)' }}>
+                Tiket Antrean Anda
+              </span>
+              <h3 className="text-xl font-black mt-2 text-stone-100">
+                {patient ? patient.name : 'Pasien Tamu'}
+              </h3>
+              <p className="text-xs text-stone-400 mt-1">Layanan: {activeLead.service}</p>
+            </div>
+            
+            <div className="flex sm:flex-col items-start sm:items-end gap-2 sm:gap-1">
+              <span className="text-xs text-stone-400">Nomor Antrean</span>
+              <span className="text-4xl font-mono font-black" style={{ color: 'var(--accent)' }}>
+                {activeLead.queueNumber}
+              </span>
+            </div>
+
+            <div className="flex sm:flex-col items-start sm:items-end gap-2 sm:gap-1">
+              <span className="text-xs text-stone-400">Tahapan</span>
+              <span className="text-sm font-bold uppercase tracking-wide flex items-center gap-1.5" style={{ color: 'var(--success)' }}>
+                <CheckCircle2 className="w-4 h-4" />
+                {activeLead.stage === 'konsultasi' ? 'Menunggu Konsultasi' : 
+                 activeLead.stage === 'jadwal' ? 'Jadwal Ditetapkan' :
+                 activeLead.stage === 'pembayaran' ? 'Sedang Ditangani' : 'Tindakan Selesai'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Statistik ringkas */}
-      <div className="grid grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Sedang Ditangani', value: leads.pembayaran?.length ?? 0, color: 'var(--accent)', bg: 'var(--accent-soft)' },
           { label: 'Masih Menunggu',   value: totalAktif,                    color: 'var(--warning)', bg: 'var(--warning-soft)' },
@@ -206,18 +259,18 @@ const TrackingPage = () => {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl p-4 text-center"
-            style={{ background: s.bg, border: `1px solid ${s.color}33` }}
+            className="rounded-2xl p-4 text-center border"
+            style={{ background: s.bg, borderColor: `${s.color}25` }}
           >
             <p className="text-2xl font-black mb-1" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-xs font-medium" style={{ color: 'var(--text)' }}>{s.label}</p>
+            <p className="text-xs font-semibold" style={{ color: 'var(--text)' }}>{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Banner privasi */}
       <div
-        className="flex items-center gap-3 p-3 rounded-xl mb-5 text-xs"
+        className="flex items-center gap-3 p-3 rounded-xl text-xs"
         style={{ background: 'var(--info-soft)', border: '1px solid var(--info)', color: 'var(--info)' }}
       >
         <Info className="w-4 h-4 flex-shrink-0" />
@@ -228,12 +281,21 @@ const TrackingPage = () => {
         </p>
       </div>
 
-      {/* KanbanBoard — membaca shared state LANGSUNG, tanpa prop tambahan */}
-      <KanbanBoard />
+      {/* Kanban Board Container with neon glow ornaments */}
+      <div 
+        className="p-3 rounded-3xl transition-all duration-300"
+        style={{
+          background: 'linear-gradient(135deg, rgba(201, 169, 110, 0.12), transparent)',
+          boxShadow: '0 0 30px rgba(201, 169, 110, 0.08), inset 0 0 12px rgba(255, 255, 255, 0.03)',
+          border: '1px solid rgba(201, 169, 110, 0.15)',
+        }}
+      >
+        <KanbanBoard />
+      </div>
 
       {/* CTA bawah */}
       <div
-        className="mt-6 rounded-2xl p-6 text-center"
+        className="rounded-2xl p-6 text-center"
         style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}
       >
         <p className="text-lg font-bold mb-1" style={{ color: 'var(--text-heading)' }}>

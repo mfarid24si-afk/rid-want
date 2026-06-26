@@ -1,9 +1,12 @@
-import { Ticket, Clock, CheckCircle2, XCircle } from 'lucide-react'
+import { useState } from 'react'
+import { Ticket, Clock, CheckCircle2, XCircle, Copy, Check } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import toast from 'react-hot-toast'
 
 const vouchers = [
   {
     code: 'BDAY25', title: 'Birthday Special 25%',
-    desc: 'Diskon 25% untuk semua treatment', expiry: '10 Jun 2025',
+    desc: 'Diskon 25% untuk semua treatment kecantikan', expiry: '10 Jun 2025',
     status: 'active', category: 'Birthday',
   },
   {
@@ -12,18 +15,28 @@ const vouchers = [
     status: 'active', category: 'Paket',
   },
   {
-    code: 'FIRST20', title: 'First Visit',
-    desc: 'Diskon 20% kunjungan pertama', expiry: '01 Jan 2025',
+    code: 'FIRST20', title: 'First Visit Discount',
+    desc: 'Diskon 20% khusus kunjungan pertama Anda', expiry: '01 Jan 2025',
     status: 'used', category: 'New Member',
   },
 ]
 
 const VoucherPage = () => {
+  const [copiedCode, setCopiedCode] = useState(null)
+
+  const handleCopy = (code) => {
+    navigator.clipboard.writeText(code)
+    setCopiedCode(code)
+    toast.success(`Kode voucher ${code} berhasil disalin! 📋`)
+    setTimeout(() => setCopiedCode(null), 2000)
+  }
+
   return (
-    <div className="max-w-3xl mx-auto px-4 md:px-6 py-10">
-      <div className="text-center mb-8">
+    <div className="max-w-3xl mx-auto px-4 md:px-6 py-10 space-y-8">
+      {/* Header */}
+      <div className="text-center">
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+          className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 animate-pulse-slow"
           style={{ background: 'var(--info-soft)' }}
         >
           <Ticket className="w-7 h-7" style={{ color: 'var(--info)' }} />
@@ -31,11 +44,11 @@ const VoucherPage = () => {
         <h1 className="text-3xl font-black mb-1" style={{ color: 'var(--text-heading)' }}>
           Voucher Saya
         </h1>
-        <p style={{ color: 'var(--text)' }}>Dompet voucher kecantikan digital Anda</p>
+        <p style={{ color: 'var(--text)' }}>Dompet voucher kecantikan digital Anda. Gunakan kode saat pembayaran.</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Voucher Aktif',    value: vouchers.filter((v) => v.status === 'active').length, color: 'var(--success)' },
           { label: 'Sudah Dipakai',    value: vouchers.filter((v) => v.status === 'used').length,   color: 'var(--text)' },
@@ -43,82 +56,108 @@ const VoucherPage = () => {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl p-4 text-center"
-            style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
+            className="rounded-3xl p-4 text-center border transition-all"
+            style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
           >
             <p className="text-2xl font-black mb-0.5" style={{ color: s.color }}>{s.value}</p>
-            <p className="text-xs" style={{ color: 'var(--text)' }}>{s.label}</p>
+            <p className="text-[10px] uppercase font-bold tracking-wider" style={{ color: 'var(--text)' }}>{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Daftar voucher */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {vouchers.map((v) => {
           const isActive = v.status === 'active'
+          const isCopied = copiedCode === v.code
+
           return (
             <div
               key={v.code}
-              className="rounded-2xl overflow-hidden"
+              className="relative overflow-hidden rounded-3xl border flex flex-col md:flex-row transition-all duration-300"
               style={{
-                border: `1px solid ${isActive ? 'var(--accent)' : 'var(--border)'}`,
+                backgroundColor: 'var(--bg-surface)',
+                borderColor: isActive ? 'var(--accent)' : 'var(--border)',
+                boxShadow: isActive ? '0 10px 25px rgba(201, 169, 110, 0.08)' : 'none',
                 opacity: isActive ? 1 : 0.6,
               }}
             >
-              {/* Strip kiri */}
-              <div className="flex">
-                <div
-                  className="w-2 flex-shrink-0"
-                  style={{ background: isActive ? 'var(--accent)' : 'var(--border-strong)' }}
-                />
-                <div className="flex-1 p-5 flex flex-col sm:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <span
-                        className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                        style={{
-                          background: isActive ? 'var(--accent-soft)' : 'var(--bg-raised)',
-                          color: isActive ? 'var(--accent)' : 'var(--text)',
-                        }}
-                      >
-                        {v.category}
-                      </span>
+              {/* Ticket Cutouts Left and Right */}
+              <div className="absolute -left-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full border z-10" style={{ backgroundColor: 'var(--bg-base)', borderColor: isActive ? 'var(--accent)' : 'var(--border)' }} />
+              <div className="absolute -right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full border z-10" style={{ backgroundColor: 'var(--bg-base)', borderColor: isActive ? 'var(--accent)' : 'var(--border)' }} />
+
+              {/* Left Stripe Indicator */}
+              <div
+                className="w-full md:w-3 h-3 md:h-auto flex-shrink-0"
+                style={{ background: isActive ? 'var(--accent)' : 'var(--border-strong)' }}
+              />
+
+              {/* Main Ticket Area */}
+              <div className="flex-1 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 z-0">
+                {/* Details */}
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                      style={{
+                        background: isActive ? 'var(--accent-soft)' : 'var(--bg-raised)',
+                        color: isActive ? 'var(--accent)' : 'var(--text)',
+                      }}
+                    >
+                      {v.category}
+                    </span>
+                    <div className="flex items-center gap-1">
                       {isActive
                         ? <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--success)' }} />
                         : <XCircle className="w-3.5 h-3.5" style={{ color: 'var(--text)' }} />
                       }
-                      <span className="text-xs" style={{ color: isActive ? 'var(--success)' : 'var(--text)' }}>
-                        {isActive ? 'Aktif' : 'Sudah dipakai'}
+                      <span className="text-xs font-semibold" style={{ color: isActive ? 'var(--success)' : 'var(--text)' }}>
+                        {isActive ? 'Aktif & Tersedia' : 'Sudah Digunakan'}
                       </span>
                     </div>
-                    <h3 className="font-bold mb-0.5" style={{ color: 'var(--text-heading)' }}>{v.title}</h3>
-                    <p className="text-sm mb-2" style={{ color: 'var(--text)' }}>{v.desc}</p>
-                    <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--text)' }}>
-                      <Clock className="w-3.5 h-3.5" />
-                      Berlaku s/d {v.expiry}
-                    </div>
                   </div>
-                  {/* Kode voucher */}
-                  <div className="flex flex-col items-end justify-between gap-2">
-                    <div
-                      className="px-4 py-2 rounded-xl font-mono font-black text-sm text-center"
-                      style={{
-                        background: isActive ? 'var(--accent-soft)' : 'var(--bg-raised)',
-                        color: isActive ? 'var(--accent)' : 'var(--text)',
-                        border: `1px dashed ${isActive ? 'var(--accent)' : 'var(--border)'}`,
-                      }}
-                    >
-                      {v.code}
-                    </div>
+
+                  <h3 className="text-lg font-black tracking-tight" style={{ color: 'var(--text-heading)' }}>{v.title}</h3>
+                  <p className="text-xs" style={{ color: 'var(--text)' }}>{v.desc}</p>
+                  
+                  <div className="flex items-center gap-1 text-[10px] font-medium" style={{ color: 'var(--text)' }}>
+                    <Clock className="w-3.5 h-3.5" />
+                    Berlaku s.d. {v.expiry}
+                  </div>
+                </div>
+
+                {/* Dashed Separator (Desktop) */}
+                <div className="hidden sm:block h-20 border-l border-dashed" style={{ borderColor: 'var(--border)' }} />
+
+                {/* Code & Actions */}
+                <div className="w-full sm:w-auto flex sm:flex-col items-center justify-between sm:justify-center gap-3">
+                  {/* Code Block */}
+                  <div 
+                    onClick={() => isActive && handleCopy(v.code)}
+                    className="group flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl font-mono font-black text-sm tracking-widest border transition-all cursor-pointer select-none"
+                    style={{
+                      background: isActive ? 'var(--accent-soft)' : 'var(--bg-raised)',
+                      color: isActive ? 'var(--accent)' : 'var(--text)',
+                      borderStyle: 'dashed',
+                      borderColor: isActive ? 'var(--accent)' : 'var(--border)',
+                    }}
+                  >
+                    <span>{v.code}</span>
                     {isActive && (
-                      <button
-                        className="text-xs px-3 py-1.5 rounded-xl font-semibold text-white"
-                        style={{ background: 'var(--accent)' }}
-                      >
-                        Gunakan
-                      </button>
+                      isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-opacity" />
                     )}
                   </div>
+
+                  {/* Redeem Action */}
+                  {isActive && (
+                    <button
+                      onClick={() => alert(`Gunakan kode ${v.code} saat berkonsultasi di resepsionis klinik.`)}
+                      className="text-xs px-4 py-2.5 rounded-xl font-bold text-white transition-all cursor-pointer hover:shadow-md"
+                      style={{ background: 'var(--accent)' }}
+                    >
+                      Gunakan Voucher
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

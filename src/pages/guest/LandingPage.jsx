@@ -1,4 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../../context/ThemeContext";
 import {
   Sparkles,
   ArrowRight,
@@ -9,9 +12,14 @@ import {
   ChevronRight,
   CalendarPlus,
   ListOrdered,
+  Activity,
 } from "lucide-react";
 import LocationMap from "../../components/guest/Locationmap";
+import RisingParticles from "../../components/guest/RisingParticles";
 
+// ==========================================
+// DUMMY DATA (Struktur tidak diubah)
+// ==========================================
 const services = [
   {
     emoji: "✨",
@@ -64,320 +72,764 @@ const testimonials = [
   },
 ];
 
+// ==========================================
+// ANIMASI UTAMA: ANTIGRAVITY CONFIGS
+// ==========================================
+
+// 1. Efek Melayang Lambat (Floating Effect)
+const floatVariants = (yOffset = -12, rotation = 1) => ({
+  animate: {
+    y: [0, yOffset, 0],
+    rotate: [0, rotation, 0],
+  },
+});
+
+const floatTransition = (delay = 0, duration = 5) => ({
+  y: {
+    duration: duration,
+    repeat: Infinity,
+    repeatType: "reverse",
+    ease: "easeInOut",
+    delay: delay,
+  },
+  rotate: {
+    duration: duration * 1.5,
+    repeat: Infinity,
+    repeatType: "reverse",
+    ease: "easeInOut",
+    delay: delay,
+  },
+});
+
+// 2. Anti-Gravity Scroll (Fade-in + Slide-up)
+const scrollFadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.25, 1, 0.5, 1], // Cubic-bezier easeOut
+    },
+  },
+};
+
+// 3. Staggered Entrance
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
+
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const containerRef = useRef(null);
+
+  // Efek Mouse Follower Glow (Interactive Pointer)
+  // Menghitung koordinat cursor dan memperbarui CSS variables
+  // tanpa menyebabkan re-render terus menerus pada React
+  const handleMouseMove = (e) => {
+    if (containerRef.current) {
+      const { clientX, clientY } = e;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      containerRef.current.style.setProperty("--mouse-x", `${x}px`);
+      containerRef.current.style.setProperty("--mouse-y", `${y}px`);
+    }
+  };
+
+  const isDark = theme === "dark";
 
   return (
-    <div>
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section
-        className="relative py-20 px-4 md:px-6 overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--accent-soft) 0%, var(--bg-base) 60%)",
-        }}
-      >
-        {/* Dekorasi background */}
+    <div
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      className="relative min-h-screen overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200 transition-colors duration-300"
+      style={{
+        background: "var(--bg-base)",
+        color: "var(--text-strong)",
+        "--mouse-x": "50%",
+        "--mouse-y": "50%",
+      }}
+    >
+      {/* ── BACKGROUND LAYER & GLOW ACCENTS ────────────────── */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        {/* Glow Nebula Kanan Atas */}
         <div
-          className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-20 -translate-y-1/2 translate-x-1/2"
-          style={{ background: "var(--accent)" }}
+          className={`absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full blur-[120px] transition-all duration-500 ${
+            isDark ? "bg-violet-600/10" : "bg-[#C9A96E]/8"
+          }`}
         />
-        <div className="relative max-w-4xl mx-auto text-center">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold mb-6"
-            style={{
-              background: "var(--accent-soft)",
-              color: "var(--accent)",
-              border: "1px solid var(--accent)",
-            }}
-          >
-            <Sparkles className="w-4 h-4" />
-            Klinik Kecantikan Berstandar Internasional
-          </div>
 
-          <h1
-            className="text-4xl md:text-6xl font-black mb-6 leading-tight"
-            style={{ color: "var(--text-heading)" }}
-          >
-            Tampil <span style={{ color: "var(--accent)" }}>Percaya Diri</span>{" "}
-            dengan Perawatan Terbaik
-          </h1>
+        {/* Glow Nebula Kiri Bawah */}
+        <div
+          className={`absolute bottom-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full blur-[100px] transition-all duration-500 ${
+            isDark ? "bg-cyan-600/10" : "bg-rose-300/8"
+          }`}
+        />
 
-          <p
-            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
-            style={{ color: "var(--text)" }}
-          >
-            Didukung dokter bersertifikat internasional dan teknologi estetika
-            terkini, Aura Clinic hadir untuk membantu Anda tampil terbaik setiap
-            hari.
-          </p>
+        {/* Glow Nebula Tengah (Interaktif) */}
+        <div
+          className={`absolute top-[35%] left-[25%] w-[40vw] h-[40vw] rounded-full blur-[130px] transition-all duration-500 ${
+            isDark ? "bg-teal-500/5" : "bg-amber-300/5"
+          }`}
+        />
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => navigate("/portal/booking")}
-              className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-white text-base transition-all active:scale-95"
-              style={{
-                background: "var(--accent)",
-                boxShadow: "0 4px 20px var(--accent)44",
-              }}
+        {/* Mouse Follower Glow (Pendaran Neon Interaktif) */}
+        <div
+          className="absolute inset-0 transition-opacity duration-700 pointer-events-none opacity-40"
+          style={{
+            background: isDark
+              ? "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.05) 50%, transparent 80%)"
+              : "radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(201, 169, 110, 0.15), rgba(212, 149, 106, 0.05) 50%, transparent 80%)",
+          }}
+        />
+      </div>
+
+      {/* Partikel Melayang Menentang Gravitasi */}
+      <RisingParticles theme={theme} />
+
+      {/* ── HERO SECTION (Weightless Showcase) ──────────────── */}
+      <section className="relative pt-24 pb-20 px-4 md:px-8 z-10 overflow-hidden">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Sisi Kiri: Teks Promosi & CTA */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="lg:col-span-7 text-left flex flex-col justify-center animate-fade-in"
+          >
+            {/* Badge Terapung */}
+            <motion.div
+              variants={floatVariants(-6, 0.5)}
+              animate="animate"
+              transition={floatTransition(0, 4)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-6 border border-[var(--border)] bg-[var(--bg-surface)]/60 text-[var(--accent)] backdrop-blur-md self-start shadow-[0_4px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_0_15px_rgba(56,189,248,0.15)]"
             >
-              <CalendarPlus className="w-5 h-5" />
-              Booking Konsultasi Gratis
-            </button>
-            <button
-              onClick={() => navigate("/portal/tracking")}
-              className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-bold text-base transition-all"
-              style={{
-                background: "var(--bg-surface)",
-                border: "1px solid var(--border)",
-                color: "var(--text-strong)",
-              }}
-            >
-              <ListOrdered className="w-5 h-5" />
-              Cek Antrean Saya
-            </button>
-          </div>
-        </div>
-      </section>
+              <Sparkles className="w-3.5 h-3.5" />
+              Klinik Estetika AI Berstandar Internasional
+            </motion.div>
 
-      {/* ── STATS ────────────────────────────────────────── */}
-      <section
-        className="py-10 px-4 md:px-6"
-        style={{
-          background: "var(--bg-surface)",
-          borderBottom: "1px solid var(--border)",
-        }}
-      >
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {stats.map((s) => (
-            <div key={s.label}>
-              <p
-                className="text-3xl font-black mb-1"
-                style={{ color: "var(--accent)" }}
-              >
-                {s.value}
-              </p>
-              <p className="text-sm" style={{ color: "var(--text)" }}>
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── LAYANAN UNGGULAN ─────────────────────────────── */}
-      <section className="py-16 px-4 md:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2
-              className="text-3xl font-black mb-3"
+            {/* Judul Utama Cinematic */}
+            <h1
+              className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tight"
               style={{ color: "var(--text-heading)" }}
             >
-              Layanan Unggulan Kami
-            </h2>
-            <p style={{ color: "var(--text)" }}>
-              Treatment premium dengan hasil terukur dan dokter berpengalaman
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {services.map((svc) => (
-              <div
-                key={svc.title}
-                className="rounded-2xl p-5 transition-all cursor-pointer group"
-                style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border)",
-                  boxShadow: "var(--shadow-sm)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--accent)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 20px var(--accent)22";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.boxShadow = "var(--shadow-sm)";
-                }}
-                onClick={() => navigate("/portal/services")}
+              Tampil{" "}
+              <span
+                className={`text-transparent bg-clip-text bg-gradient-to-r ${
+                  isDark
+                    ? "from-cyan-400 via-teal-300 to-indigo-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+                    : "from-[#C9A96E] via-[#D4956A] to-[#B8935A]"
+                }`}
               >
-                <div className="text-3xl mb-3">{svc.emoji}</div>
-                <h3
-                  className="font-bold mb-1"
-                  style={{ color: "var(--text-heading)" }}
-                >
-                  {svc.title}
-                </h3>
-                <p className="text-xs mb-3" style={{ color: "var(--text)" }}>
-                  {svc.desc}
+                Percaya Diri
+              </span>{" "}
+              dengan Perawatan Terbaik
+            </h1>
+
+            {/* Paragraf Keterangan */}
+            <p className="text-[var(--text)] text-base md:text-lg mb-8 max-w-xl leading-relaxed font-normal">
+              Didukung dokter bersertifikat internasional dan teknologi estetika
+              AI terkini, Aura Clinic hadir untuk membantu Anda tampil optimal
+              setiap hari dengan sensasi perawatan premium yang tenang dan
+              melayang.
+            </p>
+
+            {/* Tombol CTA dengan Magnetic Hover */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <motion.button
+                onClick={() => navigate("/portal/booking")}
+                whileHover={{
+                  scale: 1.05,
+                  y: -4,
+                  boxShadow: isDark
+                    ? "0 0 25px rgba(56,189,248,0.4)"
+                    : "0 8px 25px rgba(201,169,110,0.3)",
+                }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-white text-base cursor-pointer transition-all border"
+                style={{
+                  background: "var(--accent)",
+                  borderColor: "var(--accent)",
+                }}
+              >
+                <CalendarPlus className="w-5 h-5 text-white/80" />
+                Booking Konsultasi Gratis
+              </motion.button>
+
+              <motion.button
+                onClick={() => navigate("/portal/tracking")}
+                whileHover={{ scale: 1.05, y: -4 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-base bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md cursor-pointer transition-all"
+                style={{ color: "var(--text-strong)" }}
+              >
+                <ListOrdered
+                  className="w-5 h-5"
+                  style={{ color: "var(--text)" }}
+                />
+                Cek Antrean Saya
+              </motion.button>
+            </div>
+          </motion.div>
+
+          {/* Sisi Kanan: Hologram Mockup AI Simulator (Visual Tema Utama) */}
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+            className="lg:col-span-5 relative flex items-center justify-center"
+          >
+            {/* Glow Bulat di Belakang Hologram */}
+            <div className="absolute w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-[60px] animate-pulse z-0" />
+
+            {/* Container Hologram Terapung */}
+            <motion.div
+              variants={floatVariants(-15, 1.5)}
+              animate="animate"
+              transition={floatTransition(0.3, 5.5)}
+              className="relative w-full max-w-[340px] p-6 rounded-3xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-xl shadow-lg dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] z-10 overflow-hidden"
+              style={{
+                boxShadow: isDark
+                  ? "inset 0 0 20px rgba(255, 255, 255, 0.05), 0 0 30px rgba(56, 189, 248, 0.15)"
+                  : "inset 0 0 20px rgba(255, 255, 255, 0.2), 0 4px 20px rgba(201, 169, 110, 0.1)",
+              }}
+            >
+              {/* Garis Grid Tekno */}
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(120,120,120,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(120,120,120,0.03)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+
+              {/* Garis Scan Bergerak */}
+              <motion.div
+                className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--accent)] to-transparent z-20 pointer-events-none"
+                style={{
+                  boxShadow: isDark
+                    ? "0 0 10px rgba(56, 189, 248, 0.8)"
+                    : "0 0 8px rgba(201, 169, 110, 0.8)",
+                }}
+                animate={{ y: ["0%", "500%", "0%"] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+
+              {/* Teks Informasi Hologram */}
+              <div className="flex items-center justify-between mb-4 border-b border-black/5 dark:border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] animate-ping" />
+                  <p className="font-mono text-xs text-[var(--accent)] tracking-wider font-bold">
+                    ANTIGRAVITY AI v1.0
+                  </p>
+                </div>
+                <Activity className="w-4 h-4 text-[var(--accent)]" />
+              </div>
+
+              {/* Simulasi Grafik/Radar */}
+              <div className="h-40 w-full rounded-2xl bg-black/5 dark:bg-black/40 border border-black/5 dark:border-white/5 p-4 flex flex-col justify-between mb-4 relative overflow-hidden">
+                <div className="flex items-center justify-between z-10">
+                  <span className="text-[10px] font-mono text-[var(--text)]">
+                    FACIAL ANALYZER
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                    READY
+                  </span>
+                </div>
+
+                {/* Wajah Simulasi / Gelombang Vector */}
+                <div className="flex items-end justify-between h-20 px-4">
+                  {[40, 75, 55, 90, 60, 85, 45, 95, 70, 80].map((h, i) => (
+                    <motion.div
+                      key={i}
+                      className="w-1.5 bg-gradient-to-t from-[var(--border-strong)] to-[var(--accent)] rounded-full"
+                      animate={{
+                        height: [`${h * 0.4}%`, `${h * 0.9}%`, `${h * 0.4}%`],
+                      }}
+                      transition={{
+                        duration: 2.5 + i * 0.15,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between font-mono text-[9px] text-[var(--text)] z-10">
+                  <span>GLOW SCALE: 98.4%</span>
+                  <span>ELEVATION: 10m</span>
+                </div>
+              </div>
+
+              {/* Daftar Parameter Diagnosis */}
+              <div className="space-y-2.5">
+                {[
+                  { label: "Skin Hydration", val: "94.2%", status: "OPTIMAL" },
+                  { label: "Collagen Density", val: "88.7%", status: "HIGH" },
+                  { label: "Melanin Level", val: "12.4%", status: "STABLE" },
+                ].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center text-xs py-1.5 px-2.5 rounded-lg bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5"
+                  >
+                    <span className="text-[var(--text)]">{item.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-[var(--text-strong)]">
+                        {item.val}
+                      </span>
+                      <span className="text-[9px] font-mono text-[var(--text)] font-bold">
+                        {item.status}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── STATS SECTION (Floating Bar) ───────────────────── */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={scrollFadeUp}
+        className="py-12 px-4 md:px-8 z-10 relative"
+      >
+        {/* Container Utama Glassmorphism */}
+        <div
+          className="max-w-5xl mx-auto rounded-3xl p-8 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] relative"
+          style={{
+            boxShadow: isDark
+              ? "inset 0 0 15px rgba(255,255,255,0.02), 0 10px 40px rgba(0,0,0,0.5)"
+              : "inset 0 0 15px rgba(255,255,255,0.3), var(--shadow-sm)",
+          }}
+        >
+          {/* Grid Statik */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+            {stats.map((s, idx) => (
+              <div key={s.label} className="relative group">
+                <p className="text-3xl sm:text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-b from-[var(--text-strong)] to-[var(--text)] drop-shadow-[0_2px_8px_rgba(255,255,255,0.1)]">
+                  {s.value}
                 </p>
-                <p
-                  className="text-xs font-semibold"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {svc.price}
+                <p className="text-xs sm:text-sm font-semibold text-[var(--accent)] uppercase tracking-wider">
+                  {s.label}
                 </p>
+
+                {/* Garis Pemisah Vertikal */}
+                {idx < stats.length - 1 && (
+                  <div className="hidden md:block absolute right-0 top-1/4 bottom-1/4 w-[1px] bg-black/5 dark:bg-white/10" />
+                )}
               </div>
             ))}
           </div>
+        </div>
+      </motion.section>
 
-          <div className="text-center mt-6">
-            <button
+      {/* ── LAYANAN UNGGULAN (Asymmetric Grid) ─────────────── */}
+      <section className="py-20 px-4 md:px-8 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)]"
+            >
+              Layanan Unggulan Kami
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-[var(--text)] text-sm sm:text-base max-w-lg mx-auto"
+            >
+              Treatment premium dengan hasil terukur, dipandu teknologi
+              diagnosis kecerdasan buatan terdepan.
+            </motion.p>
+          </div>
+
+          {/* Grid Layanan Asimetris */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid grid-cols-1 md:grid-cols-6 gap-6"
+          >
+            {/* MASTER GRID CONTAINER - Pastikan pembungkus paling luarnya memiliki class grid-cols-1 md:grid-cols-6 */}
+
+            {/* Kolom Kiri: FACIAL GLOW (Penuh dari atas sampai bawah) */}
+            <motion.div
+              variants={staggerItem}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
               onClick={() => navigate("/portal/services")}
-              className="inline-flex items-center gap-2 text-sm font-semibold"
-              style={{ color: "var(--accent)" }}
+              className="md:col-span-4 rounded-3xl p-8 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-[var(--accent)] hover:shadow-[0_8px_30px_rgba(201,169,110,0.15)] dark:hover:shadow-[0_0_30px_rgba(56,189,248,0.15)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden h-full min-h-[500px]"
+            >
+              <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-3xl">
+                <img
+                  src="img/facial_glow.jpeg"
+                  alt={services[0].title}
+                  className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              </div>
+
+              <div className="relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--bg-raised)] border border-[var(--border)] flex items-center justify-center text-4xl mb-6 shadow-inner">
+                  {services[0].emoji}
+                </div>
+                <h3 className="text-2xl font-bold text-[var(--text-heading)] mb-2 group-hover:text-[var(--accent)] transition-colors">
+                  {services[0].title}
+                </h3>
+                <p className="text-[var(--text)] text-sm max-w-md font-normal leading-relaxed">
+                  {services[0].desc}. Menggunakan sistem stimulasi partikel
+                  dingin AI untuk mencerahkan secara instan tanpa iritasi.
+                </p>
+              </div>
+
+              <div className="flex justify-between items-center mt-8 border-t border-black/5 dark:border-white/5 pt-4 relative z-10">
+                <span className="text-[var(--accent)] text-sm font-bold tracking-wide font-mono">
+                  {services[0].price}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs text-[var(--text)] font-bold group-hover:text-[var(--accent)] transition-colors">
+                  Detail Perawatan{" "}
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </div>
+            </motion.div>
+
+            {/* SUB-GRID KANAN: Pembungkus untuk 3 card samping agar berjejer ke bawah */}
+            <div className="md:col-span-2 flex flex-col gap-4 h-full">
+              {/* Card 2: BOTOX TREATMENT */}
+              <motion.div
+                variants={staggerItem}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                onClick={() => navigate("/portal/services")}
+                className="rounded-3xl p-5 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-[var(--accent)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden flex-1 min-h-[160px]"
+              >
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-3xl">
+                  <img
+                    src="img/botox.webp"
+                    alt={services[1].title}
+                    className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--bg-raised)] border border-[var(--border)] flex items-center justify-center text-2xl mb-3 shadow-inner">
+                    {services[1].emoji}
+                  </div>
+                  <h3 className="text-lg font-bold text-[var(--text-heading)] mb-1 group-hover:text-[var(--accent)] transition-colors">
+                    {services[1].title}
+                  </h3>
+                  <p className="text-[var(--text)] text-xs leading-relaxed font-normal opacity-80 line-clamp-2">
+                    {services[1].desc}
+                  </p>
+                </div>
+
+                <div className="mt-4 border-t border-black/5 dark:border-white/5 pt-2 relative z-10 flex justify-between items-center">
+                  <p className="text-[var(--accent)] text-xs font-bold font-mono">
+                    {services[1].price}
+                  </p>
+                  <ArrowRight className="w-3.5 h-3.5 text-[var(--text)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all" />
+                </div>
+              </motion.div>
+
+              {/* Card 3: LASER REJUV. */}
+              <motion.div
+                variants={staggerItem}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                onClick={() => navigate("/portal/services")}
+                className="rounded-3xl p-5 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-[var(--accent)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden flex-1 min-h-[160px]"
+              >
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-3xl">
+                  <img
+                    src="img/laser.jpg"
+                    alt={services[2].title}
+                    className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--bg-raised)] border border-[var(--border)] flex items-center justify-center text-2xl mb-3 shadow-inner">
+                    {services[2].emoji}
+                  </div>
+                  <h3 className="text-lg font-bold text-[var(--text-heading)] mb-1 group-hover:text-[var(--accent)] transition-colors">
+                    {services[2].title}
+                  </h3>
+                  <p className="text-[var(--text)] text-xs leading-relaxed font-normal opacity-80 line-clamp-2">
+                    {services[2].desc}
+                  </p>
+                </div>
+
+                <div className="mt-4 border-t border-black/5 dark:border-white/5 pt-2 relative z-10 flex justify-between items-center">
+                  <p className="text-[var(--accent)] text-xs font-bold font-mono">
+                    {services[2].price}
+                  </p>
+                  <ArrowRight className="w-3.5 h-3.5 text-[var(--text)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all" />
+                </div>
+              </motion.div>
+
+              {/* Card 4: CHEMICAL PEELING (Sekarang ikut masuk ke sisi kanan secara vertikal) */}
+              <motion.div
+                variants={staggerItem}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                onClick={() => navigate("/portal/services")}
+                className="rounded-3xl p-5 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-[var(--accent)] flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden flex-1 min-h-[160px]"
+              >
+                <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-3xl">
+                  <img
+                    src="img/chemical.jpg"
+                    alt={services[3].title}
+                    className="w-full h-full object-cover opacity-20 group-hover:scale-105 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                </div>
+
+                <div className="relative z-10">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--bg-raised)] border border-[var(--border)] flex items-center justify-center text-2xl mb-3 shadow-inner">
+                    {services[3].emoji}
+                  </div>
+                  <h3 className="text-lg font-bold text-[var(--text-heading)] mb-1 group-hover:text-[var(--accent)] transition-colors">
+                    {services[3].title}
+                  </h3>
+                  <p className="text-[var(--text)] text-xs leading-relaxed font-normal opacity-80 line-clamp-2">
+                    {services[3].desc}. Pembersihan mendalam dengan micro-peel.
+                  </p>
+                </div>
+
+                <div className="mt-4 border-t border-black/5 dark:bg-white/5 pt-2 relative z-10 flex justify-between items-center">
+                  <p className="text-[var(--accent)] text-xs font-bold font-mono">
+                    {services[3].price}
+                  </p>
+                  <ArrowRight className="w-3.5 h-3.5 text-[var(--text)] group-hover:text-[var(--accent)] group-hover:translate-x-1 transition-all" />
+                </div>
+              </motion.div>
+            </div>
+            
+          </motion.div>
+
+          {/* Tombol Lihat Semua */}
+          <div className="text-center mt-12">
+            <motion.button
+              onClick={() => navigate("/portal/services")}
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="inline-flex items-center gap-2 text-sm font-bold text-[var(--accent)] hover:opacity-80 transition-colors cursor-pointer bg-white/60 dark:bg-white/5 px-6 py-2.5 rounded-full border border-black/5 dark:border-white/5 hover:border-[var(--accent)]/20"
             >
               Lihat semua layanan <ArrowRight className="w-4 h-4" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>
 
-      {/* ── KEUNGGULAN ───────────────────────────────────── */}
-      <section
-        className="py-16 px-4 md:px-6"
-        style={{ background: "var(--bg-raised)" }}
-      >
+      {/* ── KEUNGGULAN SECTION (Gently Floating Cards) ──────── */}
+      <section className="py-20 px-4 md:px-8 relative z-10 bg-black/[0.02] dark:bg-black/20 border-y border-black/5 dark:border-white/5">
         <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-3xl font-black text-center mb-10"
-            style={{ color: "var(--text-heading)" }}
+          {/* Section Header */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl font-black text-center mb-16 text-[var(--text-heading)]"
           >
             Mengapa Memilih Aura Clinic?
-          </h2>
+          </motion.h2>
+
+          {/* Grid Keunggulan */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 icon: Shield,
                 title: "Dokter Tersertifikasi",
                 desc: "Seluruh dokter kami memiliki sertifikasi estetika internasional (AAAM, BCAM).",
+                iconColor: "text-[var(--accent)]",
+                iconBg: "bg-[var(--accent-soft)] border-[var(--border)]",
+                floatDelay: 0.1,
               },
               {
                 icon: Award,
                 title: "Teknologi Terkini",
-                desc: "Peralatan laser dan perawatan terbaru diupdate setiap tahun.",
+                desc: "Peralatan laser dan perawatan berbasis robotika pintar diupdate setiap tahun.",
+                iconColor: "text-[var(--accent)]",
+                iconBg: "bg-[var(--accent-soft)] border-[var(--border)]",
+                floatDelay: 0.3,
               },
               {
                 icon: Clock,
                 title: "Layanan Cepat",
-                desc: "Sistem antrean digital — tidak perlu menunggu lama di klinik.",
+                desc: "Sistem antrean digital cerdas — pantau estimasi waktu secara real-time dari ponsel.",
+                iconColor: "text-[var(--accent)]",
+                iconBg: "bg-[var(--accent-soft)] border-[var(--border)]",
+                floatDelay: 0.5,
               },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="rounded-2xl p-6 text-center"
-                style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: "var(--accent-soft)" }}
+            ].map(
+              ({ icon: Icon, title, desc, iconBg, iconColor, floatDelay }) => (
+                <motion.div
+                  key={title}
+                  variants={floatVariants(-10, 0.8)}
+                  animate="animate"
+                  transition={floatTransition(floatDelay, 4.5)}
+                  className="rounded-3xl p-8 text-center bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-white/80 dark:hover:bg-white/10 transition-colors duration-300 relative group"
                 >
-                  <Icon
-                    className="w-6 h-6"
-                    style={{ color: "var(--accent)" }}
-                  />
-                </div>
-                <h3
-                  className="font-bold mb-2"
-                  style={{ color: "var(--text-heading)" }}
-                >
-                  {title}
-                </h3>
-                <p className="text-sm" style={{ color: "var(--text)" }}>
-                  {desc}
-                </p>
-              </div>
-            ))}
+                  {/* Custom glow border saat hover */}
+                  <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-[var(--accent)]/30 group-hover:shadow-[0_8px_20px_rgba(201,169,110,0.06)] dark:group-hover:shadow-[0_0_20px_rgba(56,189,248,0.15)] transition-all duration-300 pointer-events-none" />
+
+                  {/* Kontainer Icon */}
+                  <div
+                    className={`w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 border ${iconBg} shadow-inner group-hover:scale-110 transition-transform`}
+                  >
+                    <Icon className={`w-6 h-6 ${iconColor}`} />
+                  </div>
+
+                  {/* Konten Teks */}
+                  <h3 className="font-bold text-lg mb-3 text-[var(--text-heading)]">
+                    {title}
+                  </h3>
+                  <p className="text-[var(--text)] text-xs sm:text-sm leading-relaxed font-normal">
+                    {desc}
+                  </p>
+                </motion.div>
+              ),
+            )}
           </div>
         </div>
       </section>
 
-      {/* ── TESTIMONIAL ──────────────────────────────────── */}
-      <section className="py-16 px-4 md:px-6">
+      {/* ── TESTIMONIALS SECTION (Speech Bubbles) ───────────── */}
+      <section className="py-20 px-4 md:px-8 relative z-10">
         <div className="max-w-4xl mx-auto">
-          <h2
-            className="text-3xl font-black text-center mb-2"
-            style={{ color: "var(--text-heading)" }}
-          >
-            Kata Pasien Kami
-          </h2>
-          <p
-            className="text-center text-sm mb-8"
-            style={{ color: "var(--text)" }}
-          >
-            Identitas pasien dilindungi sesuai standar privasi medis
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="rounded-2xl p-5"
-                style={{
-                  background: "var(--bg-surface)",
-                  border: "1px solid var(--border)",
-                }}
+          {/* Header */}
+          <div className="text-center mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl font-black mb-3 text-[var(--text-heading)]"
+            >
+              Kata Pasien Kami
+            </motion.h2>
+            <p className="text-[var(--text)] text-xs sm:text-sm">
+              Privasi medis terjamin, identitas disensor sesuai regulasi.
+            </p>
+          </div>
+
+          {/* Testimonials Grid dengan Efek Floating Berbeda Delay */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, idx) => (
+              <motion.div
+                key={idx}
+                variants={floatVariants(
+                  idx % 2 === 0 ? -12 : -8,
+                  idx % 2 === 0 ? 1 : -1,
+                )}
+                animate="animate"
+                transition={floatTransition(idx * 0.4, 5 + idx * 0.5)}
+                className="rounded-3xl p-6 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-md dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:border-[var(--accent)]/30 transition-all duration-300 flex flex-col justify-between min-h-[220px]"
               >
-                <div className="flex mb-3">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star
-                      key={j}
-                      className="w-4 h-4 fill-current"
-                      style={{ color: "var(--warning)" }}
-                    />
-                  ))}
+                {/* Rating Bintang */}
+                <div>
+                  <div className="flex gap-1 mb-4">
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <Star
+                        key={j}
+                        className="w-4 h-4 fill-[var(--accent)] text-[var(--accent)] filter drop-shadow-[0_0_5px_rgba(201,169,110,0.4)]"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-[var(--text-strong)] text-xs sm:text-sm italic leading-relaxed font-normal">
+                    "{t.text}"
+                  </p>
                 </div>
-                <p className="text-sm mb-3" style={{ color: "var(--text)" }}>
-                  "{t.text}"
-                </p>
-                <p
-                  className="text-xs font-bold font-mono"
-                  style={{ color: "var(--accent)" }}
-                >
-                  {t.name}
-                </p>
-              </div>
+
+                {/* Nama Pasien */}
+                <div className="mt-6 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between">
+                  <p className="text-xs font-bold font-mono text-[var(--accent)]">
+                    {t.name}
+                  </p>
+                  <span className="text-[9px] font-mono bg-[var(--accent-soft)] text-[var(--accent)] px-1.5 py-0.5 rounded border border-[var(--accent)]/20 font-bold uppercase">
+                    VERIFIED
+                  </span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA FINAL ────────────────────────────────────── */}
-      <section className="maps-section">
+      {/* ── MAPS & CONTACT SECTION ─────────────────────────── */}
+      <section className="relative z-10 border-t border-black/5 dark:border-white/5">
         <LocationMap />
       </section>
 
-      <section
-        className="py-16 px-4 md:px-6 text-center"
-        style={{
-          background: "var(--accent-soft)",
-          borderTop: "1px solid var(--accent)",
-        }}
-      >
-        <div className="max-w-2xl mx-auto">
-          <Sparkles
-            className="w-10 h-10 mx-auto mb-4"
-            style={{ color: "var(--accent)" }}
-          />
-          <h2
-            className="text-3xl font-black mb-3"
-            style={{ color: "var(--text-heading)" }}
+      {/* ── FINAL CTA SECTION (Cinematic Glow Endpoint) ───────── */}
+      <section className="py-24 px-4 md:px-8 text-center relative overflow-hidden z-10 bg-black/[0.01] dark:bg-black/40 border-t border-black/5 dark:border-white/5">
+        {/* Glow Radial Final */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_500px_at_center,var(--accent-soft),transparent)] pointer-events-none" />
+
+        <div className="max-w-2xl mx-auto relative z-10">
+          <motion.div
+            variants={floatVariants(-8, 0.5)}
+            animate="animate"
+            transition={floatTransition(0.1, 4.5)}
+            className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-[var(--accent-soft)] border border-[var(--accent)]/20 shadow-[0_4px_15px_rgba(201,169,110,0.15)] dark:shadow-[0_0_20px_rgba(56,189,248,0.2)] mb-6"
           >
-            Mulai Perjalanan Kecantikan Anda
+            <Sparkles className="w-8 h-8 text-[var(--accent)] animate-pulse" />
+          </motion.div>
+
+          <h2 className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)] leading-tight">
+            Mulai Perjalanan Estetika Anda
           </h2>
-          <p className="mb-6" style={{ color: "var(--text)" }}>
-            Konsultasi pertama gratis. Tidak perlu membuat akun.
+
+          <p className="text-[var(--text)] text-sm sm:text-base mb-8 max-w-md mx-auto font-normal leading-relaxed">
+            Konsultasi pertama dengan dokter tersertifikasi gratis. Sistem
+            antrean digital kami mempermudah booking tanpa ribet.
           </p>
-          <button
+
+          <motion.button
             onClick={() => navigate("/portal/booking")}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold text-white text-base transition-all active:scale-95"
-            style={{ background: "var(--accent)" }}
+            whileHover={{
+              scale: 1.06,
+              y: -4,
+              boxShadow: isDark
+                ? "0 0 30px rgba(56,189,248,0.5)"
+                : "0 10px 30px rgba(201,169,110,0.3)",
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center gap-2 px-10 py-5 rounded-2xl font-black text-white text-base shadow-md cursor-pointer transition-all border"
+            style={{
+              background: "var(--accent)",
+              borderColor: "var(--accent)",
+            }}
           >
             Booking Sekarang — Gratis
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
       </section>
     </div>

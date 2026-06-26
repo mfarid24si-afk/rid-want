@@ -1,10 +1,15 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
-import { loginAPI } from '../../services/LoginAPI' 
+import { Eye, EyeOff, Sparkles } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { useTheme } from '../../context/ThemeContext'
+import Button from '../../components/ui/Button'
+import InputField from '../../components/ui/InputField'
+import { loginAPI } from '../../services/LoginAPI'
 
 const Register = () => {
   const navigate = useNavigate()
+  const { theme } = useTheme()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -50,149 +55,159 @@ const Register = () => {
     }
   }
 
+  const isDark = theme === 'dark'
+
   return (
-    <div>
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white tracking-tight">Buat Akun Baru</h2>
-        <p className="text-zinc-400 text-sm mt-1">Daftarkan diri Anda sekarang</p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="p-8 rounded-3xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-lg dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative text-left"
+      style={{
+        boxShadow: isDark 
+          ? "inset 0 0 15px rgba(255, 255, 255, 0.02)" 
+          : "inset 0 0 15px rgba(255, 255, 255, 0.2)",
+      }}
+    >
+      {/* Mobile Logo */}
+      <div className="flex items-center gap-3 mb-8 lg:hidden">
+        <div 
+          className="w-10 h-10 rounded-2xl flex items-center justify-center border shadow-md"
+          style={{ 
+            background: 'var(--accent)', 
+            borderColor: 'rgba(255,255,255,0.1)',
+            boxShadow: isDark ? '0 0 15px rgba(56, 189, 248, 0.3)' : '0 4px 12px rgba(201, 169, 110, 0.2)'
+          }}
+        >
+          <Sparkles className="w-5 h-5 text-white" />
+        </div>
+        <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-heading)] to-[var(--accent)]">
+          Aura Clinic
+        </span>
+      </div>
+
+      <div className="mb-6">
+        <h2 className="text-2xl font-black mb-1" style={{ color: 'var(--text-heading)' }}>Buat Akun Baru</h2>
+        <p className="text-xs sm:text-sm text-[var(--text)] mt-1 font-normal leading-relaxed">Daftarkan akun administrator klinik kecantikan Anda</p>
       </div>
 
       {errorMessage && (
-        <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center font-medium">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 dark:text-red-400 text-xs text-center font-bold"
+        >
           {errorMessage}
-        </div>
+        </motion.div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
-        <div>
-          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
-            Nama Lengkap
-          </label>
-          <div className="relative">
-            <User className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
-            <input
-              type="text"
-              autoComplete="off"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nama Lengkap Anda"
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
-              required
-            />
-          </div>
-        </div>
+        <InputField
+          label="Nama Lengkap"
+          id="name"
+          type="text"
+          placeholder="Nama Lengkap Anda"
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          required
+        />
 
         {/* Email */}
-        <div>
-          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
-            Email Admin
-          </label>
-          <div className="relative">
-            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
-            <input
-              type="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="admin@clinic.com"
-              className="w-full pl-12 pr-4 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
-              required
-            />
-          </div>
-        </div>
+        <InputField
+          label="Email Admin"
+          id="email"
+          type="email"
+          placeholder="admin@clinic.com"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          required
+        />
 
         {/* Password */}
-        <div>
-          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
-            Kata Sandi
-          </label>
-          <div className="relative">
-            <Lock className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              placeholder="Minimal 8 karakter"
-              className="w-full pl-12 pr-12 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-3.5 text-zinc-500 hover:text-zinc-300 cursor-pointer"
-            >
-              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
-          </div>
+        <div className="relative">
+          <InputField
+            label="Kata Sandi"
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Minimal 8 karakter"
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3.5 top-[38px] cursor-pointer z-10 p-1 text-[var(--text)] hover:text-[var(--text-strong)] transition-colors"
+          >
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Confirm Password */}
-        <div>
-          <label className="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-2">
-            Konfirmasi Kata Sandi
-          </label>
-          <div className="relative">
-            <Lock className="absolute left-4 top-3.5 w-5 h-5 text-zinc-500" />
-            <input
-              type={showConfirmPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              placeholder="Ulangi password"
-              className="w-full pl-12 pr-12 py-3 rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 transition-all text-sm"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-3.5 text-zinc-500 hover:text-zinc-300 cursor-pointer"
-            >
-              {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
-          </div>
+        <div className="relative">
+          <InputField
+            label="Konfirmasi Kata Sandi"
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            placeholder="Ulangi password"
+            value={formData.confirmPassword}
+            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3.5 top-[38px] cursor-pointer z-10 p-1 text-[var(--text)] hover:text-[var(--text-strong)] transition-colors"
+          >
+            {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Terms */}
-        <div className="flex items-start gap-2 pt-1 select-none">
+        <div className="flex items-start gap-2.5 pt-2 select-none">
           <input 
             type="checkbox" 
-            className="w-4 h-4 mt-0.5 rounded border-zinc-700 bg-zinc-800 accent-zinc-200 cursor-pointer" 
+            id="terms"
+            className="w-4 h-4 mt-0.5 rounded border-[var(--border)] bg-[var(--bg-raised)] accent-[var(--accent)] cursor-pointer" 
             required 
           />
-          <span className="text-sm text-zinc-300 leading-tight">
+          <label htmlFor="terms" className="text-xs text-[var(--text)] leading-tight font-normal">
             Saya setuju dengan{' '}
-            <a href="#" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">Syarat & Ketentuan</a>
+            <a href="#" className="font-bold hover:underline" style={{ color: 'var(--accent)' }}>Syarat & Ketentuan</a>
             {' '}dan{' '}
-            <a href="#" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">Kebijakan Privasi</a>
-          </span>
+            <a href="#" className="font-bold hover:underline" style={{ color: 'var(--accent)' }}>Kebijakan Privasi</a>
+          </label>
         </div>
 
         {/* Tombol Submit */}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-3 rounded-xl bg-zinc-200 hover:bg-zinc-300 text-zinc-900 font-semibold flex items-center justify-center gap-2 disabled:opacity-50 mt-4 transition-colors cursor-pointer text-sm"
+        <motion.div
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.98 }}
         >
-          {isLoading ? (
-            <>
-              <div className="w-5 h-5 border-2 border-zinc-900/30 border-t-zinc-900 rounded-full animate-spin"></div>
-              <span>Memproses...</span>
-            </>
-          ) : (
-            'Daftar Sekarang'
-          )}
-        </button>
+          <Button 
+            variant="primary" 
+            type="submit" 
+            className="w-full font-bold cursor-pointer mt-2 border"
+            style={{ borderColor: 'var(--accent)' }}
+            size="lg" 
+            disabled={isLoading}
+          >
+            {isLoading ? 'Memproses...' : 'Daftar Sekarang'}
+          </Button>
+        </motion.div>
       </form>
 
-      <p className="text-center text-sm text-zinc-400 mt-6">
+      <p className="text-center text-sm mt-6 text-[var(--text)] font-normal">
         Sudah punya akun?{' '}
-        <Link to="/auth/login" className="text-sky-400 hover:text-sky-300 font-semibold transition-colors">
+        <Link 
+          to="/auth/login" 
+          className="font-bold text-[var(--accent)] hover:opacity-80 transition-opacity"
+        >
           Masuk di sini
         </Link>
       </p>
-    </div>
+    </motion.div>
   )
 }
 

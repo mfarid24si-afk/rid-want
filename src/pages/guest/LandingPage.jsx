@@ -10,6 +10,7 @@ import {
   Clock,
   Award,
   ChevronRight,
+  ChevronDown,
   CalendarPlus,
   ListOrdered,
   Activity,
@@ -201,6 +202,7 @@ const LandingPage = () => {
   };
 
   const isDark = theme === "dark";
+  const [openFaq, setOpenFaq] = useState(null);
 
   return (
     <div
@@ -290,12 +292,13 @@ const LandingPage = () => {
               dengan Perawatan Terbaik
             </h1>
 
-            {/* Paragraf Keterangan */}
+            {/* Paragraf Keterangan — problem-aware */}
             <p className="text-[var(--text)] text-base md:text-lg mb-8 max-w-xl leading-relaxed font-normal">
-              Didukung dokter bersertifikat internasional dan teknologi estetika
-              AI terkini, Aura Clinic hadir untuk membantu Anda tampil optimal
-              setiap hari dengan sensasi perawatan premium yang tenang dan
-              melayang.
+              Mulai dari kulit kusam, tanda penuaan, hingga jerawat membandel
+              — setiap masalah kulit punya solusinya. Didukung dokter
+              bersertifikat internasional dan teknologi estetika AI terkini,
+              Aura Clinic hadir untuk membantu Anda tampil optimal dengan
+              perawatan premium yang terukur dan menenangkan.
             </p>
 
             {/* Tombol CTA dengan Magnetic Hover */}
@@ -831,6 +834,117 @@ const LandingPage = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── FAQ SECTION ────────────────────────────────────── */}
+      <section className="py-20 px-4 md:px-8 relative z-10 bg-black/[0.01] dark:bg-black/20 border-t border-black/5 dark:border-white/5">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl font-black mb-3 text-[var(--text-heading)]">
+              Pertanyaan Umum
+            </h2>
+            <p className="text-[var(--text)] text-sm font-normal max-w-lg mx-auto">
+              Temukan jawaban cepat seputar layanan, booking, dan perawatan
+              di Aura Clinic.
+            </p>
+          </motion.div>
+
+          {/* Accordion */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={staggerContainer}
+            className="space-y-3"
+          >
+            {[
+              {
+                q: "Treatment apa saja yang tersedia di Aura Clinic?",
+                a: "Kami menyediakan berbagai treatment estetika premium: Facial Glow untuk kulit cerah, Botox anti-aging, Laser Rejuvenation, Chemical Peeling, dan masih banyak lagi. Setiap treatment disesuaikan dengan kondisi kulit Anda setelah konsultasi dengan dokter.",
+              },
+              {
+                q: "Apakah konsultasi pertama dikenakan biaya?",
+                a: "Konsultasi pertama dengan dokter estetika kami GRATIS tanpa biaya. Dokter akan menganalisis kondisi kulit Anda, mendiskusikan tujuan perawatan, dan merekomendasikan treatment yang paling sesuai — semua tanpa tekanan.",
+              },
+              {
+                q: "Berapa lama durasi satu sesi treatment?",
+                a: "Durasi bervariasi tergantung jenis treatment: Facial Glow sekitar 60 menit, Botox 30-45 menit, Laser Rejuvenation 45-60 menit. Dokter akan menjelaskan estimasi waktu lengkap saat konsultasi.",
+              },
+              {
+                q: "Apakah ada efek samping dari treatment?",
+                a: "Treatment kami menggunakan teknologi terbaru dengan risiko minimal. Efek samping umumnya ringan seperti kemerahan sementara yang akan hilang dalam beberapa jam. Dokter akan menjelaskan semua informasi lengkap sebelum treatment dimulai.",
+              },
+              {
+                q: "Bagaimana cara booking jadwal treatment?",
+                a: "Booking mudah melalui website kami: pilih treatment, pilih jadwal yang tersedia, dan konfirmasi. Anda juga bisa booking langsung melalui WhatsApp atau datang ke klinik. Sistem antrean digital kami memastikan Anda tidak perlu menunggu lama.",
+              },
+              {
+                q: "Apakah ada program loyalitas atau promo rutin?",
+                a: "Ya! Kami memiliki program poin reward yang bisa ditukar dengan treatment gratis, voucher ulang tahun spesial, dan promo bulanan untuk pasien setia. Pantau halaman Promo dan Poin Reward di portal pasien untuk info terbaru.",
+              },
+            ].map((faq, idx) => (
+              <motion.div
+                key={idx}
+                variants={staggerItem}
+                className="rounded-2xl overflow-hidden transition-all duration-300"
+                style={{
+                  background: "var(--bg-surface)",
+                  border: "1px solid var(--border)",
+                }}
+              >
+                <button
+                  onClick={() =>
+                    setOpenFaq(openFaq === idx ? null : idx)
+                  }
+                  className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-black/[0.02] dark:hover:bg-white/[0.02]"
+                  style={{ color: "var(--text-strong)" }}
+                >
+                  <span className="font-semibold text-sm md:text-base leading-snug flex-1">
+                    {faq.q}
+                  </span>
+                  <motion.div
+                    animate={{ rotate: openFaq === idx ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="shrink-0 w-6 h-6 flex items-center justify-center rounded-full"
+                    style={{
+                      background: "var(--bg-raised)",
+                      border: "1px solid var(--border)",
+                      color: "var(--accent)",
+                    }}
+                  >
+                    <ChevronDown className="w-3.5 h-3.5" />
+                  </motion.div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {openFaq === idx && (
+                    <motion.div
+                      key="content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div
+                        className="px-6 pb-5 pt-0 text-sm leading-relaxed"
+                        style={{ color: "var(--text)" }}
+                      >
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 

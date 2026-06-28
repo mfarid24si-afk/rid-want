@@ -26,6 +26,7 @@ const Forgot        = React.lazy(() => import('./pages/auth/Forgot'))
 
 // ── Guest / Patient Portal pages (lazy) ─────────────────────
 const LandingPage        = React.lazy(() => import('./pages/guest/LandingPage'))
+const GuestLandingPage   = React.lazy(() => import('./pages/guest/GuestLandingPage'))
 const AboutPage          = React.lazy(() => import('./pages/guest/AboutPage'))
 const ServicesPage       = React.lazy(() => import('./pages/guest/ServicesPage'))
 const PromoPage          = React.lazy(() => import('./pages/guest/PromoPage'))
@@ -45,6 +46,9 @@ function AppRoutes() {
     <>
       <Suspense fallback={<Loading />}>
         <Routes>
+          {/* Guest Landing Page — sebelum login, visible to ALL */}
+          <Route path="/" element={<GuestLandingPage />} />
+
           {/* Auth — independen dari role */}
           <Route element={<AuthLayout />}>
             <Route path="/auth/login"    element={<Login />} />
@@ -85,15 +89,7 @@ function AppRoutes() {
             </Route>
           )}
 
-          {/* ── Default redirect berdasarkan role ── */}
-          <Route
-            path="/"
-            element={
-              isGuest
-                ? <Navigate to="/portal" replace />
-                : <Navigate to="/dashboard" replace />
-            }
-          />
+          {/* ── Role-based redirects ── */}
           <Route
             path="/dashboard"
             element={

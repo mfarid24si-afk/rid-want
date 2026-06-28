@@ -5,6 +5,7 @@ import GuestLayout from './layouts/GuestLayout'
 import AuthLayout from './layouts/AuthLayout'
 import Loading from './components/ui/Loading'
 import FABRoleSwitcher from './components/guest/FABRoleSwitcher'
+import { AuthProvider } from './context/AuthContext'
 import { useRole } from './context/RoleContext'
 
 // Mengimpor 2 komponen header baru sesuai instruksi kamu
@@ -18,6 +19,7 @@ const Customers     = React.lazy(() => import('./pages/Customers'))
 const LeadsPipeline = React.lazy(() => import('./pages/LeadsPipeline'))
 const Analytics     = React.lazy(() => import('./pages/Analytics'))
 const Collaboration = React.lazy(() => import('./pages/Collaboration'))
+const UserManage    = React.lazy(() => import('./pages/UserManagement'))
 const ErrorPage     = React.lazy(() => import('./pages/ErrorPage'))
 const NotFound      = React.lazy(() => import('./pages/NotFound'))
 const Login         = React.lazy(() => import('./pages/auth/Login'))
@@ -66,6 +68,7 @@ function AppRoutes() {
               <Route path="/dashboard/leads"           element={<LeadsPipeline />} />
               <Route path="/dashboard/analytics"       element={<Analytics />} />
               <Route path="/dashboard/collaboration"   element={<Collaboration />} />
+              <Route path="/dashboard/users"           element={<UserManage />} />
               <Route path="/error/400" element={<ErrorPage code="400" description="Bad Request" />} />
               <Route path="/error/401" element={<ErrorPage code="401" description="Unauthorized" />} />
               <Route path="/error/403" element={<ErrorPage code="403" description="Forbidden" />} />
@@ -93,13 +96,13 @@ function AppRoutes() {
           <Route
             path="/dashboard"
             element={
-              isGuest ? <Navigate to="/portal" replace /> : null
+              isGuest || role === 'member' ? <Navigate to="/portal" replace /> : null
             }
           />
           <Route
             path="/portal"
             element={
-              !isGuest ? <Navigate to="/dashboard" replace /> : null
+              !isGuest && role !== 'member' ? <Navigate to="/dashboard" replace /> : null
             }
           />
 
@@ -116,7 +119,9 @@ function AppRoutes() {
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </BrowserRouter>
   )
 }

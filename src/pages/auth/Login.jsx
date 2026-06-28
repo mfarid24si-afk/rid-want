@@ -1,14 +1,16 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
 import Button from '../../components/ui/Button'
 import InputField from '../../components/ui/InputField'
-import { loginAPI } from '../../services/LoginAPI'
 
 const Login = () => {
   const { theme } = useTheme()
+  const { login } = useAuth()
+  const navigate = useNavigate()
   const [show, setShow] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
   const [isLoading, setIsLoading] = useState(false)
@@ -20,31 +22,12 @@ const Login = () => {
     setErrorMessage('')
 
     try {
-      // Membuat format query filter manual untuk Supabase REST API
-      const queryFilter = `?email=eq.${encodeURIComponent(form.email)}&password=eq.${encodeURIComponent(form.password)}`
-      
-      // Memanggil fungsi fetchLogin dari services
-      const res = await loginAPI.fetchLogin(queryFilter)
-      const dataUser = res.data || res
-
-      // Validasi ketat: dataUser wajib berupa Array dan panjangnya harus lebih dari 0
-      if (Array.isArray(dataUser) && dataUser.length > 0) {
-        setIsLoading(false)
-        
-        // Simpan sesi user ke localStorage (opsional)
-        localStorage.setItem('user_session', JSON.stringify(dataUser[0]))
-        
-        // Alihkan halaman ke dashboard secara mutlak
-        window.location.href = '/dashboard'
-      } else {
-        // Jika array kosong [], login ditahan di halaman ini
-        setIsLoading(false)
-        setErrorMessage('Email atau password tidak terdaftar!')
-      }
+      await login(form.email, form.password)
+      setIsLoading(false)
+      navigate('/dashboard', { replace: true })
     } catch (error) {
       setIsLoading(false)
-      console.error("Login error detail:", error)
-      setErrorMessage('Terjadi kesalahan koneksi atau database.')
+      setErrorMessage(error.message || 'Terjadi kesalahan koneksi.')
     }
   }
 
@@ -62,7 +45,6 @@ const Login = () => {
           : "inset 0 0 15px rgba(255, 255, 255, 0.2)",
       }}
     >
-      {/* Mobile Logo */}
       <div className="flex items-center gap-3 mb-8 lg:hidden">
         <div 
           className="w-10 h-10 rounded-2xl flex items-center justify-center border shadow-md"
@@ -83,7 +65,7 @@ const Login = () => {
         Selamat Datang
       </h2>
       <p className="text-xs sm:text-sm text-[var(--text)] mb-8 font-normal leading-relaxed">
-        Masuk ke panel manajemen klinik kecantikan Anda
+        Masuk ke akun Anda untuk melanjutkan
       </p>
 
       {errorMessage && (
@@ -147,7 +129,7 @@ const Login = () => {
             size="lg" 
             disabled={isLoading}
           >
-            {isLoading ? 'Memvalidasi...' : 'Masuk ke Dashboard'}
+            {isLoading ? 'Memvalidasi...' : 'Masuk'}
           </Button>
         </motion.div>
       </form>
@@ -170,7 +152,7 @@ const Login = () => {
           borderColor: 'rgba(201, 169, 110, 0.1)'
         }}
       >
-        💡 Masuk menggunakan akun admin terdaftar di database.
+        💡 Gunakan email & password yang terdaftar di database.
       </div>
     </motion.div>
   )

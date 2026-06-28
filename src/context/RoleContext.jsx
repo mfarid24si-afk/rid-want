@@ -17,8 +17,29 @@ export const PERMISSIONS = {
     'view:collaboration',
     'view:settings',
     'view:marketing',
+    'view:users',
+    'view:users:create',
+    'view:users:edit',
+    'view:users:delete',
   ],
-  guest: [
+  'super admin': [
+    'view:dashboard',
+    'view:analytics',
+    'view:customers',
+    'view:customers:edit',
+    'view:customers:delete',
+    'view:orders',
+    'view:leads',
+    'view:leads:edit',
+    'view:collaboration',
+    'view:settings',
+    'view:marketing',
+    'view:users',
+    'view:users:create',
+    'view:users:edit',
+    'view:users:delete',
+  ],
+  member: [
     'view:landing',
     'view:about',
     'view:services',
@@ -29,6 +50,12 @@ export const PERMISSIONS = {
     'view:voucher',
     'view:history',
     'view:customer-dashboard',
+  ],
+  guest: [
+    'view:landing',
+    'view:about',
+    'view:services',
+    'view:promo',
   ],
 }
 

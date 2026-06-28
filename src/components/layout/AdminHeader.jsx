@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
-import { Search, Bell, ChevronDown, LogOut, User, Settings, Menu, Sun, Moon } from 'lucide-react'
+import { Search, Bell, ChevronDown, LogOut, User, Settings, Menu, Sun, Moon, Shield } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 const Header = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
 
@@ -112,52 +116,67 @@ const Header = ({ onMenuClick }) => {
               </div>
             </div>
           )}
-        </div>
+        </div>          {/* Profile */}
+          <div className="relative">
+            <button
+              onClick={() => { setShowProfileMenu(!showProfileMenu); setShowNotifications(false) }}
+              className="flex items-center gap-2 p-1.5 pr-2 rounded-xl transition-all"
+              style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}
+            >
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold"
+                style={{ background: 'var(--accent)' }}>
+                {user?.name?.charAt(0)?.toUpperCase() || 'A'}
+              </div>
+              <div className="hidden md:block text-left">
+                <p className="text-xs font-semibold leading-tight" style={{ color: 'var(--text-strong)' }}>
+                  {user?.name || 'Admin'}
+                </p>
+                <p className="text-[9px] mt-0.5 font-medium" style={{ color: 'var(--text)' }}>
+                  Administrator
+                </p>
+              </div>
+              <ChevronDown className="w-3 h-3" style={{ color: 'var(--text)' }} />
+            </button>
 
-        {/* Profile */}
-        <div className="relative">
-          <button
-            onClick={() => { setShowProfileMenu(!showProfileMenu); setShowNotifications(false) }}
-            className="flex items-center gap-2 p-1.5 pr-2 rounded-xl transition-colors"
-            style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}
-          >
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold"
-              style={{ background: 'var(--accent)' }}>
-              A
-            </div>
-            <span className="text-sm font-medium hidden md:block" style={{ color: 'var(--text-strong)' }}>Admin</span>
-            <ChevronDown className="w-3 h-3" style={{ color: 'var(--text)' }} />
-          </button>
-
-          {showProfileMenu && (
-            <div className="absolute right-0 top-12 w-48 py-2 z-50" style={dropdownStyle}>
-              {[
-                { icon: User, label: 'Profil Saya' },
-                { icon: Settings, label: 'Pengaturan' },
-              ].map(({ icon: Icon, label }) => (
-                <button key={label}
+            {showProfileMenu && (
+              <div className="absolute right-0 top-12 w-56 py-2 z-50" style={dropdownStyle}>
+                {/* User info header */}
+                <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--border)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text-strong)' }}>{user?.name || 'Admin'}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text)' }}>{user?.email || '-'}</p>
+                  <div className="flex items-center gap-1 mt-1.5">
+                    <Shield className="w-3 h-3" style={{ color: 'var(--accent)' }} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
+                      Administrator
+                    </span>
+                  </div>
+                </div>
+                <div className="py-1">
+                  <button
+                    onClick={() => { setShowProfileMenu(false); navigate('/dashboard/settings') }}
+                    className="flex items-center gap-3 px-4 py-2 w-full text-sm transition-colors"
+                    style={{ color: 'var(--text-strong)' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-overlay)'}
+                    onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <Settings className="w-4 h-4" style={{ color: 'var(--text)' }} />
+                    Pengaturan
+                  </button>
+                </div>
+                <hr style={{ borderColor: 'var(--border)', margin: '4px 0' }} />
+                <button
+                  onClick={() => { logout(); navigate('/', { replace: true }) }}
                   className="flex items-center gap-3 px-4 py-2 w-full text-sm transition-colors"
-                  style={{ color: 'var(--text-strong)' }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-overlay)'}
+                  style={{ color: 'var(--danger)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-soft)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
-                  <Icon className="w-4 h-4" style={{ color: 'var(--text)' }} />
-                  {label}
+                  <LogOut className="w-4 h-4" />
+                  Keluar
                 </button>
-              ))}
-              <hr style={{ borderColor: 'var(--border)', margin: '4px 0' }} />
-              <button
-                className="flex items-center gap-3 px-4 py-2 w-full text-sm transition-colors"
-                style={{ color: 'var(--danger)' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-soft)'}
-                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-              >
-                <LogOut className="w-4 h-4" />
-                Keluar
-              </button>
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
       </div>
 
       {/* Click outside overlay */}

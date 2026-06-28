@@ -3,13 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
 import Button from '../../components/ui/Button'
 import InputField from '../../components/ui/InputField'
-import { loginAPI } from '../../services/LoginAPI'
 
 const Register = () => {
   const navigate = useNavigate()
   const { theme } = useTheme()
+  const { register } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -24,9 +25,8 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    setErrorMessage('') 
-    
-    // Validasi kecocokan kata sandi
+    setErrorMessage('')
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage('Konfirmasi kata sandi tidak cocok!')
       setIsLoading(false)
@@ -34,23 +34,20 @@ const Register = () => {
     }
 
     try {
-      // Payload disesuaikan hanya dengan kolom yang ada di database tabel login
       const payload = {
         name: formData.name,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
       }
 
-      // Menembak fungsi POST (createLogin) ke Supabase
-      await loginAPI.createLogin(payload)
-      
+      await register(payload)
       setIsLoading(false)
-      navigate('/auth/login')
+      navigate('/auth/login', { replace: true })
     } catch (error) {
       setIsLoading(false)
       console.error("Registrasi gagal:", error)
       setErrorMessage(
-        error.response?.data?.message || 'Gagal mendaftar. Periksa koneksi atau database Anda.'
+        error.response?.data?.message || error.message || 'Gagal mendaftar. Periksa koneksi atau database Anda.'
       )
     }
   }
@@ -69,7 +66,6 @@ const Register = () => {
           : "inset 0 0 15px rgba(255, 255, 255, 0.2)",
       }}
     >
-      {/* Mobile Logo */}
       <div className="flex items-center gap-3 mb-8 lg:hidden">
         <div 
           className="w-10 h-10 rounded-2xl flex items-center justify-center border shadow-md"
@@ -88,7 +84,7 @@ const Register = () => {
 
       <div className="mb-6">
         <h2 className="text-2xl font-black mb-1" style={{ color: 'var(--text-heading)' }}>Buat Akun Baru</h2>
-        <p className="text-xs sm:text-sm text-[var(--text)] mt-1 font-normal leading-relaxed">Daftarkan akun administrator klinik kecantikan Anda</p>
+        <p className="text-xs sm:text-sm text-[var(--text)] mt-1 font-normal leading-relaxed">Daftar untuk mengakses portal pasien Aura Clinic</p>
       </div>
 
       {errorMessage && (
@@ -102,7 +98,6 @@ const Register = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Name */}
         <InputField
           label="Nama Lengkap"
           id="name"
@@ -113,18 +108,16 @@ const Register = () => {
           required
         />
 
-        {/* Email */}
         <InputField
-          label="Email Admin"
+          label="Email"
           id="email"
           type="email"
-          placeholder="admin@clinic.com"
+          placeholder="email@anda.com"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
 
-        {/* Password */}
         <div className="relative">
           <InputField
             label="Kata Sandi"
@@ -144,7 +137,6 @@ const Register = () => {
           </button>
         </div>
 
-        {/* Confirm Password */}
         <div className="relative">
           <InputField
             label="Konfirmasi Kata Sandi"
@@ -164,7 +156,6 @@ const Register = () => {
           </button>
         </div>
 
-        {/* Terms */}
         <div className="flex items-start gap-2.5 pt-2 select-none">
           <input 
             type="checkbox" 
@@ -180,7 +171,6 @@ const Register = () => {
           </label>
         </div>
 
-        {/* Tombol Submit */}
         <motion.div
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}

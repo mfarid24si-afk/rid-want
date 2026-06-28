@@ -58,6 +58,12 @@ const adminMenuItems = [
     label: 'Kolaborasi Tim',
     permission: 'view:collaboration',
   },
+  {
+    path: '/dashboard/users',
+    icon: Users,
+    label: 'Manajemen Akun',
+    permission: 'view:users',
+  },
 ]
 
 // ─────────────────────────────────────────────────────────────

@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { useRole } from '../../context/RoleContext'
-import { User, ListOrdered, Gift, Ticket, History, CalendarPlus, Sparkles, CheckCircle2, Moon, Sun, ArrowRight, ShieldCheck } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
+import { User, ListOrdered, Gift, Ticket, History, CalendarPlus, Sparkles, CheckCircle2, Moon, Sun, ArrowRight, ShieldCheck, Trash2, AlertTriangle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { censorName } from '../../components/crm/KanbanBoard'
 import { motion, AnimatePresence } from 'framer-motion'
+import Modal from '../../components/ui/Modal'
+import Button from '../../components/ui/Button'
 
 const CustomerDashboard = () => {
   const { leads, customers } = useRole()
+  const { user, deleteAccount } = useAuth()
   const navigate = useNavigate()
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   // Simulasi: tampilkan data pasien pertama sebagai "yang sedang login"
   const patient = customers?.[0]
@@ -421,6 +429,93 @@ const CustomerDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* ── DELETE ACCOUNT SECTION ── */}
+      <div
+        className="rounded-3xl p-6 shadow-md border transition-all duration-300"
+        style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-red-500/10 border border-red-500/20">
+            <Trash2 className="w-5 h-5 text-red-500" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-sm" style={{ color: 'var(--text-heading)' }}>Hapus Akun</h3>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--text)' }}>
+              Setelah dihapus, semua data akun Anda akan hilang permanen.
+            </p>
+          </div>
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:shadow-md"
+            style={{ background: 'var(--danger)' }}
+          >
+            Hapus Akun
+          </button>
+        </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={showDeleteModal} onClose={() => { setShowDeleteModal(false); setDeleteConfirmText(''); setDeleteError('') }} title="Hapus Akun" maxWidth="max-w-sm">
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+            <AlertTriangle className="w-6 h-6 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold" style={{ color: 'var(--text-strong)' }}>Anda yakin ingin menghapus akun?</p>
+              <p className="text-xs mt-1 leading-relaxed" style={{ color: 'var(--text)' }}>
+                Tindakan ini <strong>tidak dapat dibatalkan</strong>. Seluruh data Anda, termasuk riwayat kunjungan dan poin reward, akan dihapus permanen.
+              </p>
+            </div>
+          </div>
+
+          {deleteError && (
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-500 text-xs text-center font-bold">
+              {deleteError}
+            </div>
+          )}
+
+          <div>
+            <p className="text-xs font-semibold mb-1.5" style={{ color: 'var(--text-strong)' }}>
+              Ketik <strong style={{ color: 'var(--accent)' }}>HAPUS</strong> untuk konfirmasi:
+            </p>
+            <input
+              type="text"
+              placeholder="Ketik HAPUS"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl text-sm outline-none transition-all"
+              style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="secondary" type="button" onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(''); setDeleteError('') }} className="flex-1">
+              Batal
+            </Button>
+            <Button
+              variant="primary"
+              type="button"
+              disabled={deleteConfirmText !== 'HAPUS' || deleting}
+              onClick={async () => {
+                setDeleting(true)
+                setDeleteError('')
+                try {
+                  await deleteAccount()
+                  navigate('/', { replace: true })
+                } catch (err) {
+                  setDeleteError(err.message || 'Gagal menghapus akun')
+                } finally {
+                  setDeleting(false)
+                }
+              }}
+              className="flex-1"
+              style={{ background: 'var(--danger)', borderColor: 'var(--danger)' }}
+            >
+              {deleting ? 'Menghapus...' : 'Ya, Hapus Akun Saya'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

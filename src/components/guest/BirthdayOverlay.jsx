@@ -93,7 +93,7 @@ const BirthdayOverlay = () => {
           !
         </p>
         <p className="text-sm mb-5" style={{ color: 'var(--text)' }}>
-          Aura Clinic memberikan kejutan spesial untuk hari istimewa Anda ✨
+          Skinova memberikan kejutan spesial untuk hari istimewa Anda ✨
         </p>
 
         {/* Voucher hadiah */}

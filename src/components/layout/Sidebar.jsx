@@ -142,7 +142,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               className="font-bold text-base leading-tight truncate"
               style={{ color: 'var(--text-heading)' }}
             >
-              {isGuest ? 'Aura Clinic' : 'BeautyClinic'}
+              Skinova
             </h1>
             {/* Teks sub-judul berbeda per role */}
             <p className="text-xs truncate" style={{ color: 'var(--text)' }}>

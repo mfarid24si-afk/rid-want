@@ -78,13 +78,13 @@ const Register = () => {
           <Sparkles className="w-5 h-5 text-white" />
         </div>
         <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-heading)] to-[var(--accent)]">
-          Aura Clinic
+          Skinova
         </span>
       </div>
 
       <div className="mb-6">
         <h2 className="text-2xl font-black mb-1" style={{ color: 'var(--text-heading)' }}>Buat Akun Baru</h2>
-        <p className="text-xs sm:text-sm text-[var(--text)] mt-1 font-normal leading-relaxed">Daftar untuk mengakses portal pasien Aura Clinic</p>
+        <p className="text-xs sm:text-sm text-[var(--text)] mt-1 font-normal leading-relaxed">Daftar untuk mengakses portal pasien Skinova</p>
       </div>
 
       {errorMessage && (

@@ -5,7 +5,7 @@ import { useTheme } from '../../context/ThemeContext'
 
 // Lokasi dummy klinik — ganti dengan koordinat/alamat asli saat go-live
 const CLINIC = {
-  name: 'Aura Clinic — Cabang Pekanbaru',
+  name: 'Skinova — Cabang Pekanbaru',
   address: 'Jl. Sudirman No. 88, Pekanbaru, Riau, Indonesia',
   lat: 0.5071,
   lng: 101.4478,
@@ -159,7 +159,7 @@ const LocationMap = () => {
 
             {shouldLoadMap && (
               <iframe
-                title="Lokasi Aura Clinic"
+                title="Lokasi Skinova"
                 src={MAP_EMBED_SRC}
                 width="100%"
                 height="100%"

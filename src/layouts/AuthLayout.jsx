@@ -100,7 +100,7 @@ const AuthLayout = () => {
             className="text-4xl font-black text-center mb-3 tracking-tight"
             style={{ color: 'var(--text-heading)' }}
           >
-            Aura Clinic
+            Skinova
           </motion.h1>
           
           <motion.p 

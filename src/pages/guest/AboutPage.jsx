@@ -55,7 +55,7 @@ const AboutPage = () => {
           className="text-3xl md:text-4xl font-black mb-3"
           style={{ color: "var(--text-heading)" }}
         >
-          Tentang Aura Clinic
+          Tentang Skinova
         </h1>
         <p
           className="text-base max-w-2xl mx-auto"

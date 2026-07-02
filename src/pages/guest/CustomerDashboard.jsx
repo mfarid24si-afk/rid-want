@@ -114,7 +114,7 @@ const CustomerDashboard = () => {
               className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#2D1B10]"
               style={{ backgroundColor: 'var(--accent)' }}
             >
-              Aura Prestige Card
+              Skinova Prestige Card
             </span>
           </div>
 

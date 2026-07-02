@@ -279,7 +279,7 @@ function GuestRegistrationPanel({ onSubmit }) {
 // KOMPONEN UTAMA: LeadsPipeline
 // Satu halaman, dua tampilan:
 //   — Admin → Sales Pipeline CRM penuh
-//   — Guest → Live Tracker Antrean Aura Clinic
+//   — Guest → Live Tracker Antrean Skinova
 // ─────────────────────────────────────────────────────────────
 const LeadsPipeline = () => {
   const { can, role, leads, setLeads } = useRole()
@@ -405,7 +405,7 @@ const LeadsPipeline = () => {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // RENDER: GUEST — Live Tracker Antrean Aura Clinic
+  // RENDER: GUEST — Live Tracker Antrean Skinova
   // Tampilan kiosk publik, zero elemen internal bisnis
   // ─────────────────────────────────────────────────────────────
   if (isGuest) {
@@ -448,7 +448,7 @@ const LeadsPipeline = () => {
                 className="font-bold mb-1"
                 style={{ color: 'var(--accent)' }}
               >
-                Aura Clinic — Klinik Kecantikan &amp; Estetika
+                Skinova — Klinik Kecantikan &amp; Estetika
               </h3>
               <p className="text-xs leading-relaxed" style={{ color: 'var(--text)' }}>
                 Selamat datang di tracker antrean digital kami. Identitas setiap

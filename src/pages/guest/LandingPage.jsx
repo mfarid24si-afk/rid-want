@@ -64,7 +64,7 @@ const testimonials = [
   {
     name: "M**** P****",
     rating: 5,
-    text: 'Botox di Aura Clinic sangat natural. Tidak terlihat "kaku" sama sekali. Sangat direkomendasikan!',
+    text: 'Botox di Skinova sangat natural. Tidak terlihat "kaku" sama sekali. Sangat direkomendasikan!',
   },
   {
     name: "R**** K****",
@@ -297,7 +297,7 @@ const LandingPage = () => {
               Mulai dari kulit kusam, tanda penuaan, hingga jerawat membandel
               — setiap masalah kulit punya solusinya. Didukung dokter
               bersertifikat internasional dan teknologi estetika AI terkini,
-              Aura Clinic hadir untuk membantu Anda tampil optimal dengan
+              Skinova hadir untuk membantu Anda tampil optimal dengan
               perawatan premium yang terukur dan menenangkan.
             </p>
 
@@ -339,7 +339,7 @@ const LandingPage = () => {
             </div>
           </motion.div>
 
-          {/* Sisi Kanan: Multi-layered Floating Beauty Cards (Aura Premium Skin Analyzer) */}
+          {/* Sisi Kanan: Multi-layered Floating Beauty Cards (Skinova Premium Skin Analyzer) */}
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -364,7 +364,7 @@ const LandingPage = () => {
               {/* Image background */}
               <img
                 src="img/facial.webp"
-                alt="Aura Luxury Treatment"
+                alt="Skinova Luxury Treatment"
                 className="w-full h-full object-cover"
               />
               
@@ -374,7 +374,7 @@ const LandingPage = () => {
               {/* Text label at the bottom of the image card */}
               <div className="absolute bottom-5 left-5 right-5 text-left text-white">
                 <span className="text-[10px] font-mono tracking-widest text-[var(--accent)] font-bold uppercase">
-                  Aura Facial Assessment
+                  Skinova Facial Assessment
                 </span>
                 <h4 className="text-lg font-bold mt-1 text-white leading-snug">
                   Sensasi Perawatan Mewah &amp; Menenangkan
@@ -713,7 +713,7 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="text-3xl font-black text-center mb-16 text-[var(--text-heading)]"
           >
-            Mengapa Memilih Aura Clinic?
+            Mengapa Memilih Skinova?
           </motion.h2>
 
           {/* Grid Keunggulan */}
@@ -852,7 +852,7 @@ const LandingPage = () => {
             </h2>
             <p className="text-[var(--text)] text-sm font-normal max-w-lg mx-auto">
               Temukan jawaban cepat seputar layanan, booking, dan perawatan
-              di Aura Clinic.
+              di Skinova.
             </p>
           </motion.div>
 
@@ -866,7 +866,7 @@ const LandingPage = () => {
           >
             {[
               {
-                q: "Treatment apa saja yang tersedia di Aura Clinic?",
+                q: "Treatment apa saja yang tersedia di Skinova?",
                 a: "Kami menyediakan berbagai treatment estetika premium: Facial Glow untuk kulit cerah, Botox anti-aging, Laser Rejuvenation, Chemical Peeling, dan masih banyak lagi. Setiap treatment disesuaikan dengan kondisi kulit Anda setelah konsultasi dengan dokter.",
               },
               {

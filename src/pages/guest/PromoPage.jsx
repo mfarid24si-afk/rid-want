@@ -48,7 +48,7 @@ const PromoPage = () => {
           Promo &amp; Voucher Spesial
         </h1>
         <p style={{ color: 'var(--text)' }}>
-          Hemat lebih banyak dengan program loyalitas &amp; promo eksklusif Aura Clinic
+          Hemat lebih banyak dengan program loyalitas &amp; promo eksklusif Skinova
         </p>
       </div>
 

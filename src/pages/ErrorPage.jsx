@@ -49,8 +49,8 @@ const ErrorPage = () => {
         {/* Support Info - Tautan diubah menggunakan warna aksen biru langit cerah */}
         <p className="text-sm text-zinc-500 mt-8">
           Jika masalah terus berlanjut, hubungi{' '}
-          <a href="mailto:support@beautyclinic.com" className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
-            support@beautyclinic.com
+          <a href="mailto:support@skinova.id" className="text-sky-400 hover:text-sky-300 hover:underline transition-colors">
+            support@skinova.id
           </a>
         </p>
       </div>

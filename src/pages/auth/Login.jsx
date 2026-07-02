@@ -57,7 +57,7 @@ const Login = () => {
           <Sparkles className="w-5 h-5 text-white" />
         </div>
         <span className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[var(--text-heading)] to-[var(--accent)]">
-          Aura Clinic
+          Skinova
         </span>
       </div>
 
@@ -83,7 +83,7 @@ const Login = () => {
           label="Email"
           id="email"
           type="email"
-          placeholder="admin@beautyclinic.id"
+          placeholder="admin@skinova.id"
           value={form.email}
           onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
           required

@@ -74,7 +74,7 @@ const GuestNavbar = () => {
                 className="font-bold text-base leading-none"
                 style={{ color: 'var(--text-heading)' }}
               >
-                Aura Clinic
+                Skinova
               </p>
               <p className="text-xs" style={{ color: 'var(--text)' }}>
                 Klinik Kecantikan &amp; Estetika

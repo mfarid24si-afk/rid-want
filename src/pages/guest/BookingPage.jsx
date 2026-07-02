@@ -132,7 +132,7 @@ const BookingPage = () => {
           
           <div className="text-center pb-4 border-b border-dashed" style={{ borderColor: 'var(--border)' }}>
             <h4 className="font-black text-sm uppercase tracking-widest" style={{ color: 'var(--accent)' }}>E-Receipt Booking</h4>
-            <p className="text-[10px] text-stone-400 mt-0.5">AURA CLINIC & ESTETIKA</p>
+            <p className="text-[10px] text-stone-400 mt-0.5">SKINOVA & ESTETIKA</p>
           </div>
 
           <div className="py-4 space-y-2 border-b border-dashed" style={{ borderColor: 'var(--border)' }}>

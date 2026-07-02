@@ -196,7 +196,7 @@ const TrackingPage = () => {
         </div>
         <div>
           <h3 className="font-bold mb-1" style={{ color: 'var(--accent)' }}>
-            Aura Clinic — Klinik Kecantikan &amp; Estetika
+            Skinova — Klinik Kecantikan &amp; Estetika
           </h3>
           <p className="text-xs leading-relaxed" style={{ color: 'var(--text)' }}>
             Tracker antrean digital kami. Identitas setiap pasien{' '}

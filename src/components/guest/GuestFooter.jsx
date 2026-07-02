@@ -56,7 +56,7 @@ const GuestFooter = () => {
                   className="font-bold text-base leading-none"
                   style={{ color: 'var(--text-heading)' }}
                 >
-                  Aura Clinic
+                  Skinova
                 </p>
                 <p className="text-xs" style={{ color: 'var(--text)' }}>
                   Klinik Kecantikan &amp; Estetika
@@ -137,7 +137,7 @@ const GuestFooter = () => {
         >
           {[
             { label: '📍 Lokasi', value: 'Jl. Kecantikan No. 88, Jakarta Selatan' },
-            { label: '📞 Telepon', value: '(021) 888-AURA' },
+            { label: '📞 Telepon', value: '(021) 888-SKIN' },
             { label: '🕐 Jam Buka', value: 'Sen–Sab, 09.00 – 20.00 WIB' },
           ].map((info) => (
             <div key={info.label}>
@@ -160,7 +160,7 @@ const GuestFooter = () => {
             color: 'var(--text)',
           }}
         >
-          <p>© 2025 Aura Clinic. Seluruh hak dilindungi.</p>
+          <p>© 2025 Skinova. Seluruh hak dilindungi.</p>
           <div className="flex gap-4">
             <a href="#" style={{ color: 'var(--text)' }}>Kebijakan Privasi</a>
             <a href="#" style={{ color: 'var(--text)' }}>Syarat &amp; Ketentuan</a>

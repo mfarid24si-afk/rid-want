@@ -17,11 +17,8 @@ import {
   Phone,
   Mail,
   MapPin,
-  BellRing,
-  BarChart3,
-  Users,
-  Database,
-  Calendar,
+  CalendarPlus,
+  Activity,
 } from "lucide-react";
 import RisingParticles from "../../components/guest/RisingParticles";
 
@@ -86,67 +83,114 @@ const testimonials = [
   },
 ];
 
-const problems = [
+const advantages = [
   {
-    problem: "Booking masih manual via WhatsApp?",
-    solution: "Sistem booking online otomatis — pasien bisa pilih jadwal sendiri, admin tinggal konfirmasi.",
+    icon: Star,
+    title: "Dokter Tersertifikasi",
+    desc: "Tim dokter estetika kami memiliki sertifikasi internasional dan pengalaman bertahun-tahun di bidang kecantikan.",
     color: "from-amber-500/20 to-amber-500/5",
   },
   {
-    problem: "Jadwal treatment sering bentrok?",
-    solution: "Kalender digital dengan deteksi bentrok otomatis — tidak ada lagi double booking.",
+    icon: Shield,
+    title: "Teknologi AI Terkini",
+    desc: "Diagnosis kulit berbasis kecerdasan buatan untuk hasil perawatan yang lebih akurat dan personal.",
     color: "from-rose-500/20 to-rose-500/5",
   },
   {
-    problem: "Data & riwayat pasien tersebar?",
-    solution: "Semua data pasien, riwayat treatment, dan pembayaran tersimpan rapi dalam satu dashboard.",
+    icon: Clock,
+    title: "Layanan Cepat & Tepat",
+    desc: "Sistem antrean digital cerdas — pantau estimasi waktu secara real-time dari ponsel Anda.",
     color: "from-violet-500/20 to-violet-500/5",
   },
   {
-    problem: "Follow-up pasien tidak konsisten?",
-    solution: "Reminder WhatsApp otomatis untuk jadwal treatment, ulang tahun, dan promo spesial.",
+    icon: Award,
+    title: "Hasil Terukur & Aman",
+    desc: "Setiap treatment didokumentasikan dengan foto dan analisis kulit digital untuk memastikan hasil optimal.",
     color: "from-cyan-500/20 to-cyan-500/5",
   },
 ];
 
-const crmFeatures = [
+const doctors = [
   {
-    icon: Users,
-    title: "Manajemen Pasien",
-    desc: "Kelola data, riwayat treatment, dan preferensi setiap pasien dalam satu dashboard terpusat.",
+    avatar: '/img/dokter.jpg',
+    name: 'dr. Ayu Maharani, SpKK',
+    title: 'Dokter Kepala & Dermatologis Senior',
+    certs: [
+      'Board Certified \u2013 AAAM (USA)',
+      'BCAM Certificate \u2013 Anti Aging Medicine',
+      'PERDOSKI Member',
+    ],
+    exp: '12 tahun pengalaman',
+    specialty: 'Dermatologi Estetika & Laser',
   },
   {
-    icon: Calendar,
-    title: "Appointment Otomatis",
-    desc: "Booking online dengan deteksi bentrok otomatis. Pasien pilih jadwal, admin tinggal konfirmasi.",
+    avatar: '/img/raihan.png',
+    name: 'dr. Raihan Ghafari, SpBP-RE',
+    title: 'Spesialis Bedah Plastik Rekonstruksi',
+    certs: [
+      'SpBP-RE \u2013 Universitas Indonesia',
+      'ISAPS International Member',
+      'PERAPI Certified',
+    ],
+    exp: '9 tahun pengalaman',
+    specialty: 'Bedah Estetika & Anti Aging',
   },
   {
-    icon: BellRing,
-    title: "Reminder WhatsApp",
-    desc: "Pengingat otomatis via WhatsApp untuk jadwal treatment, ulang tahun, dan promo spesial.",
+    avatar: '/img/ari.png',
+    name: 'dr. Ari Sanjaya, SpKK',
+    title: 'Spesialis Kulit & Kelamin',
+    certs: [
+      'SpKK \u2013 Universitas Airlangga',
+      'IDI Certified Member',
+      'Aesthetic Medicine Cert.',
+    ],
+    exp: '7 tahun pengalaman',
+    specialty: 'Kulit Bermasalah & Acne',
   },
   {
-    icon: Database,
-    title: "Riwayat Treatment Digital",
-    desc: "Catatan treatment lengkap dengan rekomendasi dokter — akses kapan saja, di mana saja.",
-  },
-  {
-    icon: BarChart3,
-    title: "Dashboard Bisnis",
-    desc: "Pantau pendapatan, okupansi, dan loyalitas pasien secara real-time dengan grafik interaktif.",
-  },
-  {
-    icon: Award,
-    title: "Membership & Poin Reward",
-    desc: "Program loyalitas terintegrasi — poin otomatis, voucher ulang tahun, dan segmentasi pasien VIP.",
+    avatar: "/img/koko.png",
+    name: 'Elvin winata, Sp.DVE',
+    title: 'Spesialis Dermatologi, Venereologi & Estetika',
+    certs: [
+    'Sp.DVE \u2013 Universitas Indonesia',
+    'Advanced Facial Filler & Botox Certified (Seoul, South Korea)',
+    'International Society of Dermatology Member',],
+    exp: '10 tahun pengalaman',
+    specialty: 'Anti-Aging, Thread Lift, & Facial Contouring',
   },
 ];
 
-const workflowSteps = [
-  { step: "01", icon: Star, title: "Daftar Akun", desc: "Buat akun klinik Anda — gratis, tanpa biaya setup, tanpa kartu kredit." },
-  { step: "02", icon: Users, title: "Import Data Pasien", desc: "Migrasi data pasien existing dengan mudah — atau mulai dari awal dengan template siap pakai." },
-  { step: "03", icon: Clock, title: "Atur Jadwal & Layanan", desc: "Konfigurasi layanan, jadwal dokter, dan sistem reminder dalam satu dashboard." },
-  { step: "04", icon: BarChart3, title: "Pantau & Kembangkan", desc: "Pantau performa klinik secara real-time dan tingkatkan retensi pasien dengan data akurat." },
+const clinicFeatures = [
+  {
+    icon: Star,
+    title: "Facial Glow Premium",
+    desc: "Perawatan wajah menyeluruh untuk kulit cerah, bersih, dan terhidrasi optimal.",
+  },
+  {
+    icon: Activity,
+    title: "Botox Anti-Aging",
+    desc: "Injeksi presisi untuk menghaluskan kerutan dengan hasil natural dan tahan lama.",
+  },
+  {
+    icon: Sparkles,
+    title: "Laser Rejuvenation",
+    desc: "Teknologi fraksi laser terkini untuk memperbaiki tekstur kulit dan bekas jerawat.",
+  },
+  {
+    icon: CalendarPlus,
+    title: "Chemical Peeling",
+    desc: "Eksfoliasi kimiawi aman untuk mengangkat sel kulit mati dan merangsang regenerasi.",
+  },
+  {
+    icon: Award,
+    title: "Konsultasi Gratis",
+    desc: "Konsultasi pertama dengan dokter estetika tanpa biaya — diskusikan tujuan perawatan Anda.",
+  },
+  {
+    icon: Shield,
+    title: "Standar Internasional",
+    desc: "Seluruh prosedur mengikuti standar keamanan internasional dengan alat steril dan bersertifikat.",
+  },
 ];
 
 // ==========================================
@@ -639,32 +683,30 @@ const GuestLandingPage = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-6 border border-[var(--border)] bg-[var(--bg-surface)]/60 text-[var(--accent)] backdrop-blur-md self-start"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              CRM untuk Klinik Kecantikan
+              Klinik Estetika & Kecantikan Premium
             </motion.div>
 
             <h1
               className="text-4xl sm:text-5xl md:text-6xl font-black mb-6 leading-[1.1] tracking-tight"
               style={{ color: "var(--text-heading)" }}
             >
-              Kelola{" "}
+              Tampil{" "}
               <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDark ? "from-cyan-400 via-teal-300 to-indigo-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.2)]" : "from-[#C9A96E] via-[#D4956A] to-[#B8935A]"}`}>
-                Klinik Kecantikan
+                Percaya Diri
               </span>{" "}
-              dengan Mudah & Profesional
+              dengan Perawatan Terbaik
             </h1>
 
-            {/* Problem-aware subheadline */}
             <p className="text-[var(--text)] text-base md:text-lg mb-8 max-w-xl leading-relaxed font-normal">
-              Dari booking online, manajemen jadwal, reminder WhatsApp otomatis,
-              hingga dashboard bisnis real-time — Skinova CRM membantu Anda
-              mengelola klinik kecantikan lebih efisien, meningkatkan kepuasan
-              pasien, dan mengembangkan bisnis dengan data yang akurat.
+              Dari kulit kusam, tanda penuaan, hingga jerawat membandel — setiap masalah kulit punya solusinya. 
+              Didukung dokter bersertifikat internasional dan teknologi estetika AI terkini, 
+              Skinova hadir untuk membantu Anda tampil optimal dengan perawatan premium yang terukur dan menenangkan.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <motion.button
-                onClick={() => navigate("/auth/register")}
+                onClick={() => navigate("/portal/booking")}
                 whileHover={{
                   scale: 1.05,
                   y: -4,
@@ -673,25 +715,25 @@ const GuestLandingPage = () => {
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-white text-base cursor-pointer transition-all border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 style={{ background: "var(--accent)", borderColor: "var(--accent)" }}
-                aria-label="Coba Skinova CRM gratis 14 hari"
+                aria-label="Booking konsultasi gratis"
               >
-                <Sparkles className="w-5 h-5 text-white/80" />
-                Coba Gratis 14 Hari
+                <CalendarPlus className="w-5 h-5 text-white/80" />
+                Booking Konsultasi Gratis
               </motion.button>
 
               <motion.button
                 onClick={() => {
-                  const el = document.getElementById("crm-features");
+                  const el = document.getElementById("services");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
                 whileHover={{ scale: 1.05, y: -4 }}
                 whileTap={{ scale: 0.98 }}
                 className="flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl font-bold text-base bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                 style={{ color: "var(--text-strong)" }}
-                aria-label="Lihat fitur CRM Skinova"
+                aria-label="Lihat layanan Skinova"
               >
                 <ArrowRight className="w-5 h-5" style={{ color: "var(--text)" }} />
-                Lihat Fitur CRM
+                Lihat Layanan
               </motion.button>
             </div>
           </motion.div>
@@ -809,16 +851,16 @@ const GuestLandingPage = () => {
               transition={floatTransition(0, 3.5)}
               className="inline-block px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-[var(--border)] bg-[var(--bg-surface)]/60 text-[var(--accent)]"
             >
-              Masalah & Solusi
+              Mengapa Skinova?
             </motion.span>
             <h2 className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)]">
-              Kendala Operasional Klinik Anda?{" "}
+              Keunggulan{" "}
               <span className={`text-transparent bg-clip-text bg-gradient-to-r ${isDark ? "from-cyan-400 to-teal-300" : "from-[#C9A96E] to-[#D4956A]"}`}>
-                Ada Solusinya
+                Klinik Kami
               </span>
             </h2>
             <p className="text-[var(--text)] text-sm sm:text-base max-w-xl mx-auto font-normal">
-              Ratusan klinik telah beralih ke sistem digital. Kelola booking, jadwal, data pasien, dan follow-up dalam satu platform terintegrasi.
+              Kami menggabungkan keahlian dokter berpengalaman dengan teknologi AI terkini untuk hasil perawatan yang optimal dan aman.
             </p>
           </motion.div>
 
@@ -829,11 +871,12 @@ const GuestLandingPage = () => {
             viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-1 md:grid-cols-2 gap-4"
           >
-            {problems.map((item, idx) => (
+            {advantages.map((item, idx) => (
               <motion.div
                 key={idx}
                 variants={staggerItem}
-                className="rounded-2xl p-5 flex items-start gap-4 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300"
+                whileHover={{ y: -4, x: 2, transition: { duration: 0.3 } }}
+                className="rounded-2xl p-5 flex items-start gap-4 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm hover:shadow-md hover:border-[var(--accent)]/30 transition-all duration-300"
               >
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border"
@@ -843,16 +886,16 @@ const GuestLandingPage = () => {
                     color: "var(--accent)",
                   }}
                 >
-                  <X className="w-4 h-4" />
+                  <item.icon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm mb-1" style={{ color: "var(--text-heading)" }}>
-                    {item.problem}
+                    {item.title}
                   </p>
                   <div className="flex items-start gap-2">
                     <Check className="w-3.5 h-3.5 mt-0.5 shrink-0 text-emerald-500" />
                     <p className="text-xs leading-relaxed" style={{ color: "var(--text)" }}>
-                      {item.solution}
+                      {item.desc}
                     </p>
                   </div>
                 </div>
@@ -909,7 +952,7 @@ const GuestLandingPage = () => {
               viewport={{ once: true }}
               className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)]"
             >
-              Semua Fitur untuk Kelola Klinik Anda
+              Layanan & Treatment Pilihan
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -918,7 +961,7 @@ const GuestLandingPage = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-[var(--text)] text-sm sm:text-base max-w-lg mx-auto"
             >
-              Dari manajemen pasien hingga dashboard bisnis — semua terintegrasi dalam satu platform yang mudah digunakan.
+              Dari perawatan wajah hingga anti-aging — setiap treatment dirancang untuk hasil maksimal dengan kenyamanan premium.
             </motion.p>
           </div>
 
@@ -929,7 +972,7 @@ const GuestLandingPage = () => {
             viewport={{ once: true, margin: "-100px" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
           >
-            {crmFeatures.map((feature, idx) => (
+            {clinicFeatures.map((feature, idx) => (
               <motion.div
                 key={feature.title}
                 variants={staggerItem}
@@ -951,13 +994,13 @@ const GuestLandingPage = () => {
 
           <div className="text-center mt-12">
             <motion.button
-              onClick={() => navigate("/auth/register")}
+              onClick={() => navigate("/portal/services")}
               whileHover={{ scale: 1.05, y: -2 }}
               className="inline-flex items-center gap-2 text-sm font-bold text-white px-6 py-3 rounded-2xl transition-all cursor-pointer shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               style={{ background: "var(--accent)" }}
-              aria-label="Mulai gratis menggunakan Skinova CRM"
+              aria-label="Lihat semua layanan Skinova"
             >
-              Coba Gratis 14 Hari <ArrowRight className="w-4 h-4" />
+              Lihat Semua Layanan <ArrowRight className="w-4 h-4" />
             </motion.button>
           </div>
         </div>
@@ -1079,10 +1122,10 @@ const GuestLandingPage = () => {
             className="text-center mb-14"
           >
             <h2 className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)]">
-              Bagaimana Cara Kerjanya?
+              Tim Dokter Estetika Kami
             </h2>
             <p className="text-[var(--text)] text-sm sm:text-base max-w-lg mx-auto font-normal">
-              Empat langkah mudah untuk mulai menggunakan Skinova CRM di klinik Anda.
+              Ditangani oleh dokter-dokter berpengalaman dan bersertifikat di bidang estetika.
             </p>
           </motion.div>
 
@@ -1091,42 +1134,68 @@ const GuestLandingPage = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
           >
-            {workflowSteps.map((step, idx) => (
+            {doctors.map((doc, idx) => (
               <motion.div
-                key={step.step}
+                key={doc.name + idx}
                 variants={staggerItem}
-                className="relative text-center p-6 rounded-2xl bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300"
+                className="rounded-2xl p-5 bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm hover:shadow-md hover:border-[var(--accent)]/30 transition-all duration-300"
               >
-                {/* Step Number */}
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4 text-lg font-black border-2"
-                  style={{
-                    color: "var(--accent)",
-                    borderColor: "var(--accent)",
-                    background: "var(--accent-soft)",
-                  }}
-                >
-                  {step.step}
-                </div>
-
-                {/* Connector line (desktop) */}
-                {idx < workflowSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-6 left-[60%] w-[80%] h-[2px]"
-                    style={{
-                      background: `linear-gradient(to right, var(--accent), transparent)`,
-                      opacity: 0.3,
-                    }}
-                  />
+                {doc.avatar ? (
+                  <>
+                    {/* Avatar Foto */}
+                    <img
+                      src={doc.avatar}
+                      alt={doc.name}
+                      className="w-14 h-14 rounded-full object-cover mb-3"
+                      style={{ border: '2px solid var(--accent)' }}
+                    />
+                    {/* Nama */}
+                    <h3 className="font-bold text-sm mb-0.5" style={{ color: 'var(--text-heading)' }}>
+                      {doc.name}
+                    </h3>
+                    {/* Title */}
+                    <p className="text-xs font-semibold mb-1" style={{ color: 'var(--accent)' }}>
+                      {doc.title}
+                    </p>
+                    {/* Specialty + Exp */}
+                    <p className="text-xs mb-2" style={{ color: 'var(--text)' }}>
+                      🎓 {doc.specialty} &nbsp;·&nbsp; {doc.exp}
+                    </p>
+                    {/* Certifications */}
+                    <div className="space-y-1 text-left">
+                      {doc.certs.map((c) => (
+                        <div key={c} className="flex items-start gap-1.5">
+                          <Award className="w-3 h-3 flex-shrink-0 mt-0.5" style={{ color: 'var(--warning)' }} />
+                          <p className="text-[10px] leading-snug" style={{ color: 'var(--text)' }}>
+                            {c}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  /* Placeholder untuk dokter ke-4 */
+                  <div className="flex flex-col items-center justify-center min-h-[200px] opacity-40">
+                    <div
+                      className="w-14 h-14 rounded-full flex items-center justify-center mb-3 text-xl border-2 border-dashed"
+                      style={{
+                        color: 'var(--text)',
+                        borderColor: 'var(--border)',
+                        background: 'var(--bg-raised)',
+                      }}
+                    >
+                      ?
+                    </div>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--text)' }}>
+                      Segera Hadir
+                    </p>
+                    <p className="text-[10px] mt-1" style={{ color: 'var(--text)' }}>
+                      Dokter baru akan diumumkan
+                    </p>
+                  </div>
                 )}
-
-                <h3 className="font-bold text-sm mb-2" style={{ color: "var(--text-heading)" }}>
-                  {step.title}
-                </h3>
-                <p className="text-xs leading-relaxed" style={{ color: "var(--text)" }}>
-                  {step.desc}
-                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -1151,20 +1220,20 @@ const GuestLandingPage = () => {
             {[
               {
                 icon: Shield,
-                title: "Keamanan Data Terjamin",
-                desc: "Data pasien terenkripsi penuh sesuai standar privasi. Hanya staf berwenang yang dapat mengakses informasi sensitif.",
+                title: "              Suasana Premium & Nyaman",
+                desc: "Klinik dirancang dengan konsep mewah dan menenangkan — setiap kunjungan terasa seperti spa eksklusif.",
                 delay: 0.1,
               },
               {
-                icon: BellRing,
-                title: "Integrasi WhatsApp",
-                desc: "Reminder otomatis, notifikasi booking, dan follow-up pasien langsung via WhatsApp — tanpa biaya tambahan.",
+                icon: Award,
+                title: "Teknologi AI Terdepan",
+                desc: "Diagnosis kulit berbasis AI untuk hasil perawatan yang presisi, personal, dan terukur.",
                 delay: 0.3,
               },
               {
                 icon: Clock,
-                title: "Support Cepat & Mudah",
-                desc: "Tim support siap membantu via WhatsApp dan telepon. Setup awal dibantu gratis — tidak perlu staf IT khusus.",
+                title: "Booking Online Mudah",
+                desc: "Pilih treatment, pilih jadwal, konfirmasi — semua dari ponsel Anda. Sistem antrean digital tanpa ribet.",
                 delay: 0.5,
               },
             ].map(({ icon: Icon, title, desc, delay }) => (
@@ -1262,7 +1331,7 @@ const GuestLandingPage = () => {
               Pertanyaan Umum
             </h2>
             <p className="text-[var(--text)] text-sm font-normal max-w-lg mx-auto">
-              Temukan jawaban seputar CRM, layanan klinik, booking, dan perawatan di Skinova.
+              Temukan jawaban seputar layanan, booking, dan perawatan di Skinova.
             </p>
           </motion.div>
 
@@ -1275,28 +1344,28 @@ const GuestLandingPage = () => {
           >
             {[
               {
-                q: "Apa saja fitur utama Skinova CRM?",
-                a: "Skinova CRM memiliki 6 fitur utama: Manajemen Pasien (data & riwayat terpusat), Appointment Otomatis (booking online + deteksi bentrok), Reminder WhatsApp (pengingat jadwal & promo), Riwayat Treatment Digital (catatan lengkap), Dashboard Bisnis (grafik pendapatan & okupansi real-time), serta Membership & Poin Reward (program loyalitas terintegrasi).",
+                q: "Treatment apa saja yang tersedia di Skinova?",
+                a: "Kami menyediakan berbagai treatment estetika premium: Facial Glow untuk kulit cerah, Botox anti-aging untuk kerutan, Laser Rejuvenation untuk perbaikan tekstur kulit, Chemical Peeling untuk eksfoliasi mendalam, dan masih banyak lagi. Setiap treatment disesuaikan dengan kondisi kulit Anda setelah konsultasi dengan dokter.",
               },
               {
-                q: "Apakah data pasien aman di Skinova CRM?",
-                a: "Keamanan adalah prioritas utama kami. Seluruh data pasien disimpan dengan enkripsi penuh, akses berbasis peran (role-based), dan backup otomatis harian. Kami juga mematuhi standar perlindungan data pribadi yang berlaku di Indonesia.",
+                q: "Apakah konsultasi pertama dikenakan biaya?",
+                a: "Konsultasi pertama dengan dokter estetika kami GRATIS tanpa biaya. Dokter akan menganalisis kondisi kulit Anda, mendiskusikan tujuan perawatan, dan merekomendasikan treatment yang paling sesuai — semua tanpa tekanan.",
               },
               {
-                q: "Berapa biaya berlangganan Skinova CRM?",
-                a: "Kami menawarkan free trial 14 hari tanpa biaya dan tanpa kartu kredit. Setelah masa trial, tersedia paket bulanan dan tahunan dengan harga terjangkau — mulai dari Rp 299.000/bulan. Tim kami akan membantu Anda memilih paket yang sesuai dengan ukuran klinik.",
+                q: "Berapa lama durasi satu sesi treatment?",
+                a: "Durasi bervariasi tergantung jenis treatment: Facial Glow sekitar 60 menit, Botox 30-45 menit, Laser Rejuvenation 45-60 menit. Dokter akan menjelaskan estimasi waktu lengkap saat konsultasi.",
               },
               {
-                q: "Apakah bisa integrasi dengan WhatsApp existing?",
-                a: "Ya! Skinova CRM terintegrasi penuh dengan WhatsApp API. Reminder jadwal, notifikasi booking, dan follow-up pasien terkirim otomatis tanpa perlu instalasi tambahan. Cukup hubungkan nomor WhatsApp klinik Anda.",
+                q: "Apakah ada efek samping dari treatment?",
+                a: "Treatment kami menggunakan teknologi terbaru dengan risiko minimal. Efek samping umumnya ringan seperti kemerahan sementara yang akan hilang dalam beberapa jam. Dokter akan menjelaskan semua informasi lengkap sebelum treatment dimulai.",
               },
               {
                 q: "Bagaimana cara booking jadwal treatment?",
-                a: "Booking mudah melalui website kami setelah mendaftar akun: pilih treatment, pilih jadwal yang tersedia, dan konfirmasi. Anda juga bisa booking langsung melalui WhatsApp atau datang ke klinik.",
+                a: "Booking mudah melalui website kami: pilih treatment, pilih jadwal yang tersedia, dan konfirmasi. Anda juga bisa booking langsung melalui WhatsApp atau datang ke klinik. Sistem antrean digital kami memastikan Anda tidak perlu menunggu lama.",
               },
               {
                 q: "Apakah ada program loyalitas atau promo rutin?",
-                a: "Ya! Kami memiliki program poin reward yang bisa ditukar dengan treatment gratis, voucher ulang tahun spesial, dan promo bulanan untuk pasien setia. Daftar sekarang untuk mulai mengumpulkan poin.",
+                a: "Ya! Kami memiliki program poin reward yang bisa ditukar dengan treatment gratis, voucher ulang tahun spesial, dan promo bulanan untuk pasien setia. Pantau halaman Promo dan Poin Reward di portal pasien untuk info terbaru.",
               },
             ].map((faq, idx) => (
               <motion.div
@@ -1368,12 +1437,11 @@ const GuestLandingPage = () => {
             <Sparkles className="w-8 h-8 text-[var(--accent)] animate-pulse" />
           </motion.div>
 
-          <h2 className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)] leading-tight">
-            Kelola Klinik Anda dengan Skinova CRM
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-black mb-4 text-[var(--text-heading)] leading-tight">              Mulai Perjalanan Estetika Anda
+            </h2>
 
           <p className="text-[var(--text)] text-sm sm:text-base mb-8 max-w-md mx-auto font-normal leading-relaxed">
-            Coba gratis 14 hari tanpa kartu kredit. Tim kami siap membantu setup awal dan migrasi data klinik Anda.
+            Konsultasi pertama dengan dokter tersertifikasi gratis. Sistem antrean digital kami mempermudah booking tanpa ribet.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1389,19 +1457,19 @@ const GuestLandingPage = () => {
               style={{ background: "var(--accent)", borderColor: "var(--accent)" }}
               aria-label="Coba Skinova CRM gratis 14 hari"
             >
-              Coba Gratis 14 Hari
+              Booking Sekarang — Gratis
               <ChevronRight className="w-5 h-5" />
             </motion.button>
 
             <motion.button
-              onClick={() => navigate("/auth/login")}
+              onClick={() => navigate("/portal/tracking")}
               whileHover={{ scale: 1.05, y: -4 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center gap-2 px-8 py-5 rounded-2xl font-bold text-base bg-white/60 dark:bg-white/5 border border-black/5 dark:border-white/10 backdrop-blur-md cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               style={{ color: "var(--text-strong)" }}
-              aria-label="Masuk ke portal pasien"
+              aria-label="Cek antrean"
             >
-              Masuk ke Portal Pasien
+              Cek Antrean Saya
             </motion.button>
           </div>
         </div>

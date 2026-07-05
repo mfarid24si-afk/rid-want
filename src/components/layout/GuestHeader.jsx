@@ -1,18 +1,17 @@
 import { useState } from 'react'
 import { Search, Bell, ChevronDown, LogOut, User, Settings, Menu, Sun, Moon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../../context/ThemeContext'
-import RoleSwitcher from './RoleSwitcher'
+import { useAuth } from '../../context/AuthContext'
 import { useRole } from '../../context/RoleContext'
+import RoleSwitcher from './RoleSwitcher'
 
 const Header = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme()
   const { role } = useRole()
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const isGuest = role === 'guest'
-  const [showProfileMenu, setShowProfileMenu] = useState(false)
-  const [showNotifications, setShowNotifications] = useState(false)
-
-const Header = ({ onMenuClick }) => {
-  const { theme, toggleTheme } = useTheme()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
 
@@ -21,6 +20,11 @@ const Header = ({ onMenuClick }) => {
     { id: 2, title: 'Pembayaran diterima', message: 'Invoice #INV-001 telah dibayar', time: '1 jam lalu', unread: true },
     { id: 3, title: 'Stok menipis', message: 'Serum Vitamin C tersisa 5 unit', time: '2 jam lalu', unread: false },
   ]
+
+  const handleLogout = () => {
+    logout()
+    navigate('/', { replace: true })
+  }
 
   const dropdownStyle = {
     background: 'var(--bg-raised)',
@@ -61,8 +65,8 @@ const Header = ({ onMenuClick }) => {
 
       {/* Right Section */}
       <div className="flex items-center gap-2 md:gap-3 ml-auto">
-        {/* Role Switcher */}
-        !isGuest && <RoleSwitcher />
+        {/* Role Switcher — hanya untuk admin */}
+        {!isGuest && <RoleSwitcher />}
 
         {/* Theme Toggle */}
         <button
@@ -132,9 +136,9 @@ const Header = ({ onMenuClick }) => {
           >
             <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold"
               style={{ background: 'var(--accent)' }}>
-              A
+              {user?.name?.charAt(0)?.toUpperCase() || 'A'}
             </div>
-            <span className="text-sm font-medium hidden md:block" style={{ color: 'var(--text-strong)' }}>Admin</span>
+            <span className="text-sm font-medium hidden md:block" style={{ color: 'var(--text-strong)' }}>{user?.name || 'Member'}</span>
             <ChevronDown className="w-3 h-3" style={{ color: 'var(--text)' }} />
           </button>
 
@@ -156,6 +160,7 @@ const Header = ({ onMenuClick }) => {
               ))}
               <hr style={{ borderColor: 'var(--border)', margin: '4px 0' }} />
               <button
+                onClick={handleLogout}
                 className="flex items-center gap-3 px-4 py-2 w-full text-sm transition-colors"
                 style={{ color: 'var(--danger)' }}
                 onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-soft)'}
@@ -176,6 +181,5 @@ const Header = ({ onMenuClick }) => {
       )}
     </header>
   )
-}
 }
 export default Header

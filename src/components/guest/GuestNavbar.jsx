@@ -16,8 +16,10 @@ import {
   Ticket,
   History,
   LayoutDashboard,
+  LogOut,
 } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../context/AuthContext'
 
 // Navigasi murni pasien — zero istilah CRM/bisnis internal
 const navItems = [
@@ -39,9 +41,17 @@ const accountItems = [
 
 const GuestNavbar = () => {
   const { theme, toggleTheme } = useTheme()
+  const { logout } = useAuth()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/', { replace: true })
+    setAccountOpen(false)
+    setMobileOpen(false)
+  }
 
   const activeStyle = { color: 'var(--accent)', fontWeight: '600' }
   const inactiveStyle = { color: 'var(--text)' }
@@ -161,6 +171,17 @@ const GuestNavbar = () => {
                         {item.label}
                       </NavLink>
                     ))}
+                    <hr style={{ borderColor: 'var(--border)', margin: '4px 8px' }} />
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 px-4 py-2.5 w-full text-sm transition-colors"
+                      style={{ color: 'var(--danger)' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-soft)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Keluar
+                    </button>
                   </div>
                 </>
               )}
@@ -227,6 +248,16 @@ const GuestNavbar = () => {
                     {item.label}
                   </NavLink>
                 ))}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium transition-all"
+                  style={{ color: 'var(--danger)' }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--danger-soft)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Keluar
+                </button>
               </div>
             </nav>
           </div>

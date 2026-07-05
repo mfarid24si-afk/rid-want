@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+import { useAuth } from './AuthContext'
 import { leadsData } from '../data/mockLeads'
 import { customersData } from '../data/mockCustomers'
 
@@ -6,23 +7,6 @@ const RoleContext = createContext(null)
 
 export const PERMISSIONS = {
   admin: [
-    'view:dashboard',
-    'view:analytics',
-    'view:customers',
-    'view:customers:edit',
-    'view:customers:delete',
-    'view:orders',
-    'view:leads',
-    'view:leads:edit',
-    'view:collaboration',
-    'view:settings',
-    'view:marketing',
-    'view:users',
-    'view:users:create',
-    'view:users:edit',
-    'view:users:delete',
-  ],
-  'super admin': [
     'view:dashboard',
     'view:analytics',
     'view:customers',
@@ -60,12 +44,33 @@ export const PERMISSIONS = {
 }
 
 export function RoleProvider({ children }) {
-  const [role, setRole] = useState('admin')
+  // Role berasal dari database (tabel public.users) via AuthContext
+  const { user, loading: authLoading } = useAuth()
+  const [role, setRole] = useState('guest')
+  const [synced, setSynced] = useState(false) // apakah role sudah sinkron dari database
+
+  // Sinkronisasi role dari AuthContext ke RoleContext
+  useEffect(() => {
+    if (!authLoading && user?.role) {
+      // Role dari database: 'admin' atau 'member'
+      setRole(user.role)
+      setSynced(true)
+    } else if (!authLoading && !user) {
+      // Tidak login → guest (confirmed)
+      setRole('guest')
+      setSynced(true)
+    } else if (!authLoading && user && !user.role) {
+      // User ada tapi role undefined → fallback ke member
+      setRole('member')
+      setSynced(true)
+    }
+  }, [authLoading, user])
 
   // SINGLE SOURCE OF TRUTH — dibaca Admin & Guest dari sumber yang sama
   const [leads, setLeads] = useState(leadsData)
   const [customers, setCustomers] = useState(customersData)
 
+  // Untuk development/testing: toggle role manual
   const switchRole = (newRole) => setRole(newRole)
   const toggleRole = () => setRole((r) => (r === 'admin' ? 'guest' : 'admin'))
 
@@ -74,7 +79,7 @@ export function RoleProvider({ children }) {
 
   return (
     <RoleContext.Provider
-      value={{ role, switchRole, toggleRole, can, leads, setLeads, customers, setCustomers }}
+      value={{ role, synced, switchRole, toggleRole, can, leads, setLeads, customers, setCustomers }}
     >
       {children}
     </RoleContext.Provider>

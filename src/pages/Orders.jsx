@@ -3,6 +3,7 @@ import { Search, Filter, MoreVertical, Eye, FileText, Download, Calendar, Credit
 import PageHeader from '../components/layout/PageHeader'
 import { useTheme } from '../context/ThemeContext'
 import Badge from '../components/ui/Badge'
+import OrderDetailDrawer from '../components/OrderDetailDrawer'
 
 // Mock Data
 const ordersData = [
@@ -113,6 +114,7 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [showActionMenu, setShowActionMenu] = useState(null)
+  const [selectedOrder, setSelectedOrder] = useState(null)
 
   const filteredOrders = ordersData.filter(order => {
     const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -347,6 +349,7 @@ const Orders = () => {
                           style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border)' }}
                         >
                           <button 
+                            onClick={() => { setSelectedOrder(order); setShowActionMenu(null) }}
                             className="flex items-center gap-2 px-4 py-2 w-full transition-colors text-left cursor-pointer"
                             style={{ color: 'var(--text-strong)' }}
                             onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-raised)' }}
@@ -433,6 +436,13 @@ const Orders = () => {
           onClick={() => setShowActionMenu(null)}
         />
       )}
+
+      {/* Order Detail Drawer */}
+      <OrderDetailDrawer
+        order={selectedOrder}
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      />
     </div>
   )
 }

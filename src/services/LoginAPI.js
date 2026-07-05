@@ -1,44 +1,47 @@
-import axios from 'axios'
+import { supabase } from './supabase'
 
-const API_URL = "https://uomlornefemmjqeyxvbx.supabase.co/rest/v1/login"
-const API_KEY = "sb_publishable_VkzKqlUf00cshgBchFndgA_ChUQCV1X"
-
-const headers = {
-    apikey: API_KEY,
-    Authorization: `Bearer ${API_KEY}`,
-    "Content-Type": "application/json",
-}
-
-const supabaseHeaders = {
-    apikey: API_KEY,
-    Authorization: `Bearer ${API_KEY}`,
-    "Content-Type": "application/json",
-    Prefer: "return=representation",
-}
+// LoginAPI sekarang menggunakan Supabase client
+// Tetap kompatibel dengan kode lama yang mengimpornya
 
 export const loginAPI = {
-    async fetchLogin(queryFilter = "") {
-        const response = await axios.get(`${API_URL}${queryFilter}`, { headers: supabaseHeaders })
-        return response.data
-    },
-
-    async createLogin(data) {
-        const response = await axios.post(API_URL, data, { headers: supabaseHeaders })
-        return response.data
-    },
-
-    async updateLogin(id, data) {
-        const response = await axios.patch(`${API_URL}?id=eq.${id}`, data, { headers: supabaseHeaders })
-        return response.data
-    },
-
-    async deleteLogin(id) {
-        const response = await axios.delete(`${API_URL}?id=eq.${id}`, { headers: supabaseHeaders })
-        return response.data
-    },
-
-    async getLogin(id) {
-        const response = await axios.get(`${API_URL}?id=eq.${id}`, { headers: supabaseHeaders })
-        return response.data
+  async fetchLogin(queryFilter = '') {
+    let query = supabase.from('users').select('*')
+    if (queryFilter) {
+      const match = queryFilter.match(/^\?(.+)=eq\.(.+)$/)
+      if (match) {
+        const column = match[1]
+        const value = decodeURIComponent(match[2])
+        query = query.eq(column, value)
+      }
     }
+    const { data, error } = await query
+    if (error) throw error
+    return data
+  },
+
+  async createLogin(data) {
+    const { data: newUser, error } = await supabase.from('users').insert([data]).select()
+    if (error) throw error
+    return newUser
+  },
+
+  async updateLogin(id, data) {
+    const { data: updated, error } = await supabase.from('users').update(data).eq('id', id).select()
+    if (error) throw error
+    return updated
+  },
+
+  async deleteLogin(id) {
+    const { error } = await supabase.from('users').delete().eq('id', id)
+    if (error) throw error
+    return true
+  },
+
+  async getLogin(id) {
+    const { data, error } = await supabase.from('users').select('*').eq('id', id)
+    if (error) throw error
+    return data
+  },
 }
+
+export { supabase }

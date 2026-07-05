@@ -1,95 +1,189 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { loginAPI } from '../services/LoginAPI'
+import { supabase } from '../services/supabase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)       // user profile dari tabel public.users
+  const [authUser, setAuthUser] = useState(null) // user dari Supabase Auth
   const [loading, setLoading] = useState(true)
 
-  // Cek session tersimpan saat mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem('auth_user')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        if (parsed && parsed.id && parsed.email) {
-          setUser(parsed)
-        } else {
-          localStorage.removeItem('auth_user')
-        }
-      }
-    } catch {
-      localStorage.removeItem('auth_user')
-    } finally {
-      setLoading(false)
+  // Buat profile user di public.users jika belum ada
+  const ensureProfile = useCallback(async (authUserData) => {
+    if (!authUserData?.id) return null
+
+    // Coba ambil profil yang sudah ada
+    const { data: existing } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', authUserData.id)
+      .maybeSingle()
+
+    if (existing) return existing // Profil sudah ada
+
+    // Profil belum ada — buat baru
+    const meta = authUserData.user_metadata || {}
+    const newProfile = {
+      id: authUserData.id,
+      name: meta.name || authUserData.email?.split('@')[0] || 'User',
+      email: authUserData.email || '',
+      role: meta.role || 'member',
+      points: 0,
     }
+
+    const { data: created, error } = await supabase
+      .from('users')
+      .insert([newProfile])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Gagal membuat profil:', error)
+      // Fallback: coba sekali lagi (mungkin race condition dengan trigger)
+      const { data: retry } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUserData.id)
+        .maybeSingle()
+      return retry || null
+    }
+
+    return created
   }, [])
+
+  // Fetch atau buat user profile dari tabel public.users
+  const fetchProfile = useCallback(async (userId) => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (error) {
+      console.error('Gagal memuat profil:', error)
+      return null
+    }
+    return data
+  }, [])
+
+  // Setup listener auth state
+  useEffect(() => {
+    let cancelled = false
+
+    // Dapatkan session saat ini
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled) return
+      if (session?.user) {
+        setAuthUser(session.user)
+        let profile = await fetchProfile(session.user.id)
+        if (!profile) {
+          profile = await ensureProfile(session.user)
+        }
+        setUser(profile)
+      }
+      if (!cancelled) setLoading(false)
+    })
+
+    // Listen for auth state changes — hanya proses event yang bermakna
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (cancelled) return
+
+        // Abaikan event TOKEN_REFRESHED dan USER_UPDATED
+        // agar tidak me-reset state user setiap token di-refresh
+        if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          return
+        }
+
+        if (session?.user) {
+          setAuthUser(session.user)
+          let profile = await fetchProfile(session.user.id)
+          if (!profile) {
+            profile = await ensureProfile(session.user)
+          }
+          setUser(profile)
+        } else {
+          setAuthUser(null)
+          setUser(null)
+        }
+        // Jangan set loading=false di sini — loading hanya dari getSession
+      }
+    )
+
+    return () => {
+      cancelled = true
+      subscription?.unsubscribe()
+    }
+  }, [fetchProfile, ensureProfile])
 
   const login = useCallback(async (email, password) => {
-    // Fetch user by email — password divalidasi di client
-    const filter = `?email=eq.${encodeURIComponent(email)}`
-    const res = await loginAPI.fetchLogin(filter)
-    const users = Array.isArray(res) ? res : (res?.data || [])
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-    if (users.length === 0) {
-      throw new Error('Email tidak terdaftar!')
+    if (error) {
+      if (error.message === 'Invalid login credentials') {
+        throw new Error('Email atau password salah!')
+      }
+      throw new Error(error.message || 'Gagal masuk')
     }
 
-    const matched = users.find((u) => u.password === password)
-    if (!matched) {
-      throw new Error('Password salah!')
-    }
-
-    // Simpan session (tanpa password)
-    const { password: _, ...safeUser } = matched
-    setUser(safeUser)
-    localStorage.setItem('auth_user', JSON.stringify(safeUser))
-    return safeUser
+    // Profil akan ter-load & auto-create via onAuthStateChange
+    return data.user
   }, [])
 
-  const register = useCallback(async (data) => {
-    const res = await loginAPI.createLogin(data)
-    const newUser = res?.data || res
-    const userData = Array.isArray(newUser) ? newUser[0] : newUser
-    if (userData && userData.id) {
-      const { password: _, ...safeUser } = userData
-      setUser(safeUser)
-      localStorage.setItem('auth_user', JSON.stringify(safeUser))
-      return safeUser
+  const register = useCallback(async ({ name, email, password }) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          role: 'member',
+        },
+      },
+    })
+
+    if (error) {
+      throw new Error(error.message || 'Gagal mendaftar')
     }
-    throw new Error('Gagal mendaftarkan akun')
+
+    // Profil akan di-create otomatis via onAuthStateChange + ensureProfile
+    return data.user
   }, [])
 
-  const logout = useCallback(() => {
-    setUser(null)
-    localStorage.removeItem('auth_user')
+  const logout = useCallback(async () => {
+    const { error } = await supabase.auth.signOut()
+    if (error) console.error('Gagal logout:', error)
+    // State akan di-reset otomatis via onAuthStateChange
   }, [])
 
   const deleteAccount = useCallback(async () => {
     if (!user?.id) throw new Error('Tidak ada sesi aktif')
-    await loginAPI.deleteLogin(user.id)
-    logout()
+    // Hapus dari tabel public.users
+    const { error: deleteError } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', user.id)
+    if (deleteError) console.error('Gagal hapus profil:', deleteError)
+    // Logout — state akan di-reset via onAuthStateChange
+    await logout()
   }, [user, logout])
 
   const refreshUser = useCallback(async () => {
-    if (!user?.id) return
-    const filter = `?id=eq.${user.id}`
-    const res = await loginAPI.fetchLogin(filter)
-    const users = Array.isArray(res) ? res : (res?.data || [])
-    if (users.length > 0) {
-      const { password: _, ...safeUser } = users[0]
-      setUser(safeUser)
-      localStorage.setItem('auth_user', JSON.stringify(safeUser))
-    }
-  }, [user?.id])
+    if (!authUser?.id) return
+    const profile = await fetchProfile(authUser.id)
+    if (profile) setUser(profile)
+  }, [authUser?.id, fetchProfile])
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        user,           // Dari tabel public.users (name, email, role, points, ...)
+        authUser,       // Dari Supabase Auth (id, email, ...)
         loading,
-        isAuthenticated: !!user,
+        isAuthenticated: !!authUser,
         login,
         register,
         logout,

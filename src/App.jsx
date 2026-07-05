@@ -6,7 +6,9 @@ import AuthLayout from './layouts/AuthLayout'
 import Loading from './components/ui/Loading'
 import FABRoleSwitcher from './components/guest/FABRoleSwitcher'
 import { AuthProvider } from './context/AuthContext'
+import { RoleProvider } from './context/RoleContext'
 import { useRole } from './context/RoleContext'
+import { useAuth } from './context/AuthContext'
 
 // Mengimpor 2 komponen header baru sesuai instruksi kamu
 import AdminHeader from './components/layout/AdminHeader'
@@ -39,16 +41,43 @@ const VoucherPage        = React.lazy(() => import('./pages/guest/VoucherPage'))
 const ServiceHistoryPage = React.lazy(() => import('./pages/guest/ServiceHistoryPage'))
 const CustomerDashboard  = React.lazy(() => import('./pages/guest/CustomerDashboard'))
 
+// ── Loading screen untuk auth ──
+function AuthLoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-base)' }}>
+      <div className="text-center">
+        <div className="w-12 h-12 rounded-2xl mx-auto mb-4 animate-pulse" style={{ background: 'var(--accent)' }} />
+        <p className="text-sm" style={{ color: 'var(--text)' }}>Memuat...</p>
+      </div>
+    </div>
+  )
+}
+
 // ── Root router: memilih layout berdasarkan role ─────────────
 function AppRoutes() {
-  const { role } = useRole()
+  const { role, synced } = useRole()
+  const { loading: authLoading, isAuthenticated } = useAuth()
   const isGuest = role === 'guest'
+  const isMember = role === 'member'
+  const isAdmin = role === 'admin'
+
+  // Tampilkan loading screen saat auth masih diproses
+  // ATAU role belum sinkron dari database (mencegah redirect ke halaman salah)
+  if (authLoading || !synced) {
+    return <AuthLoadingScreen />
+  }
+
+  // Safety: jika user sudah login tapi role masih 'guest'
+  // (belum sync dari database), tunggu sampai role benar
+  if (isAuthenticated && role === 'guest') {
+    return <AuthLoadingScreen />
+  }
 
   return (
     <>
       <Suspense fallback={<Loading />}>
         <Routes>
-          {/* Guest Landing Page — sebelum login, visible to ALL */}
+          {/* Guest Landing Page — visible to ALL */}
           <Route path="/" element={<GuestLandingPage />} />
 
           {/* Auth — independen dari role */}
@@ -58,9 +87,8 @@ function AppRoutes() {
             <Route path="/auth/forgot"   element={<Forgot />} />
           </Route>
 
-          {/* ── ADMIN AREA ── */}
-          {!isGuest && (
-            // Mengirimkan AdminHeader sebagai properti agar MainLayout merender header yang tepat
+          {/* ── ADMIN AREA (hanya untuk admin) ── */}
+          {isAdmin && (
             <Route element={<MainLayout header={<AdminHeader />} />}>
               <Route path="/dashboard"                 element={<Dashboard />} />
               <Route path="/dashboard/orders"          element={<Orders />} />
@@ -75,9 +103,8 @@ function AppRoutes() {
             </Route>
           )}
 
-          {/* ── GUEST / PATIENT PORTAL ── */}
-          {isGuest && (
-            // Mengirimkan GuestHeader sebagai properti agar GuestLayout merender header yang tepat
+          {/* ── MEMBER / PATIENT PORTAL (untuk member & guest) ── */}
+          {(isGuest || isMember) && (
             <Route element={<GuestLayout header={<GuestHeader />} />}>
               <Route path="/portal"         element={<LandingPage />} />
               <Route path="/portal/about"   element={<AboutPage />} />
@@ -92,17 +119,17 @@ function AppRoutes() {
             </Route>
           )}
 
-          {/* ── Role-based redirects ── */}
+          {/* ── Redirects berdasarkan role ── */}
           <Route
             path="/dashboard"
             element={
-              isGuest || role === 'member' ? <Navigate to="/portal" replace /> : null
+              !isAdmin ? <Navigate to="/portal" replace /> : null
             }
           />
           <Route
             path="/portal"
             element={
-              !isGuest && role !== 'member' ? <Navigate to="/dashboard" replace /> : null
+              isAdmin ? <Navigate to="/dashboard" replace /> : null
             }
           />
 
@@ -110,7 +137,7 @@ function AppRoutes() {
         </Routes>
       </Suspense>
 
-      {/* FAB Role Switcher — melayang di luar semua layout, selalu terlihat */}
+      {/* FAB Role Switcher — untuk development/testing */}
       <FABRoleSwitcher />
     </>
   )
@@ -120,7 +147,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <RoleProvider>   {/* RoleProvider di sini, di dalam AuthProvider */}
+          <AppRoutes />
+        </RoleProvider>
       </AuthProvider>
     </BrowserRouter>
   )

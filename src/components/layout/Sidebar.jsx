@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Users,
@@ -16,6 +16,7 @@ import {
   ClipboardPen,
 } from 'lucide-react'
 import { useRole } from '../../context/RoleContext'
+import { useAuth } from '../../context/AuthContext'
 
 // ─────────────────────────────────────────────────────────────
 // MENU ADMIN — Penuh akses, istilah teknis bisnis
@@ -97,6 +98,8 @@ const guestMenuItems = [
 // ─────────────────────────────────────────────────────────────
 const Sidebar = ({ isOpen, onClose }) => {
   const { can, role } = useRole()
+  const { logout } = useAuth()
+  const navigate = useNavigate()
   const isGuest = role === 'guest'
 
   // Pilih menu set berdasarkan role — tidak ada overlap
@@ -280,6 +283,11 @@ const Sidebar = ({ isOpen, onClose }) => {
       {/* ── Tombol Keluar ── */}
       <div className="p-3 flex-shrink-0" style={{ borderTop: '1px solid var(--border)' }}>
         <button
+          onClick={() => {
+            logout()
+            navigate('/', { replace: true })
+            onClose()
+          }}
           className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl text-sm font-medium transition-all"
           style={{ color: 'var(--text)' }}
           onMouseEnter={(e) => {

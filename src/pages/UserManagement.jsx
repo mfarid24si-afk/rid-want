@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Search, Plus, Pencil, Trash2, AlertTriangle } from 'lucide-react'
-import { loginAPI } from '../services/LoginAPI'
+import { Search, Plus, Pencil, Trash2, AlertTriangle, Shield, UserCircle } from 'lucide-react'
+import { loginAPI, supabase } from '../services/LoginAPI'
 import Modal from '../components/ui/Modal'
 import Button from '../components/ui/Button'
 import InputField from '../components/ui/InputField'
@@ -16,7 +16,7 @@ const UserManagement = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState('create')
   const [selectedUser, setSelectedUser] = useState(null)
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' })
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'member' })
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState('')
 
@@ -42,7 +42,7 @@ const UserManagement = () => {
   const openCreate = () => {
     setModalMode('create')
     setSelectedUser(null)
-    setFormData({ name: '', email: '', password: '' })
+    setFormData({ name: '', email: '', password: '', role: 'member' })
     setFormError('')
     setModalOpen(true)
   }
@@ -50,7 +50,7 @@ const UserManagement = () => {
   const openEdit = (u) => {
     setModalMode('edit')
     setSelectedUser(u)
-    setFormData({ name: u.name || '', email: u.email || '', password: '' })
+    setFormData({ name: u.name || '', email: u.email || '', password: '', role: u.role || 'member' })
     setFormError('')
     setModalOpen(true)
   }
@@ -67,14 +67,40 @@ const UserManagement = () => {
           setSaving(false)
           return
         }
-        await loginAPI.createLogin({
-          name: formData.name,
+        // Daftar via Supabase Auth dulu
+        const { data: authData, error: authError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+              role: formData.role,
+            },
+          },
         })
+        if (authError) throw new Error(authError.message)
+        // Upsert: insert profile ke public.users (kalau sudah ada, update)
+        // .update() tidak akan bekerja kalau record belum ada
+        if (authData?.user?.id) {
+          const { error: upsertError } = await supabase
+            .from('users')
+            .upsert({
+              id: authData.user.id,
+              name: formData.name,
+              email: formData.email,
+              role: formData.role,
+              points: 0,
+            }, { onConflict: 'id' })
+            .select()
+          if (upsertError) console.error('Gagal upsert profile:', upsertError)
+        }
       } else {
-        const updateData = { name: formData.name, email: formData.email }
-        if (formData.password) updateData.password = formData.password
+        // Edit: update name, email, role di tabel users
+        const updateData = {
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+        }
         await loginAPI.updateLogin(selectedUser.id, updateData)
       }
       setModalOpen(false)
@@ -153,6 +179,7 @@ const UserManagement = () => {
                 <tr style={{ borderBottom: '1px solid var(--border)' }}>
                   <th className="text-left px-4 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text)' }}>Nama</th>
                   <th className="text-left px-4 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text)' }}>Email</th>
+                  <th className="text-center px-4 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text)' }}>Role</th>
                   <th className="text-right px-4 py-3 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--text)' }}>Aksi</th>
                 </tr>
               </thead>
@@ -169,6 +196,54 @@ const UserManagement = () => {
                       </div>
                     </td>
                     <td className="px-4 py-3" style={{ color: 'var(--text)' }}>{u.email}</td>
+                    <td className="px-4 py-3 text-center">
+                      {u.id === currentUser?.id ? (
+                        // Akun sendiri — tidak bisa diubah role-nya
+                        <>
+                          <span
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
+                            style={{
+                              background: 'var(--accent-soft)',
+                              color: 'var(--accent)',
+                            }}
+                          >
+                            <Shield className="w-3 h-3" /> Admin
+                          </span>
+                          <span className="block text-[10px] mt-0.5 font-medium" style={{ color: 'var(--text)' }}>
+                            (Anda)
+                          </span>
+                        </>
+                      ) : (
+                        // User lain — bisa ganti role langsung dari dropdown
+                        <select
+                          value={u.role || 'member'}
+                          onChange={async (e) => {
+                            const newRole = e.target.value
+                            try {
+                              await supabase
+                                .from('users')
+                                .update({ role: newRole })
+                                .eq('id', u.id)
+                              // Refresh data
+                              const res = await loginAPI.fetchLogin()
+                              const data = Array.isArray(res) ? res : (res?.data || [])
+                              setUsers(data)
+                            } catch (err) {
+                              console.error('Gagal update role:', err)
+                            }
+                          }}
+                          className="px-2.5 py-1.5 rounded-xl text-xs font-bold outline-none cursor-pointer transition-all"
+                          style={{
+                            background: u.role === 'admin' ? 'var(--accent-soft)' : 'var(--info-soft)',
+                            color: u.role === 'admin' ? 'var(--accent)' : 'var(--info)',
+                            border: `1px solid ${u.role === 'admin' ? 'var(--accent)' : 'var(--info)'}`,
+                          }}
+                        >
+                          <option value="member" style={{ background: 'var(--bg-surface)', color: 'var(--text-strong)' }}>👤 Member</option>
+                          <option value="admin" style={{ background: 'var(--bg-surface)', color: 'var(--text-strong)' }}>🛡️ Admin</option>
+                        </select>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
@@ -213,6 +288,36 @@ const UserManagement = () => {
             onChange={(e) => setFormData(p => ({ ...p, email: e.target.value }))} required />
           <InputField label={modalMode === 'create' ? 'Password' : 'Password (kosongkan jika tidak diubah)'} id="upass" type="password" placeholder="Minimal 3 karakter" value={formData.password}
             onChange={(e) => setFormData(p => ({ ...p, password: e.target.value }))} required={modalMode === 'create'} />
+
+          {/* Role Selector */}
+          <div>
+            <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-strong)' }}>
+              Role / Hak Akses
+            </label>
+            <div className="flex gap-3">
+              {[
+                { value: 'member', label: 'Member', icon: UserCircle, desc: 'Akses portal pasien' },
+                { value: 'admin', label: 'Admin', icon: Shield, desc: 'Akses penuh dashboard' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setFormData(p => ({ ...p, role: opt.value }))}
+                  className="flex-1 flex flex-col items-center gap-1.5 p-4 rounded-xl text-xs font-semibold transition-all cursor-pointer"
+                  style={{
+                    background: formData.role === opt.value ? 'var(--accent-soft)' : 'var(--bg-raised)',
+                    border: `1px solid ${formData.role === opt.value ? 'var(--accent)' : 'var(--border)'}`,
+                    color: formData.role === opt.value ? 'var(--accent)' : 'var(--text)',
+                  }}
+                >
+                  <opt.icon className="w-5 h-5" />
+                  {opt.label}
+                  <span className="text-[10px] font-normal opacity-70">{opt.desc}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="flex gap-3 pt-2">
             <Button variant="secondary" type="button" onClick={() => setModalOpen(false)} className="flex-1">Batal</Button>
             <Button variant="primary" type="submit" disabled={saving} className="flex-1">

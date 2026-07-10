@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { DollarSign, Users, Calendar, Package, TrendingUp } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -10,6 +11,9 @@ import Avatar from '../components/ui/Avatar'
 import Button from '../components/ui/Button'
 import { statsData, revenueData, recentTransactions, upcomingAppointments } from '../data/mockDashboard'
 import { useRole } from '../context/RoleContext'
+import { appointmentService } from '../services/appointmentService'
+import { paymentService } from '../services/paymentService'
+import { supabase } from '../services/supabase'
 
 const iconMap = { revenue: DollarSign, appointments: Calendar, newCustomers: Users, products: Package }
 
@@ -18,6 +22,76 @@ const formatCurrency = (val) =>
 
 const Dashboard = () => {
   const { can } = useRole()
+  const [realStats, setRealStats] = useState(null)
+  const [realAppointments, setRealAppointments] = useState([])
+  const [realTransactions, setRealTransactions] = useState([])
+  const [realRevenue, setRealRevenue] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [appointments, payments, { count: userCount }] = await Promise.all([
+          appointmentService.getAll(),
+          paymentService.getAll(),
+          supabase.from('users').select('*', { count: 'exact', head: true }),
+        ])
+
+        // Stats
+        const totalRevenue = (payments || []).filter(p => p.status === 'paid').reduce((sum, p) => sum + (p.amount || 0), 0)
+        const todayAppts = (appointments || []).filter(a => {
+          const today = new Date().toISOString().split('T')[0]
+          return a.appointment_date === today
+        })
+        const newUsers = userCount || 0
+
+        setRealStats({
+          revenue: `Rp ${totalRevenue.toLocaleString('id-ID')}`,
+          appointments: String(appointments?.length || 0),
+          newCustomers: String(newUsers),
+        })
+
+        // Today's appointments
+        setRealAppointments((todayAppts || []).slice(0, 4).map(a => ({
+          time: a.appointment_time?.slice(0, 5) || '-',
+          customer: a.guest_name || a.users?.name || 'Pasien',
+          service: a.treatments?.name || 'Treatment',
+          avatar: (a.guest_name || 'P').charAt(0),
+        })))
+
+        // Recent transactions
+        setRealTransactions((payments || []).slice(0, 5).map(p => ({
+          id: p.id?.slice(0, 8).toUpperCase() || 'INV',
+          customer: p.appointments?.guest_name || 'Pasien',
+          service: p.appointments?.treatments?.name || 'Treatment',
+          amount: `Rp ${(p.amount || 0).toLocaleString('id-ID')}`,
+          status: p.status === 'paid' ? 'success' : p.status === 'pending' ? 'pending' : p.status === 'cancelled' ? 'failed' : 'pending',
+          time: new Date(p.created_at).toLocaleDateString('id-ID'),
+        })))
+
+        // Monthly revenue (from all payments grouped by month)
+        const monthlyMap = {}
+        ;(payments || []).filter(p => p.status === 'paid').forEach(p => {
+          const month = new Date(p.paid_at || p.created_at).toLocaleDateString('id-ID', { month: 'short' })
+          monthlyMap[month] = (monthlyMap[month] || 0) + (p.amount || 0)
+        })
+        setRealRevenue(Object.entries(monthlyMap).map(([name, revenue]) => ({ name, revenue })))
+      } catch (err) {
+        console.error('Gagal memuat data dashboard:', err)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const displayStats = realStats ? [
+    { title: 'Total Pendapatan', value: realStats.revenue, change: '-', isPositive: true, key: 'revenue' },
+    { title: 'Total Janji Temu', value: realStats.appointments, change: '-', isPositive: true, key: 'appointments' },
+    { title: 'Pelanggan Terdaftar', value: realStats.newCustomers, change: '-', isPositive: true, key: 'newCustomers' },
+    { title: 'Aktif Hari Ini', value: String(realAppointments.length), change: '-', isPositive: true, key: 'products' },
+  ] : statsData
+
+  const displayAppointments = realAppointments.length > 0 ? realAppointments : upcomingAppointments
+  const displayTransactions = realTransactions.length > 0 ? realTransactions : recentTransactions
+  const displayRevenue = realRevenue.length > 0 ? realRevenue : revenueData
 
   return (
     <div>
@@ -29,7 +103,7 @@ const Dashboard = () => {
       {/* Stat Cards — hanya Admin */}
       {can('view:dashboard') && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {statsData.map((stat) => (
+          {displayStats.map((stat) => (
             <StatCard
               key={stat.key}
               title={stat.title}
@@ -58,7 +132,7 @@ const Dashboard = () => {
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData}>
+                <AreaChart data={displayRevenue}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%"  stopColor="var(--accent)" stopOpacity={0.25} />
@@ -91,7 +165,7 @@ const Dashboard = () => {
               Janji Temu Hari Ini
             </h3>
             <div className="space-y-3">
-              {upcomingAppointments.map((apt, i) => (
+              {displayAppointments.map((apt, i) => (
                 <div key={i} className="flex items-center gap-3 py-2"
                   style={{ borderBottom: '1px solid var(--border)' }}>
                   <Avatar initials={apt.avatar} size="sm" index={i} />
@@ -131,7 +205,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentTransactions.map((tx) => (
+                {displayTransactions.map((tx) => (
                   <tr key={tx.id} style={{ borderBottom: '1px solid var(--border)' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-raised)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}

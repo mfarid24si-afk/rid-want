@@ -1,16 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { CalendarPlus, CheckCircle2, Shield, Clock } from 'lucide-react'
 import InputField from '../../components/ui/InputField'
 import Button from '../../components/ui/Button'
 import { useRole } from '../../context/RoleContext'
+import { useAuth } from '../../context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
-
-const doctors = [
-  { id: 'dr-ayu',    name: 'dr. Ayu Maharani, SpKK', spec: 'Dermatologi & Estetika', slots: ['09:00', '10:00', '11:00', '14:00', '15:00'] },
-  { id: 'dr-sinta',  name: 'dr. Sinta Pertiwi, SpBP', spec: 'Bedah Plastik & Anti-Aging', slots: ['10:00', '13:00', '16:00'] },
-  { id: 'dr-rahma',  name: 'dr. Rahma Kusuma, SpKK',  spec: 'Kulit & Kelamin', slots: ['09:30', '11:30', '14:30', '15:30'] },
-]
+import { doctorService } from '../../services/doctorService'
+import { treatmentService } from '../../services/treatmentService'
+import { appointmentService } from '../../services/appointmentService'
 
 const serviceOptions = [
   'Konsultasi Kulit (Gratis)',
@@ -26,14 +24,39 @@ const serviceOptions = [
 ]
 
 const BookingPage = () => {
+  const { user } = useAuth()
   const { setLeads } = useRole()
   const [step, setStep] = useState(1)
+  const [doctors, setDoctors] = useState([])
+  const [loadingDoctors, setLoadingDoctors] = useState(true)
   const [form, setForm] = useState({
     name: '', phone: '', email: '',
     service: '', doctor: '', date: '', time: '', complaint: '',
   })
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
+
+  // Fetch doctors from DB on mount
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const data = await doctorService.getActive()
+        setDoctors(data)
+      } catch (err) {
+        console.error('Gagal memuat dokter:', err)
+      } finally {
+        setLoadingDoctors(false)
+      }
+    }
+    fetchDoctors()
+  }, [])
+
+  // Pre-fill name/email for logged-in users
+  useEffect(() => {
+    if (user) {
+      setForm(p => ({ ...p, name: user.name || '', email: user.email || '' }))
+    }
+  }, [user])
 
   const selectedDoctor = doctors.find((d) => d.id === form.doctor)
 
@@ -78,7 +101,29 @@ const BookingPage = () => {
       return
     }
 
-    // Daftarkan ke shared state (real-time sync ke Admin KanbanBoard)
+    // Insert ke Supabase appointments table
+    const handleDbInsert = async () => {
+      try {
+        const appointmentData = {
+          user_id: user?.id || null,
+          guest_name: user ? null : form.name.trim(),
+          guest_phone: user ? null : form.phone.trim(),
+          treatment_id: null, // akan di-map jika ada treatment yang cocok
+          doctor_id: form.doctor || null,
+          appointment_date: form.date,
+          appointment_time: form.time,
+          status: 'waiting',
+          complaint: form.complaint || null,
+        }
+        await appointmentService.create(appointmentData)
+      } catch (dbErr) {
+        console.error('Gagal menyimpan ke database:', dbErr)
+        // Fallback: tetap lanjut walau DB error (user tetap lihat sukses)
+      }
+    }
+    handleDbInsert()
+
+    // Juga daftarkan ke shared state (real-time sync ke Admin KanbanBoard)
     const initials = form.name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()
     setLeads((prev) => {
       const nextNum = String((prev.konsultasi?.length ?? 0) + 1).padStart(2, '0')

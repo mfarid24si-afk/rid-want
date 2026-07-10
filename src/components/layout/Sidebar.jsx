@@ -14,6 +14,7 @@ import {
   Stethoscope,
   ListOrdered,
   ClipboardPen,
+  Tag,
 } from 'lucide-react'
 import { useRole } from '../../context/RoleContext'
 import { useAuth } from '../../context/AuthContext'
@@ -64,6 +65,24 @@ const adminMenuItems = [
     icon: Users,
     label: 'Manajemen Akun',
     permission: 'view:users',
+  },
+  {
+    path: '/dashboard/treatments',
+    icon: Sparkles,
+    label: 'Treatment',
+    permission: 'view:treatments',
+  },
+  {
+    path: '/dashboard/doctors',
+    icon: Stethoscope,
+    label: 'Dokter',
+    permission: 'view:doctors',
+  },
+  {
+    path: '/dashboard/promotions',
+    icon: Tag,
+    label: 'Promo & Voucher',
+    permission: 'view:promotions',
   },
 ]
 

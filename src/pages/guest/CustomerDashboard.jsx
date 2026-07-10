@@ -7,23 +7,56 @@ import { censorName } from '../../components/crm/KanbanBoard'
 import { motion, AnimatePresence } from 'framer-motion'
 import Modal from '../../components/ui/Modal'
 import Button from '../../components/ui/Button'
+import { appointmentService } from '../../services/appointmentService'
+import { supabase } from '../../services/supabase'
 
 const CustomerDashboard = () => {
-  const { leads, customers } = useRole()
+  const { leads } = useRole()
   const { user, deleteAccount } = useAuth()
   const navigate = useNavigate()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
+  const [userPoints, setUserPoints] = useState(0)
+  const [userAppointments, setUserAppointments] = useState([])
 
-  // Simulasi: tampilkan data pasien pertama sebagai "yang sedang login"
-  const patient = customers?.[0]
+  // Data user real dari Auth
+  const patient = {
+    name: user?.name || 'Pasien',
+    joinDate: user?.created_at ? new Date(user.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-',
+    totalVisits: 0,
+    lastTreatment: '-',
+    status: 'active',
+  }
 
-  // Cari antrean aktif milik pasien ini di seluruh tahapan Kanban
+  // Fetch user data from DB
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user?.id) return
+      try {
+        // Fetch points
+        const { data: userData } = await supabase
+          .from('users')
+          .select('points')
+          .eq('id', user.id)
+          .single()
+        if (userData) setUserPoints(userData.points || 0)
+
+        // Fetch appointments
+        const appointments = await appointmentService.getByUserId(user.id)
+        setUserAppointments(appointments || [])
+      } catch (err) {
+        console.error('Gagal memuat data user:', err)
+      }
+    }
+    fetchUserData()
+  }, [user])
+
+  // Cari antrean aktif milik pasien ini
   const activeLead = Object.entries(leads).reduce((found, [stage, list]) => {
     if (found) return found
-    const item = list.find(l => l.name.toLowerCase() === (patient?.name || '').toLowerCase())
+    const item = list.find(l => l.name?.toLowerCase() === (user?.name || '').toLowerCase())
     if (item) return { ...item, stage }
     return null
   }, null)

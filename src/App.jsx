@@ -21,7 +21,10 @@ const Customers     = React.lazy(() => import('./pages/Customers'))
 const LeadsPipeline = React.lazy(() => import('./pages/LeadsPipeline'))
 const Analytics     = React.lazy(() => import('./pages/Analytics'))
 const Collaboration = React.lazy(() => import('./pages/Collaboration'))
-const UserManage    = React.lazy(() => import('./pages/UserManagement'))
+const UserManage      = React.lazy(() => import('./pages/UserManagement'))
+const ManageTreatments  = React.lazy(() => import('./pages/admin/ManageTreatments'))
+const ManageDoctors     = React.lazy(() => import('./pages/admin/ManageDoctors'))
+const ManagePromotions  = React.lazy(() => import('./pages/admin/ManagePromotions'))
 const ErrorPage     = React.lazy(() => import('./pages/ErrorPage'))
 const NotFound      = React.lazy(() => import('./pages/NotFound'))
 const Login         = React.lazy(() => import('./pages/auth/Login'))
@@ -97,6 +100,9 @@ function AppRoutes() {
               <Route path="/dashboard/analytics"       element={<Analytics />} />
               <Route path="/dashboard/collaboration"   element={<Collaboration />} />
               <Route path="/dashboard/users"           element={<UserManage />} />
+              <Route path="/dashboard/treatments"     element={<ManageTreatments />} />
+              <Route path="/dashboard/doctors"        element={<ManageDoctors />} />
+              <Route path="/dashboard/promotions"     element={<ManagePromotions />} />
               <Route path="/error/400" element={<ErrorPage code="400" description="Bad Request" />} />
               <Route path="/error/401" element={<ErrorPage code="401" description="Unauthorized" />} />
               <Route path="/error/403" element={<ErrorPage code="403" description="Forbidden" />} />

@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react'
 import { Gift, Star, Award, Sparkles } from 'lucide-react'
 import { useRole } from '../../context/RoleContext'
+import { useAuth } from '../../context/AuthContext'
 import { censorName } from '../../components/crm/KanbanBoard'
 import { motion } from 'framer-motion'
+import { supabase } from '../../services/supabase'
 
 const rewards = [
   { points: 500,  emoji: '🧴', name: 'Serum Vitamin C 30ml',       stock: 'Tersedia' },
@@ -12,11 +15,34 @@ const rewards = [
 ]
 
 const LoyaltyPage = () => {
-  const { customers } = useRole()
-  const patient = customers?.[0]
+  const { user: authUser } = useAuth()
+  const [userPoints, setUserPoints] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-  // Simulasi poin — dalam produksi dari auth session
-  const userPoints = 3750
+  useEffect(() => {
+    const fetchPoints = async () => {
+      if (!authUser?.id) {
+        setLoading(false)
+        return
+      }
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('points, name')
+          .eq('id', authUser.id)
+          .single()
+        if (error) throw error
+        if (data) {
+          setUserPoints(data.points || 0)
+        }
+      } catch (err) {
+        console.error('Gagal memuat poin:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchPoints()
+  }, [authUser])
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-6 py-10 space-y-8">
@@ -53,7 +79,7 @@ const LoyaltyPage = () => {
 
         <div className="space-y-3 z-10 text-center md:text-left">
           <p className="text-xs font-semibold tracking-wider text-stone-400 uppercase">
-            Total Poin {patient ? censorName(patient.name) : 'Anda'}
+            Total Poin {authUser ? censorName(authUser.name) : 'Anda'}
           </p>
           <h2 className="text-5xl font-black tracking-tight" style={{ color: 'var(--warning)' }}>
             {userPoints.toLocaleString('id-ID')}
@@ -67,7 +93,7 @@ const LoyaltyPage = () => {
             style={{ backgroundColor: 'var(--warning)', color: '#2D1B10' }}
           >
             <Star className="w-4 h-4 fill-current" />
-            {patient?.status === 'vip' ? 'GOLD VIP MEMBER' : 'SILVER MEMBER'}
+            {'SILVER MEMBER'}
           </div>
           <span className="text-[10px] text-stone-500 font-medium">Berlaku s.d. 31 Des 2026</span>
         </div>

@@ -21,6 +21,7 @@ import {
   Activity,
 } from "lucide-react";
 import RisingParticles from "../../components/guest/RisingParticles";
+import LocationMap from "../../components/guest/Locationmap";
 
 // ==========================================
 // DUMMY DATA
@@ -1416,6 +1417,11 @@ const GuestLandingPage = () => {
             ))}
           </motion.div>
         </div>
+      </section>
+
+      {/* ── MAPS & CONTACT ──────────────────────────────── */}
+      <section className="relative z-10 border-t border-black/5 dark:border-white/5">
+        <LocationMap />
       </section>
 
       {/* ═══════════════════════════════════════════════════════

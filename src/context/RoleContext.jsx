@@ -22,6 +22,12 @@ export const PERMISSIONS = {
     'view:users:create',
     'view:users:edit',
     'view:users:delete',
+    'view:treatments',
+    'view:treatments:edit',
+    'view:doctors',
+    'view:doctors:edit',
+    'view:promotions',
+    'view:promotions:edit',
   ],
   member: [
     'view:landing',

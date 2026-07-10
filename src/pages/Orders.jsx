@@ -1,120 +1,161 @@
-import { useState } from 'react'
-import { Search, Filter, MoreVertical, Eye, FileText, Download, Calendar, CreditCard } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Search, Filter, MoreVertical, Eye, FileText, Download, Calendar, CreditCard, Plus } from 'lucide-react'
+import toast from 'react-hot-toast'
 import PageHeader from '../components/layout/PageHeader'
 import { useTheme } from '../context/ThemeContext'
 import Badge from '../components/ui/Badge'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
+import Modal from '../components/ui/Modal'
+import InputField from '../components/ui/InputField'
 import OrderDetailDrawer from '../components/OrderDetailDrawer'
+import { paymentService } from '../services/paymentService'
+import { appointmentService } from '../services/appointmentService'
+import { treatmentService } from '../services/treatmentService'
+import { supabase } from '../services/supabase'
 
-// Mock Data
-const ordersData = [
-  {
-    id: 'INV-2024-001',
-    customer: 'Sarah Wijaya',
-    service: 'Facial Glow Treatment + Serum Vitamin C',
-    date: '14 Mei 2024',
-    time: '10:30',
-    total: 'Rp 1.250.000',
-    payment: 'Transfer Bank',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-002',
-    customer: 'Maya Putri Andini',
-    service: 'Hair Spa Premium + Hair Coloring',
-    date: '14 Mei 2024',
-    time: '13:00',
-    total: 'Rp 1.800.000',
-    payment: 'Kartu Kredit',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-003',
-    customer: 'Diana Sari Kusuma',
-    service: 'Botox Treatment (Full Face)',
-    date: '14 Mei 2024',
-    time: '15:30',
-    total: 'Rp 5.500.000',
-    payment: 'Cash',
-    status: 'pending'
-  },
-  {
-    id: 'INV-2024-004',
-    customer: 'Lisa Anggraini',
-    service: 'Microblading Alis + Touch Up',
-    date: '13 Mei 2024',
-    time: '09:00',
-    total: 'Rp 3.200.000',
-    payment: 'Transfer Bank',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-005',
-    customer: 'Rina Kusuma Dewi',
-    service: 'Chemical Peeling Medium',
-    date: '13 Mei 2024',
-    time: '11:00',
-    total: 'Rp 1.500.000',
-    payment: 'QRIS',
-    status: 'cancelled'
-  },
-  {
-    id: 'INV-2024-006',
-    customer: 'Dewi Lestari',
-    service: 'Laser Rejuvenation + Facial',
-    date: '13 Mei 2024',
-    time: '14:00',
-    total: 'Rp 4.200.000',
-    payment: 'Kartu Debit',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-007',
-    customer: 'Putri Amanda Salsabila',
-    service: 'Acne Treatment Package (5x)',
-    date: '12 Mei 2024',
-    time: '10:00',
-    total: 'Rp 2.750.000',
-    payment: 'Transfer Bank',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-008',
-    customer: 'Sinta Maharani',
-    service: 'Anti Aging Premium Package',
-    date: '12 Mei 2024',
-    time: '13:30',
-    total: 'Rp 8.500.000',
-    payment: 'Kartu Kredit',
-    status: 'pending'
-  },
-  {
-    id: 'INV-2024-009',
-    customer: 'Nina Rahma',
-    service: 'Whitening Treatment + Body Spa',
-    date: '11 Mei 2024',
-    time: '09:30',
-    total: 'Rp 2.100.000',
-    payment: 'QRIS',
-    status: 'paid'
-  },
-  {
-    id: 'INV-2024-010',
-    customer: 'Anisa Fitri',
-    service: 'Derma Filler Lips',
-    date: '11 Mei 2024',
-    time: '16:00',
-    total: 'Rp 3.800.000',
-    payment: 'Cash',
-    status: 'refunded'
-  }
+const fallbackOrders = [
+  { id: 'INV-2024-001', customer: 'Sarah Wijaya',      service: 'Facial Glow Treatment + Serum Vitamin C', date: '14 Mei 2024', time: '10:30', total: 'Rp 1.250.000', payment: 'Transfer Bank', status: 'paid' },
+  { id: 'INV-2024-002', customer: 'Maya Putri Andini',  service: 'Hair Spa Premium + Hair Coloring',        date: '14 Mei 2024', time: '13:00', total: 'Rp 1.800.000', payment: 'Kartu Kredit', status: 'paid' },
+  { id: 'INV-2024-003', customer: 'Diana Sari Kusuma',  service: 'Botox Treatment (Full Face)',              date: '14 Mei 2024', time: '15:30', total: 'Rp 5.500.000', payment: 'Cash', status: 'pending' },
+  { id: 'INV-2024-004', customer: 'Lisa Anggraini',    service: 'Microblading Alis + Touch Up',             date: '13 Mei 2024', time: '09:00', total: 'Rp 3.200.000', payment: 'Transfer Bank', status: 'paid' },
+  { id: 'INV-2024-005', customer: 'Rina Kusuma Dewi',  service: 'Chemical Peeling Medium',                  date: '13 Mei 2024', time: '11:00', total: 'Rp 1.500.000', payment: 'QRIS', status: 'cancelled' },
+  { id: 'INV-2024-006', customer: 'Dewi Lestari',      service: 'Laser Rejuvenation + Facial',              date: '13 Mei 2024', time: '14:00', total: 'Rp 4.200.000', payment: 'Kartu Debit', status: 'paid' },
+  { id: 'INV-2024-007', customer: 'Putri Amanda',      service: 'Acne Treatment Package (5x)',               date: '12 Mei 2024', time: '10:00', total: 'Rp 2.750.000', payment: 'Transfer Bank', status: 'paid' },
+  { id: 'INV-2024-008', customer: 'Sinta Maharani',    service: 'Anti Aging Premium Package',               date: '12 Mei 2024', time: '13:30', total: 'Rp 8.500.000', payment: 'Kartu Kredit', status: 'pending' },
+  { id: 'INV-2024-009', customer: 'Nina Rahma',        service: 'Whitening Treatment + Body Spa',           date: '11 Mei 2024', time: '09:30', total: 'Rp 2.100.000', payment: 'QRIS', status: 'paid' },
+  { id: 'INV-2024-010', customer: 'Anisa Fitri',       service: 'Derma Filler Lips',                        date: '11 Mei 2024', time: '16:00', total: 'Rp 3.800.000', payment: 'Cash', status: 'refunded' },
 ]
 
 const Orders = () => {
   const { theme } = useTheme()
+  const [ordersData, setOrdersData] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [showActionMenu, setShowActionMenu] = useState(null)
   const [selectedOrder, setSelectedOrder] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [createForm, setCreateForm] = useState({ customer: '', service: '', total: '', payment: 'cash', status: 'pending' })
+  const [creating, setCreating] = useState(false)
+  const [treatments, setTreatments] = useState([])
+  const [users, setUsers] = useState([])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [payments, appointments, txData, userData] = await Promise.all([
+          paymentService.getAll(),
+          appointmentService.getAll(),
+          treatmentService.getAll(),
+          supabase.from('users').select('id, name').order('name'),
+        ])
+        setTreatments(txData || [])
+        setUsers(userData?.data || [])
+
+        // Combine payments with appointment info
+        const combined = (payments || []).map(p => {
+          const apt = p.appointments || {}
+          return {
+            id: `INV-${p.id?.slice(0, 8).toUpperCase() || '000'}`,
+            customer: apt.guest_name || apt.users?.name || 'Pasien',
+            service: apt.treatments?.name || 'Treatment',
+            date: apt.appointment_date ? new Date(apt.appointment_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-',
+            time: apt.appointment_time || '-',
+            total: `Rp ${(p.amount || 0).toLocaleString('id-ID')}`,
+            payment: p.payment_method === 'cash' ? 'Cash' : p.payment_method === 'transfer' ? 'Transfer Bank' : p.payment_method === 'debit' ? 'Kartu Debit' : p.payment_method === 'qris' ? 'QRIS' : 'Transfer Bank',
+            status: p.status === 'paid' ? 'paid' : p.status === 'pending' ? 'pending' : p.status === 'cancelled' ? 'cancelled' : 'refunded',
+          }
+        })
+
+        // Get appointments as orders
+        const fromAppointments = (appointments || []).map(a => ({
+          id: `APT-${a.id?.slice(0, 8).toUpperCase() || '000'}`,
+          customer: a.guest_name || a.users?.name || 'Pasien',
+          service: a.treatments?.name || 'Treatment',
+          date: a.appointment_date ? new Date(a.appointment_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-',
+          time: a.appointment_time || '-',
+          total: `Rp ${a.treatments?.price?.toLocaleString('id-ID') || '0'}`,
+          payment: '-',
+          status: a.status === 'completed' ? 'paid' : a.status === 'cancelled' ? 'cancelled' : 'pending',
+        }))
+
+        // Gabungkan payments + appointments, urutkan berdasarkan waktu
+        const allOrders = [...combined, ...fromAppointments]
+        setOrdersData(allOrders.length > 0 ? allOrders : fallbackOrders)
+      } catch (err) {
+        console.error('Gagal memuat pesanan:', err)
+        setOrdersData(fallbackOrders)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
+
+  const handleCreateOrder = async () => {
+    if (!createForm.customer.trim() || !createForm.service.trim()) {
+      toast.error('Nama pelanggan dan layanan wajib diisi')
+      return
+    }
+    setCreating(true)
+    try {
+      const amount = parseInt(createForm.total.replace(/\D/g, '')) || 0
+      // Insert dummy appointment as reference
+      const { data: apt } = await supabase
+        .from('appointments')
+        .insert([{
+          guest_name: createForm.customer.trim(),
+          treatment_id: null,
+          appointment_date: new Date().toISOString().split('T')[0],
+          appointment_time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+          status: createForm.status === 'paid' ? 'completed' : 'confirmed',
+        }])
+        .select()
+        .single()
+
+      if (apt) {
+        await paymentService.create({
+          appointment_id: apt.id,
+          amount: amount || 100000,
+          payment_method: createForm.payment,
+          status: createForm.status,
+        })
+      }
+
+      toast.success('Pesanan berhasil dibuat!')
+      setShowCreateModal(false)
+      setCreateForm({ customer: '', service: '', total: '', payment: 'cash', status: 'pending' })
+      // Refresh
+      const payments = await paymentService.getAll()
+      const appointments = await appointmentService.getAll()
+      const combined = (payments || []).map(p => ({
+        id: `INV-${p.id?.slice(0, 8).toUpperCase() || '000'}`,
+        customer: p.appointments?.guest_name || p.appointments?.users?.name || 'Pasien',
+        service: p.appointments?.treatments?.name || 'Treatment',
+        date: p.appointments?.appointment_date ? new Date(p.appointments.appointment_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-',
+        time: p.appointments?.appointment_time || '-',
+        total: `Rp ${(p.amount || 0).toLocaleString('id-ID')}`,
+        payment: p.payment_method === 'cash' ? 'Cash' : p.payment_method === 'transfer' ? 'Transfer Bank' : p.payment_method === 'debit' ? 'Kartu Debit' : p.payment_method === 'qris' ? 'QRIS' : 'Transfer Bank',
+        status: p.status === 'paid' ? 'paid' : p.status === 'pending' ? 'pending' : p.status === 'cancelled' ? 'cancelled' : 'refunded',
+      }))
+      const fromAppts = (appointments || []).map(a => ({
+        id: `APT-${a.id?.slice(0, 8).toUpperCase() || '000'}`,
+        customer: a.guest_name || a.users?.name || 'Pasien',
+        service: a.treatments?.name || 'Treatment',
+        date: a.appointment_date ? new Date(a.appointment_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-',
+        time: a.appointment_time || '-',
+        total: `Rp ${a.treatments?.price?.toLocaleString('id-ID') || '0'}`,
+        payment: '-',
+        status: a.status === 'completed' ? 'paid' : a.status === 'cancelled' ? 'cancelled' : 'pending',
+      }))
+      setOrdersData([...combined, ...fromAppts])
+    } catch (err) {
+      toast.error(err.message || 'Gagal membuat pesanan')
+    } finally {
+      setCreating(false)
+    }
+  }
 
   const filteredOrders = ordersData.filter(order => {
     const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -173,13 +214,11 @@ const Orders = () => {
       <PageHeader 
         title="Manajemen Pesanan"
         subtitle="Kelola semua transaksi dan invoice klinik Anda"
-        breadcrumbs={[
-          { label: 'Dashboard', path: '/dashboard' },
-          { label: 'Pesanan' }
-        ]}
-        actionLabel="Buat Pesanan"
-        onAction={() => alert('Buat pesanan baru')}
-      />
+      >
+        <Button variant="primary" size="sm" icon={Plus} onClick={() => setShowCreateModal(true)}>
+          Buat Pesanan
+        </Button>
+      </PageHeader>
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -429,6 +468,22 @@ const Orders = () => {
         </div>
       </div>
 
+      {/* Empty state ketika loading selesai dan data kosong */}
+      {!loading && ordersData.length === 0 && (
+        <Card>
+          <div className="text-center py-12">
+            <p className="text-4xl mb-3">📦</p>
+            <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--text-heading)' }}>Belum ada pesanan</h3>
+            <p className="text-sm mb-4" style={{ color: 'var(--text)' }}>
+              Pesanan dari member akan muncul di sini. Admin juga bisa menambahkan pesanan manual.
+            </p>
+            <Button variant="primary" icon={Plus} onClick={() => setShowCreateModal(true)}>
+              Buat Pesanan Baru
+            </Button>
+          </div>
+        </Card>
+      )}
+
       {/* Click outside handler */}
       {showActionMenu && (
         <div
@@ -436,6 +491,46 @@ const Orders = () => {
           onClick={() => setShowActionMenu(null)}
         />
       )}
+
+      {/* Modal Buat Pesanan */}
+      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Buat Pesanan Baru" maxWidth="max-w-md">
+        <div className="space-y-4">
+          <InputField label="Nama Pelanggan *" placeholder="Nama pasien" value={createForm.customer}
+            onChange={(e) => setCreateForm(p => ({ ...p, customer: e.target.value }))} />
+          <InputField label="Layanan *" placeholder="cth. Facial Glow" value={createForm.service}
+            onChange={(e) => setCreateForm(p => ({ ...p, service: e.target.value }))} />
+          <InputField label="Total (Rp)" type="number" placeholder="cth. 450000" value={createForm.total}
+            onChange={(e) => setCreateForm(p => ({ ...p, total: e.target.value }))} />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-strong)' }}>Metode Bayar</label>
+              <select value={createForm.payment} onChange={(e) => setCreateForm(p => ({ ...p, payment: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}>
+                <option value="cash">Cash</option>
+                <option value="transfer">Transfer Bank</option>
+                <option value="debit">Kartu Debit</option>
+                <option value="qris">QRIS</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-strong)' }}>Status</label>
+              <select value={createForm.status} onChange={(e) => setCreateForm(p => ({ ...p, status: e.target.value }))}
+                className="w-full px-4 py-2.5 rounded-xl text-sm outline-none"
+                style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}>
+                <option value="pending">Pending</option>
+                <option value="paid">Lunas</option>
+              </select>
+            </div>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <Button variant="secondary" onClick={() => setShowCreateModal(false)} className="flex-1">Batal</Button>
+            <Button variant="primary" onClick={handleCreateOrder} disabled={creating} className="flex-1">
+              {creating ? 'Menyimpan...' : 'Buat Pesanan'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Order Detail Drawer */}
       <OrderDetailDrawer

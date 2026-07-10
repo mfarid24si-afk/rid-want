@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   GripVertical,
   Phone,
@@ -12,6 +12,7 @@ import Avatar from '../ui/Avatar'
 import Badge from '../ui/Badge'
 import { columnConfig } from '../../data/mockLeads'
 import { useRole } from '../../context/RoleContext'
+import { appointmentService } from '../../services/appointmentService'
 
 // ─────────────────────────────────────────────────────────────
 // UTILITAS SENSOR PRIVASI
@@ -346,10 +347,74 @@ function GuestQueueColumn({ colKey, leads }) {
 // KANBAN BOARD — KOMPONEN UTAMA YANG DIEKSPOR
 // Menentukan Admin/Guest board berdasarkan role context
 // ─────────────────────────────────────────────────────────────
+const statusMap = {
+  konsultasi: 'waiting',
+  jadwal: 'confirmed',
+  pembayaran: 'in_progress',
+  selesai: 'completed',
+}
+
+const reverseStatusMap = {
+  waiting: 'konsultasi',
+  confirmed: 'jadwal',
+  in_progress: 'pembayaran',
+  completed: 'selesai',
+}
+
+// Fetch appointments from DB and map to leads format
+async function fetchAppointmentsAsLeads(setLeads, role) {
+  try {
+    const appointments = await appointmentService.getAll()
+    const grouped = { konsultasi: [], jadwal: [], pembayaran: [], selesai: [] }
+    
+    ;(appointments || []).forEach(a => {
+      const stage = reverseStatusMap[a.status] || 'konsultasi'
+      // Prevent duplicate entries (check if already in leads)
+      const lead = {
+        id: a.id || `apt-${Date.now()}`,
+        name: a.guest_name || a.users?.name || 'Pasien',
+        service: a.treatments?.name || 'Treatment',
+        value: a.treatments ? `Rp ${a.treatments.price?.toLocaleString('id-ID')}` : 'Rp 0',
+        phone: a.guest_phone || '-',
+        date: a.appointment_date ? new Date(a.appointment_date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }) : '-',
+        avatar: (a.guest_name || 'P').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+        queueNumber: a.queue_number || '-',
+        estimatedTime: a.appointment_time?.slice(0, 5) || '—',
+        status: a.status,
+        dbSynced: true,
+      }
+      grouped[stage].push(lead)
+    })
+
+    // Merge with existing in-memory leads (keep unsynced ones)
+    setLeads(prev => {
+      const merged = { ...grouped }
+      Object.keys(prev).forEach(stage => {
+        prev[stage].forEach(lead => {
+          // Keep leads that don't have a DB ID (just created in-memory)
+          if (!lead.id?.startsWith('apt-') && !grouped[stage].find(g => g.id === lead.id)) {
+            merged[stage].push(lead)
+          }
+        })
+      })
+      return merged
+    })
+  } catch (err) {
+    console.error('Gagal memuat appointments:', err)
+  }
+}
+
 const KanbanBoard = ({ onAddLead }) => {
   const { role, leads, setLeads, can } = useRole()
   const isGuest = role === 'guest'
   const canEdit = can('view:leads:edit')
+
+  // Fetch appointments from DB on mount (Admin only)
+  useEffect(() => {
+    if (!isGuest) {
+      fetchAppointmentsAsLeads(setLeads, role)
+    }
+  }, [isGuest, setLeads, role])
 
   // State untuk drag-and-drop (hanya relevan untuk Admin)
   const [draggingId, setDraggingId] = useState(null)
@@ -375,16 +440,21 @@ const KanbanBoard = ({ onAddLead }) => {
       return
     }
 
+    // Update DB
+    const movingCard = leads[draggingFrom]?.find((l) => l.id === draggingId)
+    if (movingCard?.dbSynced) {
+      const newStatus = statusMap[toCol] || 'waiting'
+      appointmentService.update(movingCard.id, { status: newStatus })
+        .catch(err => console.error('Gagal update status:', err))
+    }
+
     setLeads((prev) => {
-      // Cari kartu yang di-drag
       const movingCard = prev[draggingFrom]?.find((l) => l.id === draggingId)
       if (!movingCard) return prev
 
       return {
         ...prev,
-        // Hapus dari kolom asal
         [draggingFrom]: prev[draggingFrom].filter((l) => l.id !== draggingId),
-        // Tambahkan ke kolom tujuan
         [toCol]: [movingCard, ...prev[toCol]],
       }
     })

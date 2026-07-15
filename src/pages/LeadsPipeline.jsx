@@ -8,6 +8,8 @@ import {
   Sparkles,
   Info,
   Shield,
+  PhoneCall,
+  AlertCircle,
 } from 'lucide-react'
 import PageHeader from '../components/layout/PageHeader'
 import Card from '../components/ui/Card'
@@ -310,6 +312,14 @@ const LeadsPipeline = () => {
       return sum + (isNaN(num) ? 0 : num)
     }, 0)
 
+  // Hitung leads yang perlu follow-up (lebih dari 3 hari di stage konsultasi/jadwal)
+  const leadsNeedingFollowUp = leads.konsultasi?.filter(l => {
+    if (!l.date) return false
+    const leadDate = new Date(l.date)
+    const daysSince = Math.floor((Date.now() - leadDate.getTime()) / (1000 * 60 * 60 * 24))
+    return daysSince >= 3
+  }).length || 0
+
   // ── Handler tambah lead baru (Admin) ──
   const handleAddLead = () => {
     const e = {}
@@ -608,6 +618,41 @@ const LeadsPipeline = () => {
 
       {/* Kanban Board — mode Admin dengan drag-drop */}
       <KanbanBoard />
+
+      {/* Follow-up Reminder Card */}
+      {leadsNeedingFollowUp > 0 && (
+        <Card
+          className="mt-4"
+          style={{
+            background: 'var(--danger-soft)',
+            border: '1px solid var(--danger)',
+          }}
+        >
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--danger)' }} />
+              <div>
+                <h3
+                  className="text-sm font-bold mb-1"
+                  style={{ color: 'var(--danger)' }}
+                >
+                  🔔 Follow-up Required
+                </h3>
+                <p className="text-xs" style={{ color: 'var(--text)' }}>
+                  <strong style={{ color: 'var(--danger)' }}>{leadsNeedingFollowUp} lead(s)</strong> belum
+                  dihubungi selama 3+ hari sejak pendaftaran. Segera lakukan
+                  follow-up untuk meningkatkan konversi.
+                </p>
+              </div>
+            </div>
+            {canEdit && (
+              <Button variant="primary" size="sm" icon={PhoneCall}>
+                Follow-up Sekarang
+              </Button>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Banner Marketing Automation */}
       <Card

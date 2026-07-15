@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search, Bell, ChevronDown, LogOut, User, Settings, Menu, Sun, Moon, Shield } from 'lucide-react'
 import { useTheme } from '../../context/ThemeContext'
 import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
+import { supportService } from '../../services/supportService'
+import { supabase } from '../../services/supabase'
 
 const Header = ({ onMenuClick }) => {
   const { theme, toggleTheme } = useTheme()
@@ -10,12 +12,36 @@ const Header = ({ onMenuClick }) => {
   const navigate = useNavigate()
   const [showProfileMenu, setShowProfileMenu] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
-  const notifications = [
-    { id: 1, title: 'Janji temu baru', message: 'Sarah booking Facial Treatment', time: '5 menit lalu', unread: true },
-    { id: 2, title: 'Pembayaran diterima', message: 'Invoice #INV-001 telah dibayar', time: '1 jam lalu', unread: true },
-    { id: 3, title: 'Stok menipis', message: 'Serum Vitamin C tersisa 5 unit', time: '2 jam lalu', unread: false },
-  ]
+  // Fetch real notifications from DB
+  useEffect(() => {
+    const fetchNotifs = async () => {
+      if (!user?.id) return
+      try {
+        const notifs = await supportService.getNotifications(user.id)
+        setNotifications(notifs || [])
+        const unread = notifs?.filter(n => !n.is_read)?.length || 0
+        setUnreadCount(unread)
+      } catch (err) {
+        // Fallback mock data
+        setNotifications([
+          { id: '1', title: 'Janji temu baru', message: 'Ada booking baru hari ini', status: 'sent', created_at: new Date().toISOString() },
+        ])
+      }
+    }
+    fetchNotifs()
+    // Poll setiap 30 detik
+    const interval = setInterval(fetchNotifs, 30000)
+    return () => clearInterval(interval)
+  }, [user?.id])
+
+  const handleMarkRead = async (notifId) => {
+    await supportService.markNotifRead(notifId)
+    setNotifications(prev => prev.map(n => n.id === notifId ? { ...n, is_read: true } : n))
+    setUnreadCount(prev => Math.max(0, prev - 1))
+  }
 
   const dropdownStyle = {
     background: 'var(--bg-raised)',
@@ -80,8 +106,12 @@ const Header = ({ onMenuClick }) => {
             style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)' }}
           >
             <Bell className="w-4 h-4" style={{ color: 'var(--text-strong)' }} />
-            <span className="absolute top-1 right-1 w-2 h-2 rounded-full"
-              style={{ background: 'var(--danger)' }} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                style={{ background: 'var(--danger)' }}>
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
           </button>
 
           {showNotifications && (
@@ -90,24 +120,37 @@ const Header = ({ onMenuClick }) => {
                 <h3 className="font-semibold text-sm" style={{ color: 'var(--text-heading)' }}>Notifikasi</h3>
               </div>
               <div className="max-h-72 overflow-y-auto">
-                {notifications.map((notif) => (
-                  <div key={notif.id}
-                    className="px-4 py-3 cursor-pointer transition-colors"
-                    style={{ background: notif.unread ? 'var(--accent-soft)' : 'transparent' }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-overlay)'}
-                    onMouseLeave={e => e.currentTarget.style.background = notif.unread ? 'var(--accent-soft)' : 'transparent'}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
-                        style={{ background: notif.unread ? 'var(--accent)' : 'var(--border-strong)' }} />
-                      <div>
-                        <p className="text-sm font-medium" style={{ color: 'var(--text-strong)' }}>{notif.title}</p>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--text)' }}>{notif.message}</p>
-                        <p className="text-xs mt-1" style={{ color: 'var(--text)' }}>{notif.time}</p>
-                      </div>
-                    </div>
+                {notifications.length === 0 ? (
+                  <div className="px-4 py-8 text-center text-xs" style={{ color: 'var(--text)' }}>
+                    Belum ada notifikasi
                   </div>
-                ))}
+                ) : (
+                  notifications.slice(0, 10).map((notif) => {
+                    const isUnread = !notif.is_read
+                    const timeAgo = notif.created_at
+                      ? new Date(notif.created_at).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' })
+                      : ''
+                    return (
+                      <div key={notif.id}
+                        onClick={() => isUnread && handleMarkRead(notif.id)}
+                        className="px-4 py-3 cursor-pointer transition-colors"
+                        style={{ background: isUnread ? 'var(--accent-soft)' : 'transparent' }}
+                        onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-overlay)'}
+                        onMouseLeave={e => e.currentTarget.style.background = isUnread ? 'var(--accent-soft)' : 'transparent'}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+                            style={{ background: isUnread ? 'var(--accent)' : 'var(--border-strong)' }} />
+                          <div>
+                            <p className={`text-sm font-medium ${isUnread ? 'font-bold' : ''}`} style={{ color: 'var(--text-strong)' }}>{notif.title}</p>
+                            <p className="text-xs mt-0.5" style={{ color: 'var(--text)' }}>{notif.message}</p>
+                            <p className="text-xs mt-1" style={{ color: 'var(--text)' }}>{timeAgo}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
               </div>
               <div className="px-4 py-2" style={{ borderTop: '1px solid var(--border)' }}>
                 <button className="text-sm font-medium" style={{ color: 'var(--accent)' }}>

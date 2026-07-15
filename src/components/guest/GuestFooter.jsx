@@ -22,12 +22,15 @@ const footerLinks = {
   ],
 }
 
+const WHATSAPP_NUMBER = '6281288876500' // Format: 62 (kode RI) + no wa tanpa 0
+const WHATSAPP_MESSAGE = 'Halo%20Skinova!%20Saya%20ingin%20konsultasi%20tentang%20treatment%20kecantikan.'
+
 const socialLinks = [
-  { icon: MessageSquare, label: 'WhatsApp',  href: '#' },
-  { icon: Globe,         label: 'Website',   href: '#' },
-  { icon: Share2,        label: 'Instagram', href: '#' },
-  { icon: Link2,         label: 'TikTok',    href: '#' },
-  { icon: Zap,           label: 'Telegram',  href: '#' },
+  { icon: MessageSquare, label: 'WhatsApp',  href: `https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}` },
+  { icon: Globe,         label: 'Website',   href: '/' },
+  { icon: Share2,        label: 'Instagram', href: 'https://instagram.com/skinova.clinic' },
+  { icon: Link2,         label: 'TikTok',    href: 'https://tiktok.com/@skinova.clinic' },
+  { icon: Zap,           label: 'Telegram',  href: 'https://t.me/skinova_bot' },
 ]
 
 const GuestFooter = () => {
@@ -129,7 +132,7 @@ const GuestFooter = () => {
 
         {/* Jam operasional */}
         <div
-          className="rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm"
+          className="rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3 text-sm"
           style={{
             background: 'var(--bg-raised)',
             border: '1px solid var(--border)',
@@ -137,7 +140,8 @@ const GuestFooter = () => {
         >
           {[
             { label: '📍 Lokasi', value: 'Jl. Kecantikan No. 88, Jakarta Selatan' },
-            { label: '📞 Telepon', value: '(021) 888-SKIN' },
+            { label: '📞 Telepon', value: '(+62) 812-8887-6500' },
+          { label: '💬 WhatsApp', value: '(+62) 812-8887-6500' },
             { label: '🕐 Jam Buka', value: 'Sen–Sab, 09.00 – 20.00 WIB' },
           ].map((info) => (
             <div key={info.label}>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Gift, Star, Award, Sparkles } from 'lucide-react'
 import { useRole } from '../../context/RoleContext'
 import { useAuth } from '../../context/AuthContext'
+import Badge from '../../components/ui/Badge'
 import { censorName } from '../../components/crm/KanbanBoard'
 import { motion } from 'framer-motion'
 import { supabase } from '../../services/supabase'
@@ -14,9 +15,16 @@ const rewards = [
   { points: 5000, emoji: '👑', name: 'Free Treatment Anti Aging',     stock: 'Terbatas' },
 ]
 
+const tierGradients = {
+  bronze: { bg: 'linear-gradient(135deg, #2D1B10 0%, #5C4033 50%, #2D1B10 100%)', border: 'rgba(205, 127, 50, 0.4)', accent: '#CD7F32' },
+  silver: { bg: 'linear-gradient(135deg, #1C1917 0%, #443E38 50%, #1C1917 100%)', border: 'rgba(192, 192, 192, 0.4)', accent: '#C0C0C0' },
+  gold:   { bg: 'linear-gradient(135deg, #2D1B10 0%, #4A3728 50%, #1A0D07 100%)', border: 'rgba(255, 215, 0, 0.4)', accent: '#FFD700' },
+}
+
 const LoyaltyPage = () => {
   const { user: authUser } = useAuth()
   const [userPoints, setUserPoints] = useState(0)
+  const [membershipTier, setMembershipTier] = useState('bronze')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -33,7 +41,9 @@ const LoyaltyPage = () => {
           .single()
         if (error) throw error
         if (data) {
-          setUserPoints(data.points || 0)
+          const pts = data.points || 0
+          setUserPoints(pts)
+          setMembershipTier(pts >= 2000 ? 'gold' : pts >= 500 ? 'silver' : 'bronze')
         }
       } catch (err) {
         console.error('Gagal memuat poin:', err)
@@ -60,14 +70,13 @@ const LoyaltyPage = () => {
         <p style={{ color: 'var(--text)' }}>Tukarkan poin Anda dengan produk skincare gratis & treatment premium</p>
       </div>
 
-      {/* Balance card — Metallic Luxury Member Card */}
-      <div
-        className="relative overflow-hidden rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-6 transition-all duration-500 hover:shadow-2xl"
-        style={{
-          background: 'linear-gradient(135deg, #1C1917 0%, #443E38 50%, #1C1917 100%)',
-          border: '1px solid rgba(201, 169, 110, 0.4)',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.15)',
-        }}
+      {/* Balance card — Metallic Luxury Member Card */}        <div
+          className="relative overflow-hidden rounded-3xl p-6 md:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-center gap-6 transition-all duration-500 hover:shadow-2xl"
+          style={{
+            background: tierGradients[membershipTier].bg,
+            border: `1px solid ${tierGradients[membershipTier].border}`,
+            boxShadow: `0 20px 40px rgba(0,0,0,0.15), inset 0 1px 1px rgba(255,255,255,0.15)`,
+          }}
       >
         {/* Radial highlight overlay */}
         <div 
@@ -88,12 +97,10 @@ const LoyaltyPage = () => {
         </div>
 
         <div className="flex flex-col items-center md:items-end gap-3 z-10">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-inner"
-            style={{ backgroundColor: 'var(--warning)', color: '#2D1B10' }}
-          >
-            <Star className="w-4 h-4 fill-current" />
-            {'SILVER MEMBER'}
+          <div className="flex items-center gap-2">
+            <Badge status={membershipTier}>
+              {membershipTier === 'gold' ? '🥇 GOLD MEMBER' : membershipTier === 'silver' ? '🥈 SILVER MEMBER' : '🥉 BRONZE MEMBER'}
+            </Badge>
           </div>
           <span className="text-[10px] text-stone-500 font-medium">Berlaku s.d. 31 Des 2026</span>
         </div>

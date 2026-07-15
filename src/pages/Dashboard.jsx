@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { DollarSign, Users, Calendar, Package, TrendingUp } from 'lucide-react'
+import { DollarSign, Users, Calendar, Package, TrendingUp, Medal } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts'
@@ -26,15 +26,26 @@ const Dashboard = () => {
   const [realAppointments, setRealAppointments] = useState([])
   const [realTransactions, setRealTransactions] = useState([])
   const [realRevenue, setRealRevenue] = useState([])
+  const [membershipSummary, setMembershipSummary] = useState({ bronze: 0, silver: 0, gold: 0 })
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [appointments, payments, { count: userCount }] = await Promise.all([
+        const [appointments, payments, { count: userCount }, users] = await Promise.all([
           appointmentService.getAll(),
           paymentService.getAll(),
           supabase.from('users').select('*', { count: 'exact', head: true }),
+          supabase.from('users').select('points').eq('role', 'member'),
         ])
+
+        // Hitung membership summary dari points (kolom membership_tier belum ada di DB)
+        const tierCount = { bronze: 0, silver: 0, gold: 0 }
+        ;(users?.data || []).forEach(u => {
+          const pts = u.points || 0
+          const tier = pts >= 2000 ? 'gold' : pts >= 500 ? 'silver' : 'bronze'
+          if (tierCount[tier] !== undefined) tierCount[tier]++
+        })
+        setMembershipSummary(tierCount)
 
         // Stats
         const totalRevenue = (payments || []).filter(p => p.status === 'paid').reduce((sum, p) => sum + (p.amount || 0), 0)
@@ -81,6 +92,8 @@ const Dashboard = () => {
     }
     fetchData()
   }, [])
+
+  const tierColors = { bronze: '#CD7F32', silver: '#9CA3AF', gold: '#FFD700' }
 
   const displayStats = realStats ? [
     { title: 'Total Pendapatan', value: realStats.revenue, change: '-', isPositive: true, key: 'revenue' },
@@ -222,6 +235,30 @@ const Dashboard = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </Card>
+      )}
+
+      {/* Membership Summary */}
+      {can('view:dashboard') && (
+        <Card className="mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Medal className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+            <h3 className="text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
+              Ringkasan Membership
+            </h3>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { key: 'gold', label: '🥇 Gold', count: membershipSummary.gold, color: tierColors.gold },
+              { key: 'silver', label: '🥈 Silver', count: membershipSummary.silver, color: tierColors.silver },
+              { key: 'bronze', label: '🥉 Bronze', count: membershipSummary.bronze, color: tierColors.bronze },
+            ].map(t => (
+              <div key={t.key} className="rounded-xl p-4 text-center" style={{ background: `${t.color}12`, border: `1px solid ${t.color}30` }}>
+                <p className="text-3xl font-black" style={{ color: t.color }}>{t.count}</p>
+                <p className="text-xs font-semibold mt-1" style={{ color: t.color }}>{t.label}</p>
+              </div>
+            ))}
           </div>
         </Card>
       )}

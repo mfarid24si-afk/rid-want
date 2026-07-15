@@ -8,47 +8,18 @@ export function AuthProvider({ children }) {
   const [authUser, setAuthUser] = useState(null) // user dari Supabase Auth
   const [loading, setLoading] = useState(true)
 
-  // Buat profile user di public.users jika belum ada
+  // Ambil profile user dari public.users jika ada
+  // Profile dibuat otomatis oleh database trigger (on_auth_user_created)
   const ensureProfile = useCallback(async (authUserData) => {
     if (!authUserData?.id) return null
 
-    // Coba ambil profil yang sudah ada
     const { data: existing } = await supabase
       .from('users')
       .select('*')
       .eq('id', authUserData.id)
       .maybeSingle()
 
-    if (existing) return existing // Profil sudah ada
-
-    // Profil belum ada — buat baru
-    const meta = authUserData.user_metadata || {}
-    const newProfile = {
-      id: authUserData.id,
-      name: meta.name || authUserData.email?.split('@')[0] || 'User',
-      email: authUserData.email || '',
-      role: meta.role || 'member',
-      points: 0,
-    }
-
-    const { data: created, error } = await supabase
-      .from('users')
-      .insert([newProfile])
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Gagal membuat profil:', error)
-      // Fallback: coba sekali lagi (mungkin race condition dengan trigger)
-      const { data: retry } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', authUserData.id)
-        .maybeSingle()
-      return retry || null
-    }
-
-    return created
+    return existing || null // Jika belum ada, trigger database akan membuatnya
   }, [])
 
   // Fetch atau buat user profile dari tabel public.users
@@ -70,8 +41,15 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let cancelled = false
 
-    // Dapatkan session saat ini
+    // Dapatkan session saat ini — dengan timeout 8 detik
+    const timeoutId = setTimeout(() => {
+      if (!cancelled) {
+        setLoading(false) // Force stop loading setelah 8 detik
+      }
+    }, 8000)
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      clearTimeout(timeoutId)
       if (cancelled) return
       if (session?.user) {
         setAuthUser(session.user)
@@ -82,6 +60,9 @@ export function AuthProvider({ children }) {
         setUser(profile)
       }
       if (!cancelled) setLoading(false)
+    }).catch(() => {
+      clearTimeout(timeoutId)
+      if (!cancelled) setLoading(false) // Error → tetap lanjut
     })
 
     // Listen for auth state changes — hanya proses event yang bermakna
@@ -129,8 +110,34 @@ export function AuthProvider({ children }) {
       throw new Error(error.message || 'Gagal masuk')
     }
 
-    // Profil akan ter-load & auto-create via onAuthStateChange
-    return data.user
+    // Profile dari user_metadata — INSTAN, tanpa query database
+    // user_metadata sudah ada di response signIn, gak butuh RLS atau timing
+    const meta = data.user?.user_metadata || {}
+    const profile = {
+      id: data.user.id,
+      email: data.user.email,
+      name: meta.name || data.user.email?.split('@')[0] || 'User',
+      role: meta.role || 'member',
+      phone: meta.phone || '',
+      points: meta.points || 0,
+      membership_tier: meta.membership_tier || null,
+    }
+
+    // Set state langsung — React akan batch render berikutnya
+    setAuthUser(data.user)
+    setUser(profile)
+
+    // Background: ambil profile asli dari database (optional, async terpisah)
+    // Kalau ada data lebih lengkap di database, akan update otomatis
+    supabase.from('users').select('*').eq('id', data.user.id).maybeSingle()
+      .then(({ data: realProfile }) => {
+        if (realProfile) setUser(realProfile)
+      })
+      .catch(() => {
+        // Gagal? Gapapa — pakai data dari metadata
+      })
+
+    return profile
   }, [])
 
   const register = useCallback(async ({ name, email, password }) => {

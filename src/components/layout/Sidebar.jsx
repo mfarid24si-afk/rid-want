@@ -10,6 +10,8 @@ import {
   LogOut,
   X,
   Settings,
+  MessageCircle,
+  Mail,
   // ── Icon untuk Guest menu ──
   Stethoscope,
   ListOrdered,
@@ -55,6 +57,18 @@ const adminMenuItems = [
     permission: 'view:orders',
   },
   {
+    path: '/dashboard/support',
+    icon: MessageCircle,
+    label: 'Support Tickets',
+    permission: 'view:support',
+  },
+  {
+    path: '/dashboard/email-marketing',
+    icon: Mail,
+    label: 'Email Marketing',
+    permission: 'view:email_marketing',
+  },
+  {
     path: '/dashboard/collaboration',
     icon: Users2,
     label: 'Kolaborasi Tim',
@@ -83,6 +97,12 @@ const adminMenuItems = [
     icon: Tag,
     label: 'Promo & Voucher',
     permission: 'view:promotions',
+  },
+  {
+    path: '/dashboard/setup',
+    icon: Settings,
+    label: 'Database Setup',
+    permission: 'view:setup',
   },
 ]
 

@@ -8,6 +8,7 @@ import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import InputField from '../components/ui/InputField'
+import Pagination from '../components/Pagination'
 import OrderDetailDrawer from '../components/OrderDetailDrawer'
 import { paymentService } from '../services/paymentService'
 import { appointmentService } from '../services/appointmentService'
@@ -40,13 +41,15 @@ const Orders = () => {
   const [creating, setCreating] = useState(false)
   const [treatments, setTreatments] = useState([])
   const [users, setUsers] = useState([])
+  const [page, setPage] = useState(1)
+  const ITEMS_PER_PAGE = 20
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [payments, appointments, txData, userData] = await Promise.all([
-          paymentService.getAll(),
-          appointmentService.getAll(),
+          supabase.from('payments').select('*, appointments:appointment_id(*)').order('created_at', { ascending: false }),
+          supabase.from('appointments').select('*, treatments:treatment_id(*), users:user_id(*)').order('created_at', { ascending: false }).limit(2000),
           treatmentService.getAll(),
           supabase.from('users').select('id, name').order('name'),
         ])
@@ -167,6 +170,15 @@ const Orders = () => {
     return matchesSearch && matchesFilter
   })
 
+  const totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE)
+  const safePage = Math.min(page, Math.max(totalPages, 1))
+  const paginatedOrders = filteredOrders.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  const handlePageChange = (newPage) => {
+    setPage(Math.max(1, Math.min(newPage, totalPages)))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'paid':
@@ -277,7 +289,7 @@ const Orders = () => {
               type="text"
               placeholder="Cari invoice, pelanggan, atau layanan..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => { setSearchTerm(e.target.value); setPage(1) }}
               className="w-full pl-10 pr-4 py-2 rounded-xl outline-none text-sm transition-all"
               style={{
                 backgroundColor: 'var(--bg-raised)',
@@ -294,7 +306,7 @@ const Orders = () => {
               {['all', 'paid', 'pending', 'cancelled', 'refunded'].map((filter) => (
                 <button
                   key={filter}
-                  onClick={() => setSelectedFilter(filter)}
+                  onClick={() => { setSelectedFilter(filter); setPage(1) }}
                   className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
                   style={{
                     backgroundColor: selectedFilter === filter ? 'var(--accent)' : 'var(--bg-raised)',
@@ -333,7 +345,7 @@ const Orders = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order) => (
+              {paginatedOrders.map((order) => (
                 <tr 
                   key={order.id} 
                   className="transition-colors border-b"
@@ -426,46 +438,13 @@ const Orders = () => {
         </div>
 
         {/* Pagination */}
-        <div 
-          className="flex items-center justify-between px-6 py-4 border-t transition-all duration-300"
-          style={{ borderColor: 'var(--border)' }}
-        >
-          <p className="text-sm" style={{ color: 'var(--text)' }}>
-            Menampilkan {filteredOrders.length} dari {ordersData.length} pesanan
-          </p>
-          <div className="flex items-center gap-2">
-            <button 
-              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
-            >
-              Sebelumnya
-            </button>
-            <button 
-              className="px-3 py-1.5 rounded-lg text-sm font-medium text-white cursor-pointer"
-              style={{ backgroundColor: 'var(--accent)' }}
-            >
-              1
-            </button>
-            <button 
-              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
-            >
-              2
-            </button>
-            <button 
-              className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer"
-              style={{ backgroundColor: 'var(--bg-raised)', color: 'var(--text)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-heading)' }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text)' }}
-            >
-              Selanjutnya
-            </button>
-          </div>
-        </div>
+        <Pagination
+          currentPage={safePage}
+          totalPages={totalPages}
+          totalItems={filteredOrders.length}
+          itemsPerPage={ITEMS_PER_PAGE}
+          onPageChange={handlePageChange}
+        />
       </div>
 
       {/* Empty state ketika loading selesai dan data kosong */}

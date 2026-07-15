@@ -8,6 +8,7 @@ import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
 import Modal from '../components/ui/Modal'
 import InputField from '../components/ui/InputField'
+import Pagination from '../components/Pagination'
 import { useRole } from '../context/RoleContext'
 import { supabase } from '../services/supabase'
 
@@ -24,8 +25,11 @@ const Customers = () => {
   const [creating, setCreating] = useState(false)
   const [editModal, setEditModal] = useState(false)
   const [editCustomer, setEditCustomer] = useState(null)
-  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', segment: 'new', status: 'active' })
+  const [editForm, setEditForm] = useState({ name: '', email: '', phone: '', segment: 'new', status: 'active', membership_tier: 'bronze', points: 0 })
+  const [filterTier, setFilterTier] = useState('all')
   const [editing, setEditing] = useState(false)
+  const [page, setPage] = useState(1)
+  const ITEMS_PER_PAGE = 20
 
   // ========== SEGMENT / STATUS OVERRIDE (via localStorage) ==========
   const OVERRIDE_KEY = 'skinova_customer_overrides'
@@ -56,15 +60,15 @@ const Customers = () => {
       try {
         const [users, appointments] = await Promise.all([
           supabase.from('users').select('*').order('created_at', { ascending: false }),
-          supabase.from('appointments').select('*, treatments:treatment_id(*)').order('created_at', { ascending: false }),
+          supabase.from('appointments').select('user_id, status, treatment_id, treatments:treatment_id(name, price), created_at').order('created_at', { ascending: false }).limit(500),
         ])
         if (users.error) throw users.error
 
-        // Hitung kunjungan per user
+        // Hitung kunjungan per user (dari 500 appointment terbaru — cukup akurat)
         const visitCount = {}
         const lastTreatment = {}
-        let totalSpentMap = {}
-        ;(appointments.data || []).forEach(a => {
+        let totalSpentMap = {};
+        (appointments.data || []).forEach(a => {
           const uid = a.user_id || 'guest'
           visitCount[uid] = (visitCount[uid] || 0) + 1
           if (a.status === 'completed' || a.status === 'confirmed') {
@@ -81,6 +85,7 @@ const Customers = () => {
           .map((u) => {
             const visits = visitCount[u.id] || 0
             const spent = totalSpentMap[u.id] || 0
+            const points = u.points || 0
 
             // Auto-calculate segment & status
             let autoSegment = 'new'
@@ -92,10 +97,18 @@ const Customers = () => {
             if (visits >= 10) autoStatus = 'vip'
             else if (visits === 0) autoStatus = 'inactive'
 
-            // Cek override dari localStorage (admin bisa timpa)
+            // Auto-calculate membership tier berdasarkan POIN
+            let autoTier = 'bronze'
+            if (points >= 2000) autoTier = 'gold'
+            else if (points >= 500) autoTier = 'silver'
+
+            // Cek override dari localStorage (admin bisa timpa segment/status)
             const userOvr = overrides[u.id] || {}
             const segment = userOvr.segment || autoSegment
             const status = userOvr.status || autoStatus
+
+            // membership_tier: cek localStorage override dulu, fallback auto dari poin
+            const membership_tier = userOvr.membership_tier || autoTier
 
             return {
               id: u.id,
@@ -104,11 +117,14 @@ const Customers = () => {
               phone: u.phone || '-',
               lastTreatment: lastTreatment[u.id] || '-',
               totalVisits: visits,
+              points,
               totalSpent: `Rp ${spent.toLocaleString('id-ID')}`,
               status,
               segment,
+              membership_tier,
               _autoSegment: autoSegment, // disimpan untuk referensi di modal edit
               _autoStatus: autoStatus,
+              _autoTier: autoTier,
               joinDate: u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-',
               avatar: (u.name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
             }
@@ -131,8 +147,18 @@ const Customers = () => {
     const matchSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase())
     const matchSegment = filterSegment === 'all' || c.segment === filterSegment
-    return matchSearch && matchSegment
+    const matchTier = filterTier === 'all' || c.membership_tier === filterTier
+    return matchSearch && matchSegment && matchTier
   })
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const safePage = Math.min(page, Math.max(totalPages, 1))
+  const paginatedCustomers = filtered.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE)
+
+  const handlePageChange = (newPage) => {
+    setPage(Math.max(1, Math.min(newPage, totalPages)))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const handleView = (customer) => {
     setSelectedCustomer(customer)
@@ -168,8 +194,9 @@ const Customers = () => {
         throw new Error('Gagal membuat akun, coba lagi')
       }
 
-      // Step 2: Upsert profile ke public.users (tidak bergantung trigger)
-      // Ini penting karena trigger on_auth_user_created mungkin belum ada di project
+      // Step 2: Upsert profile ke public.users
+      // NOTE: membership_tier tidak dikirim dulu karena kolom belum ada di DB.
+      // Jalankan migration SQL untuk menambahkan kolom (lihat file migration).
       const { error: upsertError } = await supabase
         .from('users')
         .upsert({
@@ -209,6 +236,8 @@ const Customers = () => {
           totalSpent: 'Rp 0',
           status: 'active',
           segment: 'new',
+          membership_tier: 'bronze',
+          points: 0,
           joinDate: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }),
           avatar: profile.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
         }, ...prev])
@@ -239,6 +268,8 @@ const Customers = () => {
       phone: customer.phone === '-' ? '' : customer.phone,
       segment: customer.segment,
       status: customer.status,
+      membership_tier: customer.membership_tier,
+      points: customer.points || 0,
     })
     setEditModal(true)
   }
@@ -250,28 +281,32 @@ const Customers = () => {
     }
     setEditing(true)
     try {
-      // Simpan nama, email, phone ke Supabase
+      // Simpan nama, email, phone & points ke Supabase
+      // NOTE: membership_tier disimpan di localStorage dulu karena kolom belum ada di DB.
+      // Jalankan migration SQL untuk menambahkan kolom (lihat file migration).
       const { error } = await supabase
         .from('users')
         .update({
           name: editForm.name.trim(),
           email: editForm.email.trim() || null,
           phone: editForm.phone.trim() || null,
+          points: parseInt(editForm.points) || 0,
         })
         .eq('id', editCustomer.id)
       if (error) throw error
 
-      // Simpan override segment & status ke localStorage
+      // Simpan override segment, status & membership_tier ke localStorage
       const userOvr = {}
       if (editForm.segment !== editCustomer._autoSegment) userOvr.segment = editForm.segment
       if (editForm.status !== editCustomer._autoStatus) userOvr.status = editForm.status
+      if (editForm.membership_tier !== editCustomer._autoTier) userOvr.membership_tier = editForm.membership_tier
 
       if (Object.keys(userOvr).length > 0) {
         saveOverride(editCustomer.id, userOvr)
       } else {
-        // Tidak ada perubahan dari auto → hapus override jika ada
         clearOverride(editCustomer.id, 'segment')
         clearOverride(editCustomer.id, 'status')
+        clearOverride(editCustomer.id, 'membership_tier')
       }
 
       toast.success('Data pelanggan berhasil diupdate!')
@@ -285,6 +320,8 @@ const Customers = () => {
               phone: editForm.phone.trim() || '-',
               segment: editForm.segment,
               status: editForm.status,
+              membership_tier: editForm.membership_tier,
+              points: parseInt(editForm.points) || 0,
             }
           : c
       ))
@@ -300,6 +337,13 @@ const Customers = () => {
     { key: 'loyal',  label: '⭐ Loyal' },
     { key: 'new',    label: '🌱 Baru' },
     { key: 'at-risk',label: '⚠️ At-Risk' },
+  ]
+
+  const tiers = [
+    { key: 'all',    label: 'Semua Tier', icon: '🏷️' },
+    { key: 'gold',   label: '🥇 Gold',    color: '#FFD700' },
+    { key: 'silver', label: '🥈 Silver',  color: '#9CA3AF' },
+    { key: 'bronze', label: '🥉 Bronze',  color: '#CD7F32' },
   ]
 
   return (
@@ -321,15 +365,29 @@ const Customers = () => {
               type="text"
               placeholder="Cari nama atau email..."
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1) }}
               className="w-full pl-10 pr-4 py-2 rounded-xl text-sm outline-none"
               style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}
             />
           </div>
           <div className="flex gap-2 flex-wrap">
+            {tiers.map(t => (
+              <button key={t.key}
+                onClick={() => { setFilterTier(t.key); setPage(1) }}
+                className="px-3 py-2 rounded-xl text-xs font-medium transition-all"
+                style={filterTier === t.key
+                  ? { background: 'var(--accent)', color: '#fff' }
+                  : { background: 'var(--bg-raised)', color: 'var(--text)', border: '1px solid var(--border)' }
+                }
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-wrap">
             {segments.map(s => (
               <button key={s.key}
-                onClick={() => setFilterSegment(s.key)}
+                onClick={() => { setFilterSegment(s.key); setPage(1) }}
                 className="px-3 py-2 rounded-xl text-xs font-medium transition-all"
                 style={filterSegment === s.key
                   ? { background: 'var(--accent)', color: '#fff' }
@@ -346,22 +404,37 @@ const Customers = () => {
       {/* Tabel Customers */}
       <Card>
         {loading ? (
-          <div className="text-center py-8">
-            <p style={{ color: 'var(--text)' }}>Memuat data pelanggan...</p>
+          <div className="py-6">
+            <div className="animate-pulse space-y-3">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4 px-3 py-3">
+                  <div className="w-9 h-9 rounded-full" style={{ background: 'var(--border)' }} />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 rounded w-48" style={{ background: 'var(--border)' }} />
+                    <div className="h-2.5 rounded w-32" style={{ background: 'var(--border)' }} />
+                  </div>
+                  <div className="h-3 rounded w-20" style={{ background: 'var(--border)' }} />
+                  <div className="h-6 rounded-xl w-16" style={{ background: 'var(--border)' }} />
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-xs mt-4" style={{ color: 'var(--text)' }}>
+              Memuat 1.000+ data pelanggan...
+            </p>
           </div>
         ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                {['Pelanggan', 'Kontak', 'Treatment Terakhir', 'Kunjungan', 'Total Spent', 'Segmen', 'Aksi'].map(h => (
+                {['Pelanggan', 'Kontak', 'Treatment Terakhir', 'Kunjungan', 'Poin', 'Total Spent', 'Membership', 'Segmen', 'Aksi'].map(h => (
                   <th key={h} className="text-left py-3 px-3 text-xs font-semibold"
                     style={{ color: 'var(--text)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {filtered.map((customer, i) => (
+              {paginatedCustomers.map((customer, i) => (
                 <tr key={customer.id}
                   className="transition-colors"
                   style={{ borderBottom: '1px solid var(--border)' }}
@@ -385,8 +458,18 @@ const Customers = () => {
                   <td className="py-3 px-3 text-center font-semibold" style={{ color: 'var(--text-strong)' }}>
                     {customer.totalVisits}x
                   </td>
+                  <td className="py-3 px-3 text-center font-semibold" style={{ color: 'var(--warning)' }}>
+                    {customer.points?.toLocaleString('id-ID') || 0}
+                  </td>
                   <td className="py-3 px-3 font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {customer.totalSpent}
+                  </td>
+                  <td className="py-3 px-3">
+                    <Badge status={customer.membership_tier}>
+                      {customer.membership_tier === 'gold' ? '🥇 Gold'
+                        : customer.membership_tier === 'silver' ? '🥈 Silver'
+                        : '🥉 Bronze'}
+                    </Badge>
                   </td>
                   <td className="py-3 px-3">
                     <Badge status={customer.segment}>
@@ -437,6 +520,16 @@ const Customers = () => {
             </div>
           )}
         </div>
+        )}
+        {/* Pagination */}
+        {!loading && (
+          <Pagination
+            currentPage={safePage}
+            totalPages={totalPages}
+            totalItems={filtered.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={handlePageChange}
+          />
         )}
       </Card>
 
@@ -490,6 +583,14 @@ const Customers = () => {
                   <strong style={{ color: 'var(--text-strong)' }}>{editCustomer.totalSpent}</strong>
                 </div>
                 <div>
+                  <span style={{ color: 'var(--text)' }}>Poin Saat Ini: </span>
+                  <strong style={{ color: 'var(--warning)' }}>{editCustomer.points?.toLocaleString('id-ID') || 0}</strong>
+                </div>
+                <div>
+                  <span style={{ color: 'var(--text)' }}>Auto Tier: </span>
+                  <Badge status={editCustomer._autoTier}>{editCustomer._autoTier === 'gold' ? '🥇 Gold' : editCustomer._autoTier === 'silver' ? '🥈 Silver' : '🥉 Bronze'}</Badge>
+                </div>
+                <div>
                   <span style={{ color: 'var(--text)' }}>Auto Segmen: </span>
                   <Badge status={editCustomer._autoSegment}>{editCustomer._autoSegment === 'loyal' ? 'Loyal' : 'Baru'}</Badge>
                 </div>
@@ -498,6 +599,49 @@ const Customers = () => {
                   <Badge status={editCustomer._autoStatus}>{editCustomer._autoStatus === 'vip' ? 'VIP' : editCustomer._autoStatus === 'active' ? 'Aktif' : 'Tidak Aktif'}</Badge>
                 </div>
               </div>
+            </div>
+
+            {/* ———— MANAJEMEN POIN & MEMBERSHIP ———— */}
+            <div className="p-4 rounded-xl" style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent)' }}>
+              <p className="text-xs font-bold mb-3 flex items-center gap-1.5" style={{ color: 'var(--accent)' }}>
+                ⭐ Manajemen Poin & Membership
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-strong)' }}>Total Poin</label>
+                  <input type="number" min="0" step="100"
+                    value={editForm.points}
+                    onChange={(e) => {
+                      const pts = parseInt(e.target.value) || 0
+                      setEditForm(p => ({
+                        ...p,
+                        points: pts,
+                        // Auto-calculate tier saat poin diubah
+                        membership_tier: pts >= 2000 ? 'gold' : pts >= 500 ? 'silver' : 'bronze'
+                      }))
+                    }}
+                    className="w-full px-3 py-2.5 rounded-xl text-sm outline-none font-bold"
+                    style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--text-strong)' }}>Membership Tier</label>
+                  <select value={editForm.membership_tier}
+                    onChange={(e) => setEditForm(p => ({ ...p, membership_tier: e.target.value }))}
+                    className="w-full px-3 py-2.5 rounded-xl text-sm outline-none"
+                    style={{ background: 'var(--bg-raised)', border: '1px solid var(--border)', color: 'var(--text-strong)' }}>
+                    <option value="bronze">🥉 Bronze (0-499 poin)</option>
+                    <option value="silver">🥈 Silver (500-1.999 poin)</option>
+                    <option value="gold">🥇 Gold (2.000+ poin)</option>
+                  </select>
+                </div>
+              </div>
+              <p className="text-[10px] mt-2" style={{ color: 'var(--text)' }}>
+                💡 <strong>Poin → Tier otomatis:</strong> Saat angka poin diubah, tier di form ini otomatis menyesuaikan (Bronze: 0-499, Silver: 500-1.999, Gold: 2.000+).
+              </p>
+              <p className="text-[10px] mt-1" style={{ color: 'var(--text)' }}>
+                🎯 <strong>Bebas override:</strong> Admin bisa ganti tier manual kapan saja via dropdown. Kombinasi poin + tier APA PUN bisa langsung disimpan.
+              </p>
             </div>
 
             {/* Override Segmen & Status */}
@@ -525,9 +669,6 @@ const Customers = () => {
                 </select>
               </div>
             </div>
-            <p className="text-[11px]" style={{ color: 'var(--text)' }}>
-              💡 Pilih <strong>sama dengan auto</strong> untuk reset ke perhitungan otomatis.
-            </p>
 
             <div className="flex gap-3 pt-2">
               <Button variant="secondary" onClick={() => setEditModal(false)} className="flex-1">Batal</Button>
@@ -550,6 +691,11 @@ const Customers = () => {
                   {selectedCustomer.name}
                 </h3>
                 <div className="flex gap-2 mt-1">
+                  <Badge status={selectedCustomer.membership_tier}>
+                    {selectedCustomer.membership_tier === 'gold' ? '🥇 Gold'
+                      : selectedCustomer.membership_tier === 'silver' ? '🥈 Silver'
+                      : '🥉 Bronze'}
+                  </Badge>
                   <Badge status={selectedCustomer.status}>{selectedCustomer.status}</Badge>
                   <Badge status={selectedCustomer.segment}>
                     {selectedCustomer.segment}
@@ -563,7 +709,9 @@ const Customers = () => {
                 { label: 'Telepon',        value: selectedCustomer.phone },
                 { label: 'Bergabung',      value: selectedCustomer.joinDate },
                 { label: 'Total Kunjungan',value: `${selectedCustomer.totalVisits}x` },
+                { label: 'Total Poin',     value: (selectedCustomer.points || 0).toLocaleString('id-ID') },
                 { label: 'Total Spent',    value: selectedCustomer.totalSpent },
+                { label: 'Membership Tier', value: selectedCustomer.membership_tier === 'gold' ? '🥇 Gold' : selectedCustomer.membership_tier === 'silver' ? '🥈 Silver' : '🥉 Bronze' },
                 { label: 'Treatment Terakhir', value: selectedCustomer.lastTreatment },
               ].map(({ label, value }) => (
                 <div key={label} className="p-3 rounded-xl" style={{ background: 'var(--bg-raised)' }}>

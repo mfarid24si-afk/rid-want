@@ -22,9 +22,16 @@ const Login = () => {
     setErrorMessage('')
 
     try {
-      await login(form.email, form.password)
+      // login() return profile dari user_metadata — INSTAN
+      const profile = await login(form.email, form.password)
       setIsLoading(false)
-      navigate('/dashboard', { replace: true })
+      
+      // Navigasi berdasarkan ROLE DARI RETURN (local variable, bukan stale closure)
+      if (profile.role === 'admin') {
+        navigate('/dashboard', { replace: true })
+      } else {
+        navigate('/portal', { replace: true })
+      }
     } catch (error) {
       setIsLoading(false)
       setErrorMessage(error.message || 'Terjadi kesalahan koneksi.')

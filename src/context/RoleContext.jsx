@@ -28,6 +28,11 @@ export const PERMISSIONS = {
     'view:doctors:edit',
     'view:promotions',
     'view:promotions:edit',
+    'view:support',
+    'view:support:edit',
+    'view:email_marketing',
+    'view:email_marketing:edit',
+    'view:setup',
   ],
   member: [
     'view:landing',

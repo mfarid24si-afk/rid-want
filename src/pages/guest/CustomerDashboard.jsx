@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRole } from '../../context/RoleContext'
 import { useAuth } from '../../context/AuthContext'
-import { User, ListOrdered, Gift, Ticket, History, CalendarPlus, Sparkles, CheckCircle2, Moon, Sun, ArrowRight, ShieldCheck, Trash2, AlertTriangle } from 'lucide-react'
+import {  User, ListOrdered, Gift, Ticket, History, CalendarPlus, Sparkles, CheckCircle2, Moon, Sun, ArrowRight, ShieldCheck, Trash2, AlertTriangle, MessageCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { censorName } from '../../components/crm/KanbanBoard'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -19,14 +19,15 @@ const CustomerDashboard = () => {
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState('')
   const [userPoints, setUserPoints] = useState(0)
+  const [membershipTier, setMembershipTier] = useState('bronze')
   const [userAppointments, setUserAppointments] = useState([])
 
   // Data user real dari Auth
   const patient = {
     name: user?.name || 'Pasien',
     joinDate: user?.created_at ? new Date(user.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-',
-    totalVisits: 0,
-    lastTreatment: '-',
+    totalVisits: userAppointments.length,
+    lastTreatment: userAppointments[0]?.treatments?.name || '-',
     status: 'active',
   }
 
@@ -35,13 +36,18 @@ const CustomerDashboard = () => {
     const fetchUserData = async () => {
       if (!user?.id) return
       try {
-        // Fetch points
+        // Fetch points (membership_tier dihitung dari poin karena kolum belum ada di DB)
         const { data: userData } = await supabase
           .from('users')
           .select('points')
           .eq('id', user.id)
           .single()
-        if (userData) setUserPoints(userData.points || 0)
+        if (userData) {
+          const pts = userData.points || 0
+          setUserPoints(pts)
+          // Auto-calculate tier dari points
+          setMembershipTier(pts >= 2000 ? 'gold' : pts >= 500 ? 'silver' : 'bronze')
+        }
 
         // Fetch appointments
         const appointments = await appointmentService.getByUserId(user.id)
@@ -100,6 +106,7 @@ const CustomerDashboard = () => {
     { icon: CalendarPlus, label: 'Booking Baru',     path: '/portal/booking',  color: 'var(--info)' },
     { icon: Gift,          label: 'Poin Reward',     path: '/portal/loyalty',  color: 'var(--warning)' },
     { icon: Ticket,        label: 'Voucher Saya',    path: '/portal/voucher',  color: 'var(--success)' },
+    { icon: MessageCircle, label: 'Tiket Support',   path: '/portal/tickets', color: 'var(--info)' },
     { icon: History,       label: 'Riwayat',         path: '/portal/history',  color: 'var(--accent)' },
   ]
 
@@ -155,22 +162,38 @@ const CustomerDashboard = () => {
             <h3 className="text-2xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-[#E8D5C4] via-[#FFFFFF] to-[#D4B99A]">
               {patient ? censorName(patient.name) : 'Pasien Tamu'}
             </h3>
-            <p className="text-xs text-stone-400 mt-1">ID Pelanggan: AP-00{patient?.id ?? '0'}</p>
+            <p className="text-xs text-stone-400 mt-1">ID Pelanggan: AP-00{user?.id?.slice(0,6) || '0'}</p>
           </div>
 
           <div className="pt-2">
             <div className="flex justify-between text-xs text-stone-300 font-semibold mb-1.5">
-              <span>Progress Gold VIP</span>
-              <span>75% (3.750 / 5.000 Poin)</span>
+              <span>
+                {membershipTier === 'gold' ? '🏆 Gold VIP — Maksimal!' :
+                 membershipTier === 'silver' ? '🥈 Progress ke Gold' :
+                 '🥉 Progress ke Silver'}
+              </span>
+              <span>
+                {membershipTier === 'gold' ? `${userPoints.toLocaleString('id-ID')} poin` :
+                 membershipTier === 'silver' ? `${userPoints.toLocaleString('id-ID')} / 2.000 poin` :
+                 `${userPoints.toLocaleString('id-ID')} / 500 poin`}
+              </span>
             </div>
             {/* Custom Progress Bar */}
             <div className="w-full h-2 bg-stone-800 rounded-full overflow-hidden border border-stone-700/50">
               <div 
                 className="h-full rounded-full transition-all duration-1000"
                 style={{ 
-                  width: '75%', 
-                  background: 'linear-gradient(90deg, var(--accent) 0%, #FFFFFF 100%)',
-                  boxShadow: '0 0 8px var(--accent)'
+                  width: membershipTier === 'gold' ? '100%'
+                    : membershipTier === 'silver' ? `${Math.min(100, (userPoints / 2000) * 100)}%`
+                    : `${Math.min(100, (userPoints / 500) * 100)}%`,
+                  background: membershipTier === 'gold'
+                    ? 'linear-gradient(90deg, #FFD700 0%, #FFFFFF 100%)'
+                    : membershipTier === 'silver'
+                    ? 'linear-gradient(90deg, var(--accent) 0%, #C0C0C0 100%)'
+                    : 'linear-gradient(90deg, #CD7F32 0%, var(--accent) 100%)',
+                  boxShadow: membershipTier === 'gold'
+                    ? '0 0 12px #FFD700'
+                    : '0 0 8px var(--accent)'
                 }}
               />
             </div>
@@ -183,17 +206,21 @@ const CustomerDashboard = () => {
             <span className="text-xs text-stone-400">Status Keanggotaan</span>
             <span 
               className="text-lg font-black tracking-wider flex items-center gap-1.5 mt-0.5" 
-              style={{ color: 'var(--accent)' }}
+              style={{
+                color: membershipTier === 'gold' ? '#FFD700'
+                  : membershipTier === 'silver' ? '#C0C0C0'
+                  : '#CD7F32'
+              }}
             >
               <Sparkles className="w-4 h-4 fill-current animate-pulse" />
-              {patient?.status === 'vip' ? 'GOLD VIP MEMBER' : 'SILVER MEMBER'}
+              {membershipTier === 'gold' ? '🥇 GOLD MEMBER' : membershipTier === 'silver' ? '🥈 SILVER MEMBER' : '🥉 BRONZE MEMBER'}
             </span>
           </div>
 
           <div className="mt-4 md:mt-0 flex flex-col items-end">
             <span className="text-xs text-stone-400">Total Reward Poin</span>
             <span className="text-3xl font-black text-white">
-              3.750
+              {userPoints.toLocaleString('id-ID')}
             </span>
             <span className="text-[10px] text-stone-500 font-medium">poin aktif</span>
           </div>
@@ -457,7 +484,7 @@ const CustomerDashboard = () => {
                 border: `1px solid ${patient.status === 'vip' ? 'var(--warning)' : 'var(--accent)'}33`
               }}
             >
-              {patient.status === 'vip' ? '⭐ Gold VIP Member' : patient.status}
+              {membershipTier === 'gold' ? '🥇 Gold Member' : membershipTier === 'silver' ? '🥈 Silver Member' : '🥉 Bronze Member'}
             </span>
           </div>
         </div>

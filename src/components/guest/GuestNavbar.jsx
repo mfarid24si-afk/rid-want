@@ -15,6 +15,7 @@ import {
   Gift,
   Ticket,
   History,
+  MessageCircle,
   LayoutDashboard,
   LogOut,
 } from 'lucide-react'
@@ -36,6 +37,7 @@ const accountItems = [
   { path: '/portal/me',       label: 'Dashboard Saya', icon: LayoutDashboard },
   { path: '/portal/loyalty',  label: 'Poin Reward',    icon: Gift },
   { path: '/portal/voucher',  label: 'Voucher Saya',   icon: Ticket },
+  { path: '/portal/tickets', label: 'Tiket Support',  icon: MessageCircle },
   { path: '/portal/history',  label: 'Riwayat',        icon: History },
 ]
 

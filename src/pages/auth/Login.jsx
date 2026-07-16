@@ -30,7 +30,7 @@ const Login = () => {
       if (profile.role === 'admin') {
         navigate('/dashboard', { replace: true })
       } else {
-        navigate('/portal', { replace: true })
+        navigate('/portal/me', { replace: true })
       }
     } catch (error) {
       setIsLoading(false)
